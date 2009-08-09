@@ -1,0 +1,217 @@
+#include <iostream>
+#include <fstream>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include <string.h>
+#include <iomanip>
+#include <map>
+#include <list>
+
+#include <nds.h>
+#include <fat.h>
+
+
+#undef __FTERRORS_H__
+#define FT_ERROR_START_LIST     ErrorMap ft_errors; void FT_Init_Errors(){
+#define FT_ERRORDEF( e, v, s )  ft_errors[e]=s;
+#define FT_ERROR_END_LIST       };
+
+typedef std::map<int,const char*> ErrorMap;
+#include FT_ERRORS_H
+
+
+const char colors[] = {
+    ' ',
+    ':',
+    '~',
+    '+',
+    '*',
+    '#',
+};
+
+typedef std::list<unsigned long> CharList;
+
+bool utf8_to_ucs4( const unsigned char* src, CharList& result_list )
+{
+    if( !src ) return false;
+    const unsigned char* first = src;
+    while( *first )
+    {
+        int len = 0;
+        unsigned long result = 0;
+        if( (*first >> 7) == 0 )
+        {
+            len = 1;
+            result = *first;
+        }
+        else if( (*first >> 5) == 6 )
+        {
+            len = 2;
+            result = *first & 31;
+        }
+        else if( (*first >> 4) == 14 )
+        {
+            len = 3;
+            result = *first & 15;
+        }
+        else if( (*first >> 3) == 30 )
+        {
+            len = 4;
+            result = *first & 7;
+        }
+        else return false;
+        //std::cout << "len: " << len << std::endl;
+        const unsigned char* next;
+        for( next = first + 1;
+            *next && ((*next >> 6) == 2) && (next-first<len); 
+            next++ )
+        {
+            //std::cout << "result*: " << result << std::endl;
+            result = result << 6;
+            result |= *next & 63;
+        }
+        first = next;
+        //std::cout << "result: " << result << std::endl;
+        result_list.push_back( result );
+    }
+    return true;
+}
+
+
+int main()
+{
+    consoleDemoInit();
+
+	if( !fatInitDefault() ) 
+	{
+	    std::cout << "error initializing fat driver" << std::endl;
+	    return 2;
+	}
+    
+    FT_Init_Errors();
+    std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
+    char* fontfile_name = "ukai.ttf";
+    CharList char_list;    
+    const char* input = "你好中文学生";
+    if( !utf8_to_ucs4((unsigned char*)input, char_list) )
+    {
+        std::cout << "error in utf-8 input (non fatal)" << std::endl;
+        return 2;
+    }
+    
+    FT_Error error;
+    FT_Library library;
+    if( error=FT_Init_FreeType(&library) )
+    {
+        std::cout << "error initializing freetype: " << ft_errors[error] << std::endl;
+        return 2;
+    }
+    FT_Face face;
+    if( error=FT_New_Face(library, fontfile_name, 0, &face) )
+    {
+        std::cout << "error loading: " << fontfile_name << " (" << ft_errors[error] << ")" << std::endl;
+        return 2;
+    }
+    
+    // Setting pixel size
+    if( error=FT_Set_Char_Size(face, 0, 20*64, 100, 100) )
+    {
+        std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
+        return 2;
+    }
+    
+    std::cout << "face properties: " << std::endl;
+    std::cout << "num_faces: " << face->num_faces << std::endl;
+    std::cout << "face_index: " << face->face_index << std::endl;
+    std::cout << "face_flags: " << face->face_flags << std::endl;
+    std::cout << "style_flags: " << face->style_flags << std::endl;
+    std::cout << "num_glyphs: " << face->num_glyphs << std::endl;
+    std::cout << "family_name: " << face->family_name << std::endl;
+    std::cout << "style_name: " << face->style_name << std::endl;
+    std::cout << "num_fixed_sizes: " << face->num_fixed_sizes << std::endl;
+    std::cout << "available_sizes: " << face->available_sizes << std::endl;
+    std::cout << "num_charmaps: " << face->num_charmaps << std::endl;
+    for( int i=0; i < face->num_charmaps; i++ )
+    {
+        std::cout << "charmap[" << i << "]: " << face->charmaps[i] << std::endl;
+        std::string encoding( (char*)&face->charmaps[i]->encoding, 0, 4 );
+        std::cout << "\tencoding: " << encoding << std::endl;
+        std::cout << "\tplatform_id: " << face->charmaps[i]->platform_id << std::endl;
+        std::cout << "\tencoding_id: " << face->charmaps[i]->encoding_id << std::endl;
+    }
+//    std::cout << "generic: " << face->generic << std::endl;
+//    std::cout << "bbox: " << face->bbox << std::endl;
+    std::cout << "units_per_EM: " << face->units_per_EM << std::endl;
+    std::cout << "ascender: " << face->ascender << std::endl;
+    std::cout << "descender: " << face->descender << std::endl;
+    std::cout << "height: " << face->height << std::endl;
+    std::cout << "max_advance_width: " << face->max_advance_width << std::endl;
+    std::cout << "max_advance_height: " << face->max_advance_height << std::endl;
+    std::cout << "underline_position: " << face->underline_position << std::endl;
+    std::cout << "underline_thickness: " << face->underline_thickness << std::endl;
+    std::cout << "glyph: " << face->glyph << std::endl;
+    std::cout << "size: " << face->size << std::endl;
+    std::cout << "charmap: " << face->charmap << std::endl;
+    std::cout << "driver: " << face->driver << std::endl;
+    std::cout << "memory: " << face->memory << std::endl;
+    std::cout << "stream: " << face->stream << std::endl;
+//    std::cout << "sizes_list: " << face->sizes_list << std::endl;
+//    std::cout << "autohint: " << face->autohint << std::endl;
+    std::cout << "extensions: " << face->extensions << std::endl;
+    std::cout << "internal: " << face->internal << std::endl;
+    std::cout << std::endl;
+        
+#if 0
+    // Select charmap
+    if( FT_Select_Charmap(face, FT_ENCODING_UNICODE) )
+    {
+        std::cout << "error loading unicode charmap" << std::endl;
+        return 2;
+    }
+#endif
+    
+    for( CharList::iterator char_it=char_list.begin(); char_it!=char_list.end(); char_it++ )
+    {
+        // Load Char
+        std::cout << "character code: " << *char_it << std::endl;
+        //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
+        FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
+        if( !glyph_index )
+        {
+            std::cout << "error translating character code: " << *char_it << std::endl;
+            return 2;
+        }
+        std::cout << "glyph index: " << glyph_index << std::endl;
+        if( error=FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER) )
+        {
+            std::cout << "error loading glyph index: " << glyph_index << std::endl;
+            std::cout << ft_errors[error] << std::endl;
+            return 2;
+        }
+        char buffer[256];
+        FT_Get_Glyph_Name( face, glyph_index, buffer, 256 );
+        std::cout << "glyph name: " << buffer << std::endl;
+        
+        FT_Bitmap& bitmap = face->glyph->bitmap;
+        if( !bitmap.buffer )
+        {
+            std::cout << "error: got no bitmap for current glyph" << std::endl;
+            return 2;
+        }
+        for( int row=0; row<bitmap.rows; row++ )
+        {
+            for( int pixel=0; pixel<bitmap.width; pixel++ )
+            {
+                unsigned char value = bitmap.buffer[row*bitmap.pitch+pixel];
+                int color_id = (int)( (float)value/256*sizeof(colors) );
+                std::cout << colors[color_id];
+            }
+            std::cout << std::endl;
+        }
+    }
+    
+    FT_Done_Face( face );
+    FT_Done_FreeType( library );
+    
+    std::cout << "clean exit" << std::endl;
+}
