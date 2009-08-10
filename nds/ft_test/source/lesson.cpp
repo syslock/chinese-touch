@@ -9,10 +9,13 @@ void Word::render( FreetypeRenderer& ft )
     memset( base_address, 0, 256*265 );
     
     // 2. render hanzi in the faces suggested layout (e.g. fixed width)
-    ft.render_x_centered( this->hanzi, 64, 20 );
+    ft.render( this->hanzi, ft.han_face, 40, 0, 10, true );
     
     // 3. render pinyin in variable width
+    ft.render( this->pinyin, ft.han_face, 20, 0, 65, true );
+    
     // 4. render translation in variable width
+    ft.render( this->translations["de"], ft.latin_face, 10, 10, 100 );
 }
 
 Lesson all_words_lesson("Alle Wörter");

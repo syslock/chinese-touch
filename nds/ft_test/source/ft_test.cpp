@@ -18,7 +18,7 @@ int main()
     consoleDemoInit();
 
     bool fat_initialized = fatInitDefault();
-    FreetypeRenderer ft( "ukai.ttf" );
+    FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf" );
 	if( !fat_initialized )
 	{
 	    std::cout << "error initializing fat driver" << std::endl;
@@ -36,14 +36,22 @@ int main()
         std::cout << "ready" << std::endl;
 	    while( true ) swiWaitForVBlank();
 	}
-    
-        
+      
+#if 0
     int pixel_size;
     int y;
     for( pixel_size=5, y=0; pixel_size<70; pixel_size*=1.5 )
     {
-        ft.render( "你好：nǐhǎo", pixel_size, 0, y );
+        ft.render( "你好：nǐhǎo", ft.han_face, pixel_size, 0, y );
         y += pixel_size;
+    }
+#endif
+      
+    for( Lesson::iterator word_it = all_words_lesson.begin(); 
+        word_it != all_words_lesson.end(); word_it++ )
+    {
+        (*word_it)->render( ft );
+        for( int i=0; i<100; i++ ) swiWaitForVBlank();
     }
         
     std::cout << "clean exit" << std::endl;

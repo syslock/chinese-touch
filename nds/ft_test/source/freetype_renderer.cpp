@@ -12,8 +12,8 @@
 #include FT_ERRORS_H
 
 
-FreetypeRenderer::FreetypeRenderer( const std::string& fontfile_name ) : dpi_x(100), 
-    dpi_y(100)
+FreetypeRenderer::FreetypeRenderer( const std::string& han_font, 
+        const std::string& latin_font ) : dpi_x(100), dpi_y(100)
 {
     // FIXME: FreetypeRenderer sollte unabhängig vom Zielgerät funktionieren:
     // set the mode for 2 text layers and two extended background layers
@@ -36,16 +36,23 @@ FreetypeRenderer::FreetypeRenderer( const std::string& fontfile_name ) : dpi_x(1
                     << std::endl;
         return;
     }
-    this->error = FT_New_Face( this->library, fontfile_name.c_str(), 0, &this->face );
+    this->error = FT_New_Face( this->library, han_font.c_str(), 0, &this->han_face );
     if( this->error )
     {
-        std::cout << "error loading: " << fontfile_name << " (" 
+        std::cout << "error loading chinese font: " << han_font << " (" 
+                << ft_errors[this->error] << ")" << std::endl;
+        return;
+    }
+    this->error = FT_New_Face( this->library, latin_font.c_str(), 0, &this->latin_face );
+    if( this->error )
+    {
+        std::cout << "error loading chinese font: " << latin_font << " (" 
                 << ft_errors[this->error] << ")" << std::endl;
         return;
     }
 #if 0
     // Select charmap
-    this->error = FT_Select_Charmap( this->face, FT_ENCODING_UNICODE );
+    this->error = FT_Select_Charmap( this->han_face, FT_ENCODING_UNICODE );
     if( this->error )
     {
         std::cout << "error loading unicode charmap: " << ft_errors[this->error]
@@ -57,95 +64,99 @@ FreetypeRenderer::FreetypeRenderer( const std::string& fontfile_name ) : dpi_x(1
 
 FreetypeRenderer::~FreetypeRenderer()
 {
-    FT_Done_Face( this->face );
+    FT_Done_Face( this->han_face );
+    FT_Done_Face( this->latin_face );
     FT_Done_FreeType( this->library );
 }
 
-void FreetypeRenderer::render_x_centered( const std::string& text, int pixel_size, int y )
+void FreetypeRenderer::render( const std::string& text, FT_Face& face, 
+            int pixel_size, int x, int y, bool center_x, bool center_y )
 {
     CharList char_list;
     if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
     {
         std::cout << "error in utf-8 input (non fatal)" << std::endl;
     }
-    int x = 128 - (char_list.size()/2) * pixel_size;
-    this->render( char_list, pixel_size, x, y );
-}
-
-void FreetypeRenderer::render( const std::string& text, int pixel_size, int x, int y )
-{
-    CharList char_list;
-    if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
-    {
-        std::cout << "error in utf-8 input (non fatal)" << std::endl;
-    }
-    this->render( char_list, pixel_size, x, y );
-}
-
-void FreetypeRenderer::render( CharList& char_list, int pixel_size, int x, int y )
-{
     FT_Error error;
-    error = FT_Set_Char_Size( this->face, 0, pixel_size*64, this->dpi_x, this->dpi_y );
+    error = FT_Set_Char_Size( face, 0, pixel_size*64, this->dpi_x, this->dpi_y );
     if( error )
     {
         std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
         return;
     }
-    FT_Vector pen;
-    pen.x = x * 64;
-    pen.y = -y * 64;
-    int base_height = 0;
-    for( CharList::iterator char_it=char_list.begin(); 
-            char_it!=char_list.end() && pen.x/64<256; char_it++ )
+    int full_width = 0;
+    int full_height = pixel_size;
+    for( int step = 0; step<2; step++ )
     {
-        // Load Char
-        std::cout << "character code: " << *char_it << std::endl;
-        //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
-        FT_UInt glyph_index = FT_Get_Char_Index( this->face, *char_it );
-        if( !glyph_index )
+        FT_Vector pen;
+        if( step && center_x )
         {
-            std::cout << "error translating character code: " << *char_it << std::endl;
-            return;
+            pen.x = (256/2-full_width/2) * 64;
         }
-        FT_Set_Transform( this->face, 0, &pen );
-        //std::cout << "glyph index: " << glyph_index << std::endl;
-        error = FT_Load_Glyph(this->face, glyph_index, FT_LOAD_RENDER);
-        if( error )
+        else pen.x = x * 64;
+        if( step && center_y )
         {
-            std::cout << "error loading glyph index: " << glyph_index << std::endl;
-            std::cout << ft_errors[error] << std::endl;
-            return;
+            pen.y = (192/2-full_height/2) * -64;
         }
-        char buffer[256];
-        FT_Get_Glyph_Name( this->face, glyph_index, buffer, 256 );
-        //std::cout << "glyph name: " << buffer << std::endl;
-        
-        FT_GlyphSlot& glyph = this->face->glyph;
-        FT_Bitmap& bitmap = this->face->glyph->bitmap;
-        if( !base_height ) base_height = bitmap.rows;
-        //std::cout << "w/r: " << bitmap.width << "/" << bitmap.rows 
-        //            << " t: " << glyph->bitmap_top << std::endl;
-        if( !bitmap.buffer )
+        else pen.y = -y * 64;
+        for( CharList::iterator char_it=char_list.begin(); 
+                char_it!=char_list.end(); char_it++ )
         {
-            std::cout << "error: got no bitmap for current glyph" << std::endl;
-            return;
-        }
-        for( int row=0; row<bitmap.rows; row++ )
-        {
-            // FIXME Korrektur an bitmap.width um -1, damit wir mit der
-            // 16-Bit-Kopie nicht die Puffergrenze verletzen und falsche
-            // Pixel kopieren. Allerdings kopieren wir so manchmal zu wenig.
-            for( int pixel=0; pixel<bitmap.width-1; pixel+=2 )
+            // Load Char
+            std::cout << "character code: " << *char_it << std::endl;
+            //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
+            FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
+            if( !glyph_index )
             {
-                u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
-                            + bitmap.buffer[row*bitmap.pitch+pixel];
-                u16* base_adress = bgGetGfxPtr(this->bg3) 
-                        + (row+(base_height-glyph->bitmap_top))*256/2
-                        + pixel/2 + glyph->bitmap_left/2;
-                *base_adress = value;
+                std::cout << "error translating character code: " << *char_it << std::endl;
+                return;
             }
+            FT_Set_Transform( face, 0, &pen );
+            //std::cout << "glyph index: " << glyph_index << std::endl;
+            error = FT_Load_Glyph( face, glyph_index, FT_LOAD_RENDER );
+            if( error )
+            {
+                std::cout << "error loading glyph index: " << glyph_index << std::endl;
+                std::cout << ft_errors[error] << std::endl;
+                return;
+            }
+            char buffer[256];
+            FT_Get_Glyph_Name( face, glyph_index, buffer, 256 );
+            //std::cout << "glyph name: " << buffer << std::endl;
+            
+            FT_GlyphSlot& glyph = face->glyph;
+            FT_Bitmap& bitmap = face->glyph->bitmap;
+            //std::cout << "w/r: " << bitmap.width << "/" << bitmap.rows 
+            //            << " t: " << glyph->bitmap_top << std::endl;
+            if( !bitmap.buffer )
+            {
+                std::cout << "warning: got no bitmap for current glyph" << std::endl;
+            }
+            if( bitmap.rows > full_height ) full_height = bitmap.rows;
+            for( int row=0; step && bitmap.buffer && row<bitmap.rows; row++ )
+            {
+                // FIXME Korrektur an bitmap.width um -1, damit wir mit der
+                // 16-Bit-Kopie nicht die Puffergrenze verletzen und falsche
+                // Pixel kopieren. Allerdings kopieren wir so manchmal zu wenig.
+                for( int pixel=0; pixel<bitmap.width-1; pixel+=2 )
+                {
+                    u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
+                                + bitmap.buffer[row*bitmap.pitch+pixel];
+                    u16* bg_gfx_ptr = bgGetGfxPtr(this->bg3);
+                    u16* base_address = bg_gfx_ptr
+                            + (row+(full_height-glyph->bitmap_top))*256/2
+                            + pixel/2 + glyph->bitmap_left/2;
+                    if( base_address < bg_gfx_ptr
+                        || base_address > bg_gfx_ptr+256*256-2 )
+                    {
+                        continue;
+                    }
+                    *base_address = value;
+                }
+            }
+            pen.x += glyph->advance.x;
         }
-        pen.x += glyph->advance.x;
+        full_width = pen.x/64-x;
     }
 }
 
