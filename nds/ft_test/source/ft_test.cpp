@@ -80,23 +80,47 @@ bool utf8_to_ucs4( const unsigned char* src, CharList& result_list )
 
 int main()
 {
+    // set the mode for 2 text layers and two extended background layers
+	videoSetMode(MODE_5_2D);
+    vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+
     consoleDemoInit();
+
+	int bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+	// lineare 15-bit-graupalette mit 256 indizes aufbauen:
+	for( int i=0; i<256; i++ )
+	{
+	    int value = (int)( ((double)i)*(double)(1<<5)/256.0 );
+	    BG_PALETTE[255-i] = /*(1 << 15) |*/ (value << 10) | (value << 5) | value;
+	}
+
 
 	if( !fatInitDefault() ) 
 	{
 	    std::cout << "error initializing fat driver" << std::endl;
-	    return 2;
+	    std::cout << "starting bg render test" << std::endl;
+	    for( int row=0; row<256; row++ )
+	    {
+	        for( int col=0; col<256/2; col++ )
+	        {
+	            u16* base_address = bgGetGfxPtr(bg3)+row*256/2+col;
+	            u16 value = ((2*col) << 8) + (2*col+1);
+	            *base_address = value;
+            }
+            swiWaitForVBlank();
+        }
+        std::cout << "ready" << std::endl;
+	    while( true ) swiWaitForVBlank();
 	}
     
     FT_Init_Errors();
     std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
     char* fontfile_name = "ukai.ttf";
     CharList char_list;    
-    const char* input = "你好中文学生";
+    const char* input = "你好中文学生！";
     if( !utf8_to_ucs4((unsigned char*)input, char_list) )
     {
         std::cout << "error in utf-8 input (non fatal)" << std::endl;
-        return 2;
     }
     
     FT_Error error;
@@ -114,7 +138,8 @@ int main()
     }
     
     // Setting pixel size
-    if( error=FT_Set_Char_Size(face, 0, 20*64, 100, 100) )
+    int pixel_size = 32;
+    if( error=FT_Set_Char_Size(face, 0, pixel_size*64, 100, 100) )
     {
         std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
         return 2;
@@ -170,6 +195,7 @@ int main()
     }
 #endif
     
+    int char_offset = 0;
     for( CharList::iterator char_it=char_list.begin(); char_it!=char_list.end(); char_it++ )
     {
         // Load Char
@@ -200,18 +226,24 @@ int main()
         }
         for( int row=0; row<bitmap.rows; row++ )
         {
-            for( int pixel=0; pixel<bitmap.width; pixel++ )
+            for( int pixel=0; pixel<bitmap.width; pixel+=2 )
             {
-                unsigned char value = bitmap.buffer[row*bitmap.pitch+pixel];
-                int color_id = (int)( (float)value/256*sizeof(colors) );
-                std::cout << colors[color_id];
+                u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
+                            + bitmap.buffer[row*bitmap.pitch+pixel];
+                u16* base_adress = bgGetGfxPtr(bg3) + row*256/2+pixel/2+char_offset/2;
+                *base_adress = value;
+                //int color_id = (int)( (float)value/256*sizeof(colors) );
+                //std::cout << colors[color_id];
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
         }
+        char_offset += bitmap.width;
     }
     
     FT_Done_Face( face );
     FT_Done_FreeType( library );
     
     std::cout << "clean exit" << std::endl;
+    
+    while( true ) swiWaitForVBlank();
 }
