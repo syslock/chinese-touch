@@ -186,6 +186,9 @@ int main()
             if( bitmap.rows > max_advance ) max_advance = bitmap.rows;
             for( int row=0; row<bitmap.rows; row++ )
             {
+                // FIXME Korrektur an bitmap.width um -1, damit wir mit der
+                // 16-Bit-Kopie nicht die Puffergrenze verletzen und falsche
+                // Pixel kopieren. Allerdings kopieren wir so manchmal zu wenig.
                 for( int pixel=0; pixel<bitmap.width-1; pixel+=2 )
                 {
                     u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
