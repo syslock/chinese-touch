@@ -10,6 +10,7 @@
 #include <fat.h>
 
 #include "unicode.h"
+#include "lesson.h"
 
 #undef __FTERRORS_H__
 #define FT_ERROR_START_LIST     ErrorMap ft_errors; void FT_Init_Errors(){
@@ -22,6 +23,8 @@ typedef std::map<int,const char*> ErrorMap;
 
 int main()
 {
+    init_all_words_lesson();
+
     // set the mode for 2 text layers and two extended background layers
 	videoSetMode(MODE_5_2D);
     vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
