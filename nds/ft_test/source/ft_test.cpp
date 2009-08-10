@@ -117,7 +117,7 @@ int main()
     std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
     char* fontfile_name = "ukai.ttf";
     CharList char_list;    
-    const char* input = "你好中文学生！";
+    const char* input = "你好:nǐhǎo";
     if( !utf8_to_ucs4((unsigned char*)input, char_list) )
     {
         std::cout << "error in utf-8 input (non fatal)" << std::endl;
@@ -195,51 +195,70 @@ int main()
     }
 #endif
     
-    int char_offset = 0;
-    for( CharList::iterator char_it=char_list.begin(); char_it!=char_list.end(); char_it++ )
+    FT_Vector pen;
+    for( pixel_size=5, pen.y=0*64; pixel_size<70; pixel_size*=1.5 )
     {
-        // Load Char
-        std::cout << "character code: " << *char_it << std::endl;
-        //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
-        FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
-        if( !glyph_index )
+        // Setting pixel size
+        if( error=FT_Set_Char_Size(face, 0, pixel_size*64, 100, 100) )
         {
-            std::cout << "error translating character code: " << *char_it << std::endl;
+            std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
             return 2;
         }
-        std::cout << "glyph index: " << glyph_index << std::endl;
-        if( error=FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER) )
+        pen.x = 0*64;
+        int max_advance = 0;
+        int base_height = 0;
+        for( CharList::iterator char_it=char_list.begin(); 
+                char_it!=char_list.end() && pen.x/64<256; char_it++ )
         {
-            std::cout << "error loading glyph index: " << glyph_index << std::endl;
-            std::cout << ft_errors[error] << std::endl;
-            return 2;
-        }
-        char buffer[256];
-        FT_Get_Glyph_Name( face, glyph_index, buffer, 256 );
-        std::cout << "glyph name: " << buffer << std::endl;
-        
-        FT_Bitmap& bitmap = face->glyph->bitmap;
-        if( !bitmap.buffer )
-        {
-            std::cout << "error: got no bitmap for current glyph" << std::endl;
-            return 2;
-        }
-        for( int row=0; row<bitmap.rows; row++ )
-        {
-            for( int pixel=0; pixel<bitmap.width; pixel+=2 )
+            // Load Char
+            std::cout << "character code: " << *char_it << std::endl;
+            //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
+            FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
+            if( !glyph_index )
             {
-                u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
-                            + bitmap.buffer[row*bitmap.pitch+pixel];
-                u16* base_adress = bgGetGfxPtr(bg3) + row*256/2+pixel/2+char_offset/2;
-                *base_adress = value;
-                //int color_id = (int)( (float)value/256*sizeof(colors) );
-                //std::cout << colors[color_id];
+                std::cout << "error translating character code: " << *char_it << std::endl;
+                return 2;
             }
-            //std::cout << std::endl;
+            FT_Set_Transform( face, 0, &pen );
+            //std::cout << "glyph index: " << glyph_index << std::endl;
+            if( error=FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER) )
+            {
+                std::cout << "error loading glyph index: " << glyph_index << std::endl;
+                std::cout << ft_errors[error] << std::endl;
+                return 2;
+            }
+            char buffer[256];
+            FT_Get_Glyph_Name( face, glyph_index, buffer, 256 );
+            //std::cout << "glyph name: " << buffer << std::endl;
+            
+            FT_GlyphSlot& glyph = face->glyph;
+            FT_Bitmap& bitmap = face->glyph->bitmap;
+            if( !base_height ) base_height = bitmap.rows;
+            std::cout << "w/r: " << bitmap.width << "/" << bitmap.rows 
+                        << " t: " << glyph->bitmap_top << std::endl;
+            if( !bitmap.buffer )
+            {
+                std::cout << "error: got no bitmap for current glyph" << std::endl;
+                return 2;
+            }
+            if( bitmap.rows > max_advance ) max_advance = bitmap.rows;
+            for( int row=0; row<bitmap.rows; row++ )
+            {
+                for( int pixel=0; pixel<bitmap.width-1; pixel+=2 )
+                {
+                    u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
+                                + bitmap.buffer[row*bitmap.pitch+pixel];
+                    u16* base_adress = bgGetGfxPtr(bg3) 
+                            + (row+(base_height-glyph->bitmap_top))*256/2
+                            + pixel/2 + glyph->bitmap_left/2;
+                    *base_adress = value;
+                }
+            }
+            pen.x += glyph->advance.x;
         }
-        char_offset += bitmap.width;
+        pen.y -= max_advance*64;
     }
-    
+        
     FT_Done_Face( face );
     FT_Done_FreeType( library );
     
