@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 
+#include "freetype_renderer.h"
+
 // Word ist eine Komposition aus einem chinesischen Wort, der zugehörigen 
 // Lautumschrift in Pinyin, sowie einer Abbildung von ISO-Sprachcodes zu in den 
 // jeweiligen Sprachen verfassten Übersetzungen bzw. Definitionen
@@ -14,6 +16,7 @@ class Word
 public:
     Word( const std::string& _hanzi, const std::string& _pinyin ) : hanzi(_hanzi), 
         pinyin(_pinyin), successes(0), errors(0) {};
+    void render( FreetypeRenderer& ft );
 public:
     std::string hanzi, pinyin;
     Translations translations;

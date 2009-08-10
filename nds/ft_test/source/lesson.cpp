@@ -1,4 +1,19 @@
+#include <nds.h>
+
 #include "lesson.h"
+
+void Word::render( FreetypeRenderer& ft )
+{
+    // 1. clear background buffer with background color
+    u16* base_address = bgGetGfxPtr(ft.bg3);
+    memset( base_address, 0, 256*265 );
+    
+    // 2. render hanzi in the faces suggested layout (e.g. fixed width)
+    ft.render_x_centered( this->hanzi, 64, 20 );
+    
+    // 3. render pinyin in variable width
+    // 4. render translation in variable width
+}
 
 Lesson all_words_lesson("Alle Wörter");
 void init_all_words_lesson()
