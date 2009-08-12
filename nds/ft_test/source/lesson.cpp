@@ -11,13 +11,19 @@ void Word::render( FreetypeRenderer& ft )
     // 2. render hanzi in the faces suggested layout (e.g. fixed width)
     RenderStyle render_style;
     render_style.center_x = true;
-    ft.render( this->hanzi, ft.han_face, 40, 0, 10, &render_style );
+    int top = 10;
+    RenderRect rect = ft.render( this->hanzi, ft.han_face, 32, 0, top, &render_style );
+    top += rect.height;
     
     // 3. render pinyin in variable width
-    ft.render( this->pinyin, ft.han_face, 20, 0, 65, &render_style );
+    top += 5;
+    rect = ft.render( this->pinyin, ft.han_face, 16, 0, top, &render_style );
+    top += rect.height;
     
     // 4. render translation in variable width
-    ft.render( this->translations["de"], ft.latin_face, 10, 10, 100, &render_style );
+    top += 10;
+    rect = ft.render( this->translations["de"], ft.latin_face, 9, 0, top, &render_style );
+    top += rect.height;
 }
 
 Lesson all_words_lesson("Alle Wörter");

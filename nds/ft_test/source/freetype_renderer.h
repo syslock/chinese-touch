@@ -21,13 +21,22 @@ public:
     bool center_x, center_y, linebreak, autoscale;
 };
 
+class RenderRect
+{
+public:
+    RenderRect( int _x, int _y, int _width, int _height )
+        : x(_x), y(_y), width(_width), height(_height) {}
+public:
+    int x, y, width, height;
+};
+
 class FreetypeRenderer
 {
 public:
     FreetypeRenderer( const std::string& han_font, 
                     const std::string& latin_font );
     ~FreetypeRenderer();
-    void render( const std::string& text, FT_Face& face, int pixel_size, 
+    RenderRect render( const std::string& text, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0 );
 public:
     FT_Error error;

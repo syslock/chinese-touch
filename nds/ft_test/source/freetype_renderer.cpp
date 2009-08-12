@@ -85,7 +85,7 @@ public:
 };
 typedef std::list<RenderChar*> RenderCharList;
 
-void FreetypeRenderer::render( const std::string& text, FT_Face& face, 
+RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style )
 {
     // 1. unicode conversion
@@ -95,7 +95,7 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
     {
         std::cout << "error in utf-8 input (non fatal)" << std::endl;
     }
-    if( char_list.size()==0 ) return;
+    if( char_list.size()==0 ) return RenderRect(0,0,0,0);
     
     // 2. initialize Freetype
     FT_Error error;
@@ -103,11 +103,10 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
     if( error )
     {
         std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
-        return;
+        return RenderRect(0,0,0,0);
     }
     
     // 3. compute preliminary character offsets and dimensions
-    int full_width = 0;
     int line_height = pixel_size;
     FT_Vector pen;
     pen.x = x * 64;
@@ -122,7 +121,7 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
         if( !glyph_index )
         {
             std::cout << "error translating character code: " << *char_it << std::endl;
-            return;
+            return RenderRect(0,0,0,0);
         }
         FT_Set_Transform( face, 0, &pen );
         //std::cout << "glyph index: " << glyph_index << std::endl;
@@ -131,7 +130,7 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
         {
             std::cout << "error loading glyph index: " << glyph_index << std::endl;
             std::cout << ft_errors[error] << std::endl;
-            return;
+            return RenderRect(0,0,0,0);
         }
         char buffer[1000];
         FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
@@ -154,7 +153,6 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
         if( bitmap.rows > line_height ) line_height = bitmap.rows;
         pen.x += glyph->advance.x;
     }
-    full_width = pen.x/64-x;
     
     // 4. insert line breaks
     RenderCharList::iterator prev_whitespace_it = render_char_list.end();
@@ -238,9 +236,15 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
     }
 
     // 7. render characters at final locations
+    int max_x = 0;
+    int max_y = 0;
     for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
             rchar_it!=render_char_list.end(); rchar_it++ )
     {
+        int cur_rx = (*rchar_it)->x+(*rchar_it)->width-1;
+        if( cur_rx > max_x ) max_x = cur_rx;
+        int cur_by = (*rchar_it)->y+(*rchar_it)->height-1;
+        if( cur_by > max_y ) max_y = cur_by;
         pen.x = (*rchar_it)->x*64;
         pen.y = (*rchar_it)->y*-64;
         FT_Set_Transform( face, 0, &pen );
@@ -249,7 +253,7 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
         {
             std::cout << "error loading glyph index: " << (*rchar_it)->glyph_index << std::endl;
             std::cout << ft_errors[error] << std::endl;
-            return;
+            return RenderRect(0,0,0,0);
         }
         FT_GlyphSlot& glyph = face->glyph;
         FT_Bitmap& bitmap = face->glyph->bitmap;
@@ -275,5 +279,6 @@ void FreetypeRenderer::render( const std::string& text, FT_Face& face,
             }
         }
     }
+    return RenderRect( x, y, max_x-x, max_y-y );
 }
 
