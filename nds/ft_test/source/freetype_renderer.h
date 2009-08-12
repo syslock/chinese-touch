@@ -12,6 +12,15 @@
 typedef std::map<int,const char*> ErrorMap;
 extern ErrorMap ft_errors;
 
+class RenderStyle
+{
+public:
+    RenderStyle() : center_x(false), center_y(false), 
+            linebreak(true), autoscale(false) {}
+public:
+    bool center_x, center_y, linebreak, autoscale;
+};
+
 class FreetypeRenderer
 {
 public:
@@ -19,13 +28,14 @@ public:
                     const std::string& latin_font );
     ~FreetypeRenderer();
     void render( const std::string& text, FT_Face& face, int pixel_size, 
-                int x, int y, bool center_x=false, bool center_y=false );
+                int x, int y, RenderStyle* render_style=0 );
 public:
     FT_Error error;
     FT_Face han_face, latin_face;
     FT_Library library;
     int dpi_x, dpi_y;
     int bg3;
+    int res_x, res_y;
 };
 
 #endif // FREETYPE_RENDERER_H

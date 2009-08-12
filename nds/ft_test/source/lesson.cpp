@@ -9,10 +9,12 @@ void Word::render( FreetypeRenderer& ft )
     memset( base_address, 0, 256*265 );
     
     // 2. render hanzi in the faces suggested layout (e.g. fixed width)
-    ft.render( this->hanzi, ft.han_face, 40, 0, 10, true );
+    RenderStyle render_style;
+    render_style.center_x = true;
+    ft.render( this->hanzi, ft.han_face, 40, 0, 10, &render_style );
     
     // 3. render pinyin in variable width
-    ft.render( this->pinyin, ft.han_face, 20, 0, 65, true );
+    ft.render( this->pinyin, ft.han_face, 20, 0, 65, &render_style );
     
     // 4. render translation in variable width
     ft.render( this->translations["de"], ft.latin_face, 10, 10, 100 );
@@ -25,7 +27,7 @@ void init_all_words_lesson()
     word = new Word( "你好", "nǐhǎo" );
     word->translations["de"] = "Hallo, Guten Tag (Begrüßung)";
     all_words_lesson.push_back( word );
-    word = new Word( "汉语", "hànyǔ" );
+/*    word = new Word( "汉语", "hànyǔ" );
     word->translations["de"] = "Chinesisch, Chinesische Sprache";
     all_words_lesson.push_back( word );
     word = new Word( "书法", "shūfǎ" );
@@ -39,11 +41,11 @@ void init_all_words_lesson()
     all_words_lesson.push_back( word );
     word = new Word( "医生", "yīshēng" );
     word->translations["de"] = "Arzt";
-    all_words_lesson.push_back( word );
+    all_words_lesson.push_back( word );*/
     word = new Word( "一", "yī" );
     word->translations["de"] = "eins";
     all_words_lesson.push_back( word );
-    word = new Word( "二", "èr" );
+/*    word = new Word( "二", "èr" );
     word->translations["de"] = "zwei";
     all_words_lesson.push_back( word );
     word = new Word( "三", "sān" );
@@ -69,5 +71,11 @@ void init_all_words_lesson()
     all_words_lesson.push_back( word );
     word = new Word( "十", "shí" );
     word->translations["de"] = "zehn";
+    all_words_lesson.push_back( word );*/
+    word = new Word( "您好中文老师！", "nínhǎo zhōngwénlǎoshī" );
+    word->translations["de"] = "Guten Tag Herr/Frau Chinesischlehrer(in) (höfliche Anrede)";
+    all_words_lesson.push_back( word );
+    word = new Word( "x", "x" );
+    word->translations["de"] = "testestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestest";
     all_words_lesson.push_back( word );
 }
