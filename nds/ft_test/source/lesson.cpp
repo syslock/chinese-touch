@@ -17,7 +17,7 @@ void Word::render( FreetypeRenderer& ft )
     ft.render( this->pinyin, ft.han_face, 20, 0, 65, &render_style );
     
     // 4. render translation in variable width
-    ft.render( this->translations["de"], ft.latin_face, 10, 10, 100 );
+    ft.render( this->translations["de"], ft.latin_face, 10, 10, 100, &render_style );
 }
 
 Lesson all_words_lesson("Alle Wörter");
@@ -28,7 +28,7 @@ void init_all_words_lesson()
     word->translations["de"] = "Hallo, Guten Tag (Begrüßung)";
     all_words_lesson.push_back( word );
 /*    word = new Word( "汉语", "hànyǔ" );
-    word->translations["de"] = "Chinesisch, Chinesische Sprache";
+    word->translations["de"] = "Chinesisch, chinesische Sprache";
     all_words_lesson.push_back( word );
     word = new Word( "书法", "shūfǎ" );
     word->translations["de"] = "Kalligraphie";
@@ -75,7 +75,7 @@ void init_all_words_lesson()
     word = new Word( "您好中文老师！", "nínhǎo zhōngwénlǎoshī" );
     word->translations["de"] = "Guten Tag Herr/Frau Chinesischlehrer(in) (höfliche Anrede)";
     all_words_lesson.push_back( word );
-    word = new Word( "x", "x" );
+/*    word = new Word( "x", "x" );
     word->translations["de"] = "testestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestest";
-    all_words_lesson.push_back( word );
+    all_words_lesson.push_back( word );*/
 }
