@@ -16,7 +16,7 @@ void Word::render( FreetypeRenderer& ft )
     top += rect.height;
     
     // 3. render pinyin in variable width
-    top += 5;
+    top += 10;
     rect = ft.render( this->pinyin, ft.han_face, 16, 0, top, &render_style );
     top += rect.height;
     

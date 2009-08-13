@@ -202,7 +202,7 @@ RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face,
                 (*rchar_it)->x -= x_correction;
                 (*rchar_it)->y -= y_correction;
             }
-            y_correction += line_height;
+            y_correction += line_height+1;
             x_correction = x-(*rchar_it)->x;
             RenderCharList::iterator prev_last_line_it = last_line_it;
             last_line_it = rchar_it;
@@ -259,13 +259,18 @@ RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face,
         FT_Bitmap& bitmap = face->glyph->bitmap;
         for( int row=0; bitmap.buffer && row<bitmap.rows; row++ )
         {
-            // FIXME Korrektur an bitmap.width um -1, damit wir mit der
-            // 16-Bit-Kopie nicht die Puffergrenze verletzen und falsche
-            // Pixel kopieren. Allerdings kopieren wir so manchmal zu wenig.
-            for( int pixel=0; pixel<bitmap.width-1; pixel+=2 )
+            for( int pixel=0; pixel<bitmap.width; pixel+=2 )
             {
-                u16 value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
-                            + bitmap.buffer[row*bitmap.pitch+pixel];
+                u16 value = 0;
+                if( pixel < bitmap.width-1 )
+                {
+                    value = (bitmap.buffer[row*bitmap.pitch+pixel+1] << 8)
+                                + bitmap.buffer[row*bitmap.pitch+pixel];
+                }
+                else
+                {
+                    value = bitmap.buffer[row*bitmap.pitch+pixel];
+                }
                 u16* bg_gfx_ptr = bgGetGfxPtr(this->bg3);
                 u16* base_address = bg_gfx_ptr
                         + (row+(line_height-glyph->bitmap_top))*this->res_x/2
@@ -275,10 +280,12 @@ RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face,
                 {
                     continue;
                 }
-                *base_address = value;
+                *base_address |= value;
             }
         }
     }
-    return RenderRect( x, y, max_x-x, max_y-y );
+    int height = max_y-y;
+    if( line_height > height ) height = line_height;
+    return RenderRect( x, y, max_x-x, height );
 }
 
