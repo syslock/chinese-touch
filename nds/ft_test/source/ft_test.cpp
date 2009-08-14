@@ -46,15 +46,46 @@ int main()
         y += pixel_size;
     }
 #endif
-      
-    for( Lesson::iterator word_it = all_words_lesson.begin(); 
-        word_it != all_words_lesson.end(); word_it++ )
+    touchPosition old_touch;
+    touchRead( &old_touch );
+    Lesson& lesson = all_words_lesson;
+    Lesson::iterator word_it = lesson.begin();
+    (*word_it)->render( ft );
+    while( true )
     {
-        (*word_it)->render( ft );
-        for( int i=0; i<100; i++ ) swiWaitForVBlank();
+        scanKeys();
+        touchPosition touch;
+        touchRead( &touch );
+        int area = touch.px * touch.z2 / touch.z1 - touch.px;
+        if( keysHeld() & KEY_TOUCH 
+                && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
+        {
+            if( touch.px < 15 && touch.py < 15 )
+            {
+                if( word_it != lesson.begin() )
+                {
+                    word_it--;
+                    std::cout << "prev" << std::endl;
+                    (*word_it)->render( ft );
+                }
+            }
+            if( touch.px > (ft.res_x-15) && touch.py < 15 )
+            {
+                word_it++;
+                if( word_it != lesson.end() )
+                {
+                    std::cout << "next" << std::endl;
+                    (*word_it)->render( ft );
+                }
+                else
+                {
+                    word_it--;
+                }
+            }
+            std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
+            old_touch = touch;
+        }
+        swiWaitForVBlank();
     }
-        
-    std::cout << "clean exit" << std::endl;
-    
-    while( true ) swiWaitForVBlank();
+    return 0;
 }

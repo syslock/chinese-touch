@@ -33,7 +33,7 @@ void init_all_words_lesson()
     word = new Word( "你好", "nǐhǎo" );
     word->translations["de"] = "Hallo, Guten Tag (Begrüßung)";
     all_words_lesson.push_back( word );
-/*    word = new Word( "汉语", "hànyǔ" );
+    word = new Word( "汉语", "hànyǔ" );
     word->translations["de"] = "Chinesisch, chinesische Sprache";
     all_words_lesson.push_back( word );
     word = new Word( "书法", "shūfǎ" );
@@ -47,11 +47,11 @@ void init_all_words_lesson()
     all_words_lesson.push_back( word );
     word = new Word( "医生", "yīshēng" );
     word->translations["de"] = "Arzt";
-    all_words_lesson.push_back( word );*/
+    all_words_lesson.push_back( word );
     word = new Word( "一", "yī" );
     word->translations["de"] = "eins";
     all_words_lesson.push_back( word );
-/*    word = new Word( "二", "èr" );
+    word = new Word( "二", "èr" );
     word->translations["de"] = "zwei";
     all_words_lesson.push_back( word );
     word = new Word( "三", "sān" );
@@ -77,11 +77,11 @@ void init_all_words_lesson()
     all_words_lesson.push_back( word );
     word = new Word( "十", "shí" );
     word->translations["de"] = "zehn";
-    all_words_lesson.push_back( word );*/
+    all_words_lesson.push_back( word );
     word = new Word( "您好中文老师！", "nínhǎo zhōngwénlǎoshī" );
     word->translations["de"] = "Guten Tag Herr/Frau Chinesischlehrer(in) (höfliche Anrede)";
     all_words_lesson.push_back( word );
-/*    word = new Word( "x", "x" );
+    word = new Word( "x", "x" );
     word->translations["de"] = "testestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestestest";
-    all_words_lesson.push_back( word );*/
+    all_words_lesson.push_back( word );
 }
