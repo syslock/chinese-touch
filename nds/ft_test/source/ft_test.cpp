@@ -37,15 +37,6 @@ int main()
 	    while( true ) swiWaitForVBlank();
 	}
       
-#if 0
-    int pixel_size;
-    int y;
-    for( pixel_size=5, y=0; pixel_size<70; pixel_size*=1.5 )
-    {
-        ft.render( "你好：nǐhǎo", ft.han_face, pixel_size, 0, y );
-        y += pixel_size;
-    }
-#endif
     touchPosition old_touch;
     touchRead( &old_touch );
     Lesson& lesson = all_words_lesson;
