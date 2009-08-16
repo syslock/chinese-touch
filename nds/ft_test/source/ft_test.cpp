@@ -10,30 +10,20 @@
 #include "freetype_renderer.h"
 #include "unicode.h"
 #include "lesson.h"
-
+#include "drawing_pad.h"
 
 int main()
 {
     init_all_words_lesson();
-    consoleDemoInit();
+    //consoleDemoInit();
+
+    DrawingPad dp;
 
     bool fat_initialized = fatInitDefault();
     FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf" );
 	if( !fat_initialized )
 	{
 	    std::cout << "error initializing fat driver" << std::endl;
-	    std::cout << "starting bg render test" << std::endl;
-	    for( int row=0; row<256; row++ )
-	    {
-	        for( int col=0; col<256/2; col++ )
-	        {
-	            u16* base_address = bgGetGfxPtr(ft.bg3)+row*256/2+col;
-	            u16 value = ((2*col) << 8) + (2*col+1);
-	            *base_address = value;
-            }
-            swiWaitForVBlank();
-        }
-        std::cout << "ready" << std::endl;
 	    while( true ) swiWaitForVBlank();
 	}
       
@@ -42,13 +32,14 @@ int main()
     Lesson& lesson = all_words_lesson;
     Lesson::iterator word_it = lesson.begin();
     (*word_it)->render( ft );
+    bool touched = false;
     while( true )
     {
         scanKeys();
         touchPosition touch;
         touchRead( &touch );
         int area = touch.px * touch.z2 / touch.z1 - touch.px;
-        if( keysHeld() & KEY_TOUCH 
+        if( keysCurrent() & KEY_TOUCH 
                 && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
         {
             if( touch.px < 15 && touch.py < 15 )
@@ -60,7 +51,7 @@ int main()
                     (*word_it)->render( ft );
                 }
             }
-            if( touch.px > (ft.res_x-15) && touch.py < 15 )
+            else if( touch.px > (ft.res_x-15) && touch.py < 15 )
             {
                 word_it++;
                 if( word_it != lesson.end() )
@@ -73,8 +64,25 @@ int main()
                     word_it--;
                 }
             }
+            else if( touch.px > (ft.res_x-15) && touch.py > (ft.res_y-15) )
+            {
+                dp.clear();
+            }
+            else if( touched )
+            {
+                dp.draw_line( touch.px, touch.py, old_touch.px, old_touch.py );
+            }
+            else
+            {
+                dp.draw( touch.px, touch.py );
+            }
             std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
             old_touch = touch;
+            touched = true;
+        }
+        if( keysUp() & KEY_TOUCH )
+        {
+            touched = false;
         }
         swiWaitForVBlank();
     }
