@@ -1,0 +1,691 @@
+|汉语拼音|Hànyǔ Pīnyīn|die chinesisch-lateinische Pinyin-Umschrift
+|这|zhè|das, dies (hier)
+|是|shì|sein
+|爸爸|bàba|Papa
+|那|nà|das, jenes (dort)
+|妈妈|māma|Mama
+|姐姐|jiějie|ältere Schwester
+|和|hé|und (Objektkonkatenation)
+|妹妹|mèimei|jüngere Schwester
+|哥哥|gēge|älterer Bruder
+|弟弟|dìdi|jüngerer Bruder
+|爷爷|yéye|Opa
+|奶奶|nǎinai|Oma
+|猫|māo|Katze
+|狗|gǒu|Hund
+|书|shū|Buch
+|沙发|shāfā|Sofa
+|收音机|shōuyīnjī|Radio
+|电话|diànhuà|Telefon
+|电视|diànshì|Fernseher
+|笔|bǐ|Pinsel
+|谁|shéi|wer
+|王|Wáng|Familienname (König)
+|先生|xiānsheng|Herr (Anrede)
+|马|Mǎ|Familienname (Pferd)
+|小姐|xiǎojie|Fräulein
+|毛|Máo|Familienname (Haar, Borste)
+|太太|tàitai|verheiratete Frau (Anrede)
+|什么|shénme|was
+|图书馆|túshūguǎn|Bibliothek
+|教室|jiàoshì|Unterrichtsraum
+|李|Lǐ|Familienname
+|老师|lǎoshī|Lehrer
+|学生|xuésheng|Schüler, Student
+|的|de|(Attributpartikel), (nachstehend; nach dem Besitzer)
+|历史|lìshǐ|Geschichte (Fach)
+|地理|dìlǐ|Geographie
+|英文|yīngwén|Englisch
+|词典|cídiǎn|Wörterbuch
+|德文|déwén|Deutsch
+|日文|rìwén|Japanisch
+|系|xì|Seminar; Abteilung
+|中文|zhōngwén|Chinesisch
+|秘书|mìshū|Sektretär(in)
+|哦|ó|oh (Ausruf des Erstaunens)
+|我|wǒ|ich
+|你|nǐ|du, Sie
+|您|nín|Sie (sehr höflich)
+|他|tā|er
+|她|tā|sie
+|它|tā|es
+|我们|wǒmen|wir
+|你们|nǐmen|ihr
+|他们|tāmen|sie
+|她们|tāmen|sie (nur weibliche)
+|它们|tāmen|sie (Dinge, Tiere)
+|咱们|zánmen|wir
+|不|bù|nein, nicht
+|也|yě|auch
+|都|dōu|beide,alle
+|好|hǎo|gut, geht gehen, (Begrüßung)
+|天气|tiānqì|Wetter
+|很|hěn|sehr
+|真|zhēn|wahr, echt
+|冷|lěng|kalt
+|热|rè|warm
+|忙|máng|beschäftigt sein
+|吗|ma|(Fragepartikel)
+|早|zǎo|früh, Guten Morgen
+|可爱|kě'ài|liebenswert, niedlich, nett
+|同学|tóngxué|Kommilitone/in
+|们|men|(Pluralsuffix)
+|努力|nǔlì|sich sehr anstrengen/ bemühen
+|高|gāo|hoch, groß
+|矮|ǎi|niedrig, klein
+|朋友|péngyou|Freund(in), Bekannte(r)
+|休息|xiūxi|sich ausruhen, Pause machen, freihaben
+|做|zuò|etw. machen, tun
+|练习|liànxí|Übung, Übungsaufgabe, etw. üben, einüben
+|学|xué|etw. lernen, studieren
+|生词|shēngcí|neue Vokabel
+|走|zǒu|gehen, weg-, fort-, losgehen
+|再见|zàijiàn|Auf Wiedersehen!
+|工作|gōngzuò|Arbeit
+|教|jiāo|etw. unterrichten, lehren
+|医生|yīshēng|Arzt
+|学习|xuéxí|lernen, studieren, etw. lernen, etw. studieren
+|俄文|éwén|Russisch
+|难|nán|schwierig, schwer (sein)
+|容易|róngyì|mühelos, leicht (sein)
+|谈|tán|über etw. sprechen, etw. besprechen, sich über etw. unterhalten
+|话|huà|Wort, Rede, Sprache
+|谈话|tán huà|sich unterhalten, etw. besprechen
+|看|kàn|sich etw. ansehen (Film etc.); etw. lesen
+|看|kān|auf jemanden/etw. aufpassen
+|报纸|bàozhǐ|Zeitung
+|会|huì|etw. können, beherrschen
+|妻子|qīzi|Ehefrau
+|日本|Rìběn|Japan
+|人|rén|Mensch, Person
+|日本人|rìběnrén|Japaner
+|孩子|háizi|Kind
+|饭|fàn|gekochter Reis; Essen, Mahl
+|做饭|zuò fàn|(Essen) kochen/zubereiten
+|买|mǎi|kaufen
+|卖|mài|verkaufen
+|东西|dōngxi|Ding, Sache, Gegenstand
+|买东西|mǎi dōngxi|einkaufen
+|洗|xǐ|etw. waschen
+|衣服|yīfu|Kleidung, Kleidungsstück
+|做衣服|zuò yīfu|nähen
+|是的|shìde|ja, das stimmt; so ist es
+|睡觉|shuì jiào|schlafen
+|那好|nà hǎo|dann ist es ja gut/in Ordnung
+|回家|huí jiā|nach Hause gehen/kommen, heimkehren, heimgehen
+|家|jiā|Familie, Heim, Zuhause
+|累|lèi|müde, erschöpft (sein)
+|饿|è|hungrig (sein), Hunger haben
+|吧|ba|(modale Satzpartikel)
+|关|guān|etw. schließen (Fenster, Tür); etw. ausschalten
+|关|Guān|Familienname
+|窗户|chuānghu|Fenster
+|户口|hùkǒu|Aufenthaltserlaubnis
+|户头|hùtóu|Bankkonto
+|喝|hē|trinken
+|茶|chá|Tee
+|谢谢|xièxie|jm. danken, Danke!
+|好喝|hǎohē|schmecken (nur bei Getränken; wörtl: gut zu trinken sein)
+|中国|Zhōngguó|China
+|美国|Měiguó|USA, Amerika
+|德国|Déguó|Deutschland
+|丈夫|zhàngfu|Ehemann
+|爱人|àiren|Ehepartner
+|牙|yá|Zahn
+|万|wàn|10.000
+|今天|jīntiān|der heutige Tag, heute
+|明天|míngtiān|der morgige Tag, morgen
+|昨天|zuótiān|gestern
+|明白|míngbai|offensichtlich, verstehen, realisieren
+|有|yǒu|etw. haben, besitzen
+|没|méi|nicht (haben), ''verneint ausschließlich das Verb 有 yǒu''
+|课|kè|Unterricht, Lektion
+|上午|shàngwǔ|Vormittag, vormittags
+|中午|zhōngwǔ|Mittag, mittags
+|下午|xiàwǔ|Nachmittag, nachmittags
+|上|shàng|auf, über, höher; steigen, hoch gehen; erstes; '''vorheriges'''<nowiki>; etc...</nowiki>
+|下|xià|unter, tiefer, herunter, absteigen; zweites; '''nächstes'''<nowiki>; etc...</nowiki>
+|空|kòng|freie Zeit, Muße, Lücke
+|事,事情|shì, shìqing|Vorhaben, Angelegenheit, Beschäftigung, Sache
+|一起|yìqǐ|zusammen, gemeinsam
+|房间|fángjiān|Zimmer, Raum
+|小|xiǎo|klein (sein)
+|大|dà|groß (sein)
+|书架|shūjià|Bücherregal
+|木马|mùmǎ|Pferd (Sportgerät)
+|地方|dìfang|Ort, Platz, Gegend
+|钱|qián|Geld
+|床|chuáng|Bett
+|零|líng|null
+|一|yī|eins
+|二|èr|zwei
+|三|sān|drei
+|四|sì|vier
+|五|wǔ|fünf
+|六|liù|sechs
+|七|qī|sieben
+|八|bā|acht
+|九|jiǔ|neun
+|十|shí|zehn
+|年|nián|(Kalender-)Jahr
+|月|yuè|Monat; Mond
+|日|rì|x'ter Monatstag (Schriftsprache); Sonne
+|号|hào|x'ter Monatstag (mündlich); Nummer
+|星期|xīngqī|Woche
+|学期|xuéqī|Semester
+|天|tiān|Tag, Himmel
+|天安门|Tiānānmén|Platz des himmlischen Friedens
+|几|jǐ|wie viel(e)
+|还|hái|noch, auch, außerdem, immer noch, doch noch
+|书法|shūfǎ|Kalligrafie
+|舞|wǔ|tanzen, schwingen
+|百|bǎi|100
+|个|ge|allg. Zählwort
+|哪|nǎ|wie?, welche(s,r,...)?  (Fragepartikel)
+|了|le|u.a. Perfektsuffix (vollendete Handlung)
+|第|dì|(prefix before a number, for ordering numbers, e.g. "first", "number two", etc)
+|售货员|shòuhuòyuán|Verkäufer/in
+|要|yào|etw. haben wollen, brauchen
+|张|zhāng|
+|张|zhāng|Zhang, chin. Familienname
+|地图|dìtú|Landkarte
+|多少|duōshao|wie viel, wie viele
+|付钱|fùqián|bezahlen
+|两|liǎng|zwei
+|扇|shàn|(Fächer)
+|桌子|zhuōzi|Tisch
+|把|bǎ|
+|椅子|yǐzi|Stuhl
+|个|gè/ge|
+|本|běn|(Band)
+|台|tái|
+|舒服|shūfu|bequem, behaglich, angenehm, komfortabel (sein), sich wohl fühlen
+|只|zhǐ|nur, bloß, lediglich
+|件|jiàn|
+|玩具|wánjù|Spielzeug
+|座|zuò|(Sitz)
+|楼|lóu|Gebäude
+|大学|dàxué|Hochschule, Universität
+|所|suǒ|(Ort)
+|教学楼|jiàoxuélóu|Unterrichtsgebäude
+|我不太清楚|wǒ bú tài qīngchu|Ich bin mir nicht sicher; das weiß ich nicht so genau
+|百|bǎi|hundert
+|间|jiān|(Raum, zwischen)
+|语法|yǔfǎ|Grammatik
+|杂志|zázhì|Zeitschrift, Magazin
+|画报|huàbào|Illustrierte
+|问|wèn|jemanden fragen
+|位|wèi|(Platz)
+|图书馆员|túshūguǎnyuán|Bibliothekar/in
+|找|zhǎo|suchen; zu jm. kommen; jn. aufsuchen, jn. zu sprechen wünschen
+|哪|nǎ, něi|welche/r/s
+|人民日报|Rénmín Rìbào|„Volkszeitung“
+|中央日报|Zhōngyāng Rìbào|„Zentralzeitung“
+|只|zhī|
+|一共|yígòng|insgesamt, alles zusammen genommen
+|奇怪|qíguài|seltsam, merkwürdig, erstaunlich (sein)
+|对|duì|richtig, korrekt (sein), stimmen
+|汉语|hànyǔ|die chinesische Sprache
+|哪里|nǎli|ach woher denn!, aber nein!
+|几|jǐ|ein paar, einige
+|句子|jùzi|Satz
+|多|duō|viel, zahlreich (sein)
+|姓|xìng|(mit Familiennamen) heißen
+|认识|rènshi|jn. kennen, kennenlernen
+|又|yòu|noch dazu, ferner, außerdem; wieder
+|又...又|yòu...yòu|... und ..., sowohl ... als auch
+|胖|pàng|dick, beleibt, korpulent (sein)
+|男|nán|männlich
+|女|nǚ|weiblich
+|瘦|shòu|schlank, mager (sein)
+|少|shǎo|wenig (sein)
+|厚|hòu|dick (sein)
+|就|jiù|nämlich, also, dann
+|去|qù|(hin)gehen, (hin)fahren
+|去|qù|gehen/fahren nach/zu/in
+|食堂|shítáng|Kantine, Mensa
+|吃|chī|etw. essen
+|吃饭|chīfàn|essen
+|好吃|hǎo chī|gut schmecken, lecker sein
+|市场|shìchǎng|Markt, Marktplatz
+|水果|shuǐguǒ|Obst
+|公园|gōngyuán|Park
+|咖啡馆|kāfēiguǎn|Café, Caféteria
+|咖啡|kāfēi|Kaffee
+|进城|jìn chéng|in die Stadt gehen/fahren
+|火车站|huǒchēzhàn|Bahnhof
+|站|zhàn|stehen; stehen bleiben; Haltestelle
+|接|jiē|jn. abholen
+|俄国|Éguó|Russland
+|来|lái|kommen
+|来|lái|kommen nach/in/zu
+|进|jìn|eintreten/hineingehen in, betreten
+|上课|shàng kè|Unterricht haben/halten, mit dem Unterricht beginnen
+|罢课|bà kè|den Unterreicht boykottieren
+|回|huí|zurückgehen, -kehren, -kommen nach
+|知道|zhīdao|etw. wissen, Kenntnis haben von; wissen, dass ..., ob ... etc.
+|时候|shíhou|Zeit, Zeitpunkt
+|问|wèn|fragen, ob ..., wann ... etc.
+|门票|ménpiào|Eintrittskarte
+|说|shuō|eine Fremdsprache sprechen; sagen, sprechen, dass ...
+|为什么|wèishénme|warum
+|对|duì|gegenüber, mit, zu, für
+|满意|mǎnyì|zufrieden (sein)
+|条件|tiáojiàn|Zustand, Verhältnisse
+|够|gòu|genug, genügend (sein), ausreichen
+|太|tài|zu, allzu
+|新|xīn|neu (sein)
+|有的|yǒude|manche, einige
+|管|guǎn|sich kümmern um jn./etw.
+|下课|xià kè|den Unterricht beenden
+|以后|yǐhòu|nach, danach, nachher
+|以前|yǐqián|vor, davor, ...
+|马上|mǎshàng|sofort, auf der Stelle
+|自己|zìjǐ|selbst; eigen
+|呢|ne|
+|总，总是|zǒng, zǒngshi|immer, stets
+|叫|jiào|heißen; jn./etw. rufen
+|汉堡|Hànbǎo|Hamburg
+|经济|jīngjì|Wirtschaft, Ökonomie
+|汉学|hànxué|Sinologie
+|每|měi|jede, jeder, jedes
+|中午|zhōngwǔ|Mittag
+|行|xíng|möglich, erlaubt, geeignet sein; gehen
+|行|xíng|das geht; das lässt sich machen; das ist in Ordnung
+|时间|shíjiān|Zeit, Zeitraum
+|花|huā|Zeit/Geld aufwenden, kosten
+|贵|guì|teuer, kostspielig, wertvoll (sein)
+|汉德|hàn-dé|chinesisch-deutsch
+|不谢|bú xiè|nichts zu danken
+|下班|xià bān|Feierabend/Dienstschluss haben
+|酒馆|jiǔguǎn|Wirtshaus, Gasthaus, Kneipe
+|买菜|mǎi cài|Lebensmittel einkaufen
+|喜欢|xǐhuān|etw./jn. mögen, gern haben, Gefallen haben an; etw. gern tun
+|意思|yìsi|Bedeutung, Sinn
+|有意思|yǒu yìsi|interessant, amüsant sein; Sinn haben
+|一点儿|yìdiǎnr|ein bisschen, ein wenig, etwas
+|作业|zuòyè|Schul-, Hausaufgaben
+|毕业|bìyè|das Studium abschließen
+|没意思|méi yìsi|uninteressant, langweilig, sinnlos (sein)
+|先|xiān|zuerst, zunächst
+|课文|kèwén|(Schulbuch-, Lehrbuch-) Text
+|篇|piān|
+|人口|rénkǒu|Bevölkerung
+|懂|dǒng|etw. verstehen, begreifen
+|怎么样|zěnmeyàng|wie, auf welche Weise?; wie wäre es, wenn?; was hältst du davon?
+|身体|shēntǐ|Leib, Körper
+|伯父|bófù|Onkel (älterer Bruder des Vaters); Anrede gegenüber älteren Herren
+|了|le|modale Satzpartikel
+|头|tóu|Kopf
+|疼|téng|weh tun, schmerzen
+|认真|rènzhēn|gewissenhaft, fleißig und sorgfältig, ernsthaft (sein); etw. ernst nehmen
+|进步|jìnbù|Fortschritt
+|快|kuài|schnell, rasch (sein)
+|慢|màn|langsam (sein)
+|没关系|méi guānxi|das macht nichts, ist nicht so schlimm; keine Ursache (sich zu entschuldigen)
+|说话|shuō huà|reden, sprechen
+|在|zài|da sein, anwesend sein; (an einem Ort) sein, sich befinden in...
+|在|zài|gerade (dabei)
+|正在|zhèngzài|gerade (dabei)
+|等|děng|auf jn./etw. warten
+|汉字|hànzì|chinesische Schriftzeichen
+|字|zì|Schriftzeichen
+|敲|qiāo|an/auf etw. klopfen, schlagen
+|门|mén|Tür
+|儿子|érzi|Sohn
+|开|kāi|etw. öffnen; etw. an-, einschalten
+|伯母|bómǔ|Tante (Frau des älteren Bruders des Vaters)
+|请进|qǐng jìn|bitte komm herein; treten Sie bitte ein
+|请坐|qǐng zuò|setz dich doch; bitte nehmen Sie Platz
+|洗澡|xǐ zǎo|baden, ein Bad nehmen
+|上班|shàng bān|zur Arbeit gehen, mit der Arbeit anfangen, bei der Arbeit sein
+|晚上|wǎnshang|Abend, abends
+|再|zài|wieder, noch einmal
+|女儿|nǚ'ér|Tochter
+|哎哟|āiyō|o je, ach
+|湿|shī|nass, durchnässt, feucht (sein)
+|雨|yǔ|Regen
+|车|chē|Fahrzeug, Wagen, ''hier:'' Bus
+|汽车|qìchē|Automobil
+|辆|liàng|
+|特别|tèbié|besonders, ungemein; sonderbar (sein)
+|换|huàn|etw. wechseln, tauschen
+|厨房|chúfáng|Küche
+|快（...了）|kuài|bald, gleich
+|然后|ránhòu|dann, danach, nachher, anschließend
+|冬天|dōngtiān|Winter
+|到|dào|ankommen, eintreffen (in)
+|凉|liáng|kühl, kalt (sein)
+|暖气|nuǎnqì|(Zentral-)Heizung
+|就|jiù|gleich, sofort
+|常常,常|chángcháng|oft, häufig
+|好看|hǎo kàn|gut aussehend, hübsch (sein)
+|以前|yǐqián|früher; vor, vorher, bevor
+|现在|xiànzài|jetzt, zur Zeit, gegenwärtig
+|坏|huài|schlecht, defekt, kaputt gegangen (sein)
+|响|xiǎng|ertönen, klingeln; spielen (Radio etc.)
+|毛病|máobìng|Defekt, Schaden, Mangel
+|自行车|zìxíngchē|Fahrrad
+|修理|xiūlǐ|reparieren
+|有一天|yǒu yì tiān|eines Tages
+|忽然|hūrán|unerwartet, plötzlich, auf einmal
+|有人|yǒu rén|jemand
+|年轻|niánqīng|jung, jugentlich (sein)
+|轻视|qīngshì|unterschätzen
+|对不起|duìbuqǐ|Entschuldigung!; Es tut mir leid!
+|从前|cóngqián|früher, ehemals, einst
+|小|Xiǎo|''Anredeform''
+|好久不见了|hǎo jiǔ bú jiàn le|Lange nicht gesehen!
+|上学|shàng xué|zur Schule gehen, die Schule besuchen
+|那么|nàme|so, derartig, dermaßen
+|这么|zhème|so, derartig, dermaßen
+|完全|wánquán|ganz, völlig, vollkommen
+|老|lǎo|alt, betagt (sein)
+|老|Lǎo|''Anredeform''
+|有时候|yǒu shíhou|manchmal, gelegentlich, hin und wieder
+|看|kàn|jn. besuchen (gehen)
+|结婚|jié hūn|heiraten, sich verheiraten
+|早|zǎo|längst, schon lange
+|大小|dàxiǎo|Größe, Ausmaß
+|轻重|qīngzhòng|Gewicht
+|重量|zhòngliàng|Gewicht
+|这儿|zhèr|hier
+|这里|zhèlǐ|hier
+|那儿|nàr|dort
+|那里|nàlǐ|dort
+|哪儿|nǎr|wo
+|哪里|nǎlǐ|wo
+|刘|Liú|Liu
+|一会儿|yíhuìr|ein Moment, ein Augenblick, eine kurze Weile
+|出门|chū mén|aus der Tür / aus dem Haus gehen
+|姑娘|gūniang|Mädchen, junge (unverheiratete Frau)
+|办公室|bàngōngshì|Büro
+|人们|rénmen|Leute; die Leute, man
+|毛衣|máoyī|(Woll-)Pullover
+|便宜|piányi|preisgünstig, billig (sein)
+|但是|dànshì|aber, jedoch
+|渴|kě|durstig (sein), Durst haben
+|商店|shāngdiàn|Laden, Geschäft
+|家|jiā|
+|书包|shūbāo|Schulmappe, Büchertasche
+|里|lǐ|innen, drinnen, in
+|外|wài|außen, draußen, außerhalb
+|上|shàng|oben, auf, über; in
+|下|xià|unter, unten
+|前|qián|vorn, vor
+|后|hòu|hinten, hinter
+|左|zuǒ|links
+|右|yòu|rechts
+|面|mian|
+|边|bian|
+|头|tou|
+|玩儿|wànr|spielen, sich vergnügen, sich die Zeit vertreiben; mit etw. spielen
+|汽车|qìchē|Auto
+|没了|méi le|weg, verschwunden sein
+|乱|luàn|durcheinander, unordentlich (sein)
+|乱七八糟|luànqībāzāo|großes Durcheinander, Riesenchaos
+|收拾|shōushi|''Zimmer'' aufräumen, ''Koffer'' packen
+|外国|wàiguó|Ausland
+|人民大学|Rénmín Dàxué|Volksuniversität (in Peking)
+|办公楼|bàngōnglóu|Verwaltungs-, Bürogebäude
+|条|tiáo|''Streifen''
+|路|lù|Straße, Weg
+|邮局|yóujú|Postamt
+|雪|xuě|Schnee
+|下雪|xiàxuě|schneien
+|宿舍|sùshè|Wohnheim
+|点|diǎn|... Uhr
+|刻|kè|viertel vor .../nach ...
+|半|bàn|halb (vor/nach) ...; ... einhalb
+|分|fēn|x Minuten vor/nach ...
+|差|chà|fehlen; ... vor ...
+|钟|zhōng|... Uhr
+|时|shí|... Uhr
+|(手)表|(shǒu)biǎo|(Armband-)Uhr
+|新闻|xīnwén|Nachrichten, Neuigkeiten
+|部|bù|
+|电影|diànyǐng|Film
+|开始|kāishǐ|anfangen
+|开始|kāishǐ|beginnen etwas zu tun
+|晚|wǎn|spät (sein)
+|夜里|yèli|in der Nacht, nachts
+|早上|zǎoshang|der Morgen, morgens
+|起床|qǐ chuáng|aufstehen (das Bett verlassen)
+|早饭|zǎofàn|Frühstück
+|学校|xuéxiào|Schule; Oberbegriff für alle Bildungsanstalten
+|中饭|zhōngfàn|Mittagessen
+|晚饭|wǎnfàn|Abendessen
+|和|hé|mit
+|在|zài|in, an, auf etc.
+|从|cóng|von ... (aus)
+|到|dào|nach, zu, bis
+|从...到|cóng ... dào|von ... bis
+|邮票|yóupiaò|Briefmarke
+|旁边|pángbiān|neben, an der Seite
+|电影院|diànyǐngyuàn|Kino
+|放电影|fàng diànyǐng|einen Film zeigen, vorführen
+|整|zhěng|ganz, voll, (Uhrzeit:) Punkt ...
+|医院|yīyuàn|Krankenhaus
+|从早到晚|cóng zǎo dào wǎn|von morgens bis abends
+|管家|guǎn jiā|sich um Famile und Haushalt kümmern
+|...见|jiàn|Bis ... später, zum Abend, morgen!
+|旅游|lǚyóu|reisen, eine Urlaubsreise machen
+|另|lìng|der/die/das andere
+|一些|yìxiē|ein paar, einige
+|北京|Běijīng|Peking
+|漂亮|piàoliang|hübsch, schön, gutaussehend (sein)
+|不好意思|bù hǎo yìsi|verlegen, schüchtern, beschämt (sein) sich genieren/schämen, etw. zu tun
+|脸|liǎn|Gesicht
+|红|hóng|rot (sein)
+|怎么|zěnme|wie, auf welche Weise
+|坐|zuò|sitzen, sich setzen; fahren in/mit
+|坐|zuò|mit ... ''fahren: Bus, Flugzeug etc.''
+|火车|huǒchē|Zug, Eisenbahn
+|飞机|fēijī|Flugzeug
+|柏林|Bólín|Berlin
+|要|yào|brauchen, benötigen, erfordern
+|上|shàng|einsteigen in ...
+|下|xià|aussteigen aus ...
+|开|kāi|fahren, lenken
+|开|kāi|mit ''dem Auto''
+|骑|qí|fahren (''Rad, Moped''); reiten (''Pferd'')
+|骑|qí|mit ''dem Rad, dem Pferd''
+|笔|bǐ|Schreibgerät, Stift
+|枝|zhī|
+|圆珠笔|yuánzhūbǐ|Kugelschreiber
+|用|yòng|etw. benutzen, gebrauchen
+|用|yòng|mit, mittels; auf ... (''Sprache'')
+|写|xiě|etw. schreiben
+|写字|xiě zì|schreiben
+|手|shǒu|Hand
+|双|shuāng|Paar
+|非常|fēicháng|außergewöhnlich, äußerst
+|毛笔|máobǐ|(Schreib-)Pinsel
+|是|shì, shi|
+|听说|tīngshuō|ich/wir habe/n gehört ..., vom Hörensagen wissen, dass ...
+|回来|huílái|zurückkommen, zurück sein
+|上海|Shànghǎi|Shanghai
+|天津|Tiānjīn|Tianjin
+|走路|zǒu lù|zu Fuß gehen
+|走路|zǒu lù|zu Fuß
+|时代|shídài|die Zeiten, Zeit, Epoche
+|变|biàn|sich ändern/verändern, sich wandeln
+|生活|shēnghuó|Leben, leben
+|操场|cāochǎng|Sportplatz
+|锻炼身体|duànliàn shēntǐ|Sport treiben, trainieren, sich Bewegung verschaffen
+|经理|jīnglǐ|Manager/in, Direktor/in
+|广州|Guǎngzhōu|Guangzhou, Kanton
+|订|dìng|etw. buchen, etw. abonnieren
+|票|piào|Ticket, Marke, Schein
+|起飞|qǐfēi|starten, abheben
+|开|kāi|abfahren (Zug)
+|公司|gōngsī|Firma, Unternehmen
+|请问|qǐng wèn|Gestatten Sie mir die Frage, ...
+|度假|dù jià|Urlaub machen, in den Urlaub fahren
+|病|bìng|erkranken; Krankheit
+|疼|téng|Schmerz
+|疗|liáo|heilen
+|了|liǎo|beenden
+|问题|wèntí|Frage, Problem
+|回答|huídá|Antwort; etw. beantworten
+|回答|huídá|antworten, dass...
+|啊|a/ā|ah, ach
+|昨天|zuótiān|der gestrige Tag, gestern
+|网球|wǎngqiú|Tennis
+|打|dǎ|''Tennis etc.'' spielen; jn. schlagen
+|词|cí|Wort
+|所以|suǒyǐ|deshalb, deswegen, darum
+|念|niàn|etw. vorlesen, laut lesen
+|过|guò|verbringen, absolvieren
+|念珠|niànzhū|Gebetskette, Rosenkranz
+|想念|xiǎngniàn|an jn. denken, vermissen
+|查词典|chá cídiǎn|im Wörterbuch nachschlagen/-sehen
+|办法|bànfǎ|Methode, Mittel, Weg
+|没办法|méi bànfǎ|Da kann man nichts machen.
+|有办法|yǒu bànfǎ|einen (Aus-)Weg wissen, Mittel und Wege finden
+|念书|niàn shū|lesen, lernen, studieren
+|了|le|''Verbalpartikel: Aspekt der Vollendung''
+|可怜|kělián|mitleiderregend, kläglich (sein)
+|可怜|kělián|jn. bemitleiden, Mitleid haben mit jm.
+|后来|hòulái|später, dann, danach
+|棵|kē|
+|白菜|báicài|Chinakohl
+|斤|jīn|Pfund
+|土豆|tǔdòu|Kartoffeln
+|卖|mài|etw. verkaufen
+|鱼|yú|Fisch
+|新鲜|xīnxiān|frisch (sein)
+|鸡|jī|Huhn
+|车站|chēzhàn|(Bus-)Haltestelle
+|公共汽车|gōnggòngqìchē|Bus, Omnibus
+|麻烦|máfàn(fan)|umständlich, lästig, unangenehm (sein)
+|麻烦|máfàn(fan)|jn. belästigen, stören
+|方便|fāngbiàn|bequem, angenehm, günstig (sein)
+|门口|ménkǒu|Eingang
+|生气|shēng qì|wütend, ärgerlich, böse sein
+|要紧|yàojǐn|wichtig, dringlich (sein)
+|聊天|liáo tiān|sich unterhalten, plaudern
+|饭馆|fànguǎn|Restaurant
+|跳舞|tiào wǔ|tanzen
+|高兴|gāoxìng|froh, fröhlich, glücklich (sein)
+|听|tīng|etw. hören, anhören
+|前天|qiántiān|vorgestern
+|觉得|juéde|sich ... fühlen
+|觉得|juéde|meinen, finden
+|拿|ná|etw. holen, nehmen, halten
+|讲义|jiǎnyì|Unterrichtskopien
+|份|fèn|Satz, Ausgabe
+|这几天|zhè jǐ tiān|in diesen Tagen, in letzter Zeit
+|别的|biéde|anderes
+|周末|zhōumò|Wochenende
+|一定|yídìng|sicher, bestimmt, unbedingt
+|其他|qítā|andere/r/s, die übrigen, das übrige
+|举|jǔ|etw. heben, erheben
+|用法|yòngfǎ|Gebrauch, Anwendung(smöglichkeit)
+|动词|dòngcí|Verb
+|复杂|fùzá|kompliziert (sein)
+|糊涂|hútu|konfus, wirr, durcheinander, unklar (sein)
+|已经|yǐjīng|schon, bereits
+|关于|guānyú|über ..., zu ''ein/em Thema''<nowiki>; bezüglich</nowiki>
+|放心|fàng xīn|sich keine Sorgen machen, ruhig sein
+|会|huì|können, zu tun verstehen; möglich sein
+|能|néng|können, in der Lage sein, dürfen
+|熊|xióng|Bär
+|可以|kěyǐ|können, dürfen, erlaubt sein
+|得|děi|müssen
+|必须|bìxū|müssen
+|不必|búbì|nicht müssen, nicht brauchen
+|游泳|yóuyǒng|schwimmen
+|划船|huá chuán|(ein Boot) rudern
+|怕|pà|etw./jn. fürchten; Angst haben etw. zu tun
+|水|shuǐ|Wasser
+|黑|hēi|schwarz, dunkel, finster (sein)
+|下|xià|fallen
+|带|dài|etw. bei/mit sich tragen, mitbringen
+|雨伞|yǔsǎn|Regenschirm
+|听课|tīng kè|hospitieren, am Unterricht teilnehmen; eine Vorlesung hören
+|打算|dǎsuàn|vorhaben, planen zu tun
+|打算|dǎsuàn|Absicht, Vorhaben
+|实习|shíxí|ein Praktikum machen, Praktikum
+|故事|gùshi|Geschichte, Erzählung
+|当|dāng|als ... tätig sein
+|生|shēng|(er)zeugen, produzieren, gebären
+|抽烟|chōu yān|rauchen
+|酒|jiǔ|Alkohol, alkoholische Getränke
+|武术|wǔshù|Kampfkunst
+|太极|Tàijí|Taiji (Daoismus: Prinzip der Einheit von Yin und Yang, Licht und Schatten am Gipfel des Berges)
+|阴阳|Yīn Yáng|Yin und Yang (Daoismus: Berg der einseitig von der Sonne beschienen wird und jenseitig im Schatten liegt)
+|太极拳|Tàijíquán|Taijiquan, meditatives Schattenboxen
+|太极图|Tàijì tú|Taiji-Symbol, Monade
+|气|Qì|Gas, Luft, Atem; Qi
+|道教|Dàojiào|Daoismus, "Lehre des Weges"
+|道|dào|Weg, Pfad; sprechen; Dao (Ursprung und alles durchdringendes Prinzip des Universums, Quelle von Yin und Yang)
+|万物|wànwù|Alles auf der Welt, "Zehntausend Dinge"
+|老子|Lǎozi|Laozi (Laotse), legendärer chinesischer Philosoph, der im 6. Jahrhundert v. Chr. gelebt haben soll, Begründer des Daoismus
+|道德经|Dàodéjīng|
+|想|xiǎng|wollen, mögen, wünschen
+|要|yào|wollen, sollen
+|不用|búyòng|nicht zu tun brauchen
+|愿意|yuànyì|bereit/willig sein; gern tun, mögen
+|留学|liúxué|im Ausland studieren
+|外办|wàibàn|Büro für Auswärtiges
+|主任|zhǔrèn|Leiter/in, Direktor/in
+|办|bàn|etw. erledigen, ausführen
+|手续|shǒuxù|Formalitäten
+|重要|zhòngyào|wichtig, bedeutend (sein)
+|留学生|liúxuéshēng|im Ausland Studierende/r
+|宿舍|sùshè|Wohnheim
+|服务台|fúwùtái|Rezeption, Etagendienst
+|行李|xíngli|Gepäck
+|名字|míngzi|Name ''(von Personen, Filmen, etc)''
+|楼上|lóushàng|obere Etage/n, eine Treppe höher
+|住|zhù|wohnen; etw. bewohnen, wohnen in
+|同屋|tóngwū|Mitbewohner/in
+|这样|zhè(i)yàng|so, solcherart, auf diese Weise
+|不用谢|búyòng xiè|Nichts zu danken!
+|办事|bàn shì|etw. tun, erledigen
+|楼下|lóuxià|eine/ein paar Etagen tiefer, unten im Haus
+|地|de|''Adverbialpartikel''
+|站|zhàn|＋在 stehen an, bei, ''Lokalobjekt''
+|十字路口|shízìlùkǒu|(Straßen-)Kreuzung
+|马路|mǎlù|Straße
+|过马路|guò mǎlù|die Straße überqueren
+|过去|guòqu|hinüber-, vorbeigehen, überqueren
+|声|shēng|Geräusch, Laut, Ton; Stimme
+|小心|xiǎxīn|vorsichtig sorgfältig (sein)
+|随便|suíbiàn|ungezwungen (sein), nach Belieben; unbesonnen, unüberlegt (sein)
+|跑|pǎo|laufen, rennen; gehen, fahren nach
+|听话|tīng huà|auf jn. hören, hm. gehorchen, folgsam (sein)
+|忘|wàng|etw. vergessen, vergessen etw. zu tun
+|危险|wēixiǎn|gefährlich (sein); Gefahr
+|灯|dēng|Lampe
+|盏|zhǎn|(kleine Tasse?)
+|绿|lǜ|grün (sein)
+|老大|lǎodà|der/die Älteste in einer Geschwisterreihe
+|考试|kǎoshì|Prüfung haben/abhalten, einen Test schreiben; Prüfung, Test
+|门|mén|(Tor)
+|因为|yīnwèi|weil, da
+|电梯|diàntī|Fahrstuhl
+|大衣|dàyī|Mantel
+|薄|báo, bó|dünn (sein)
+|边|biān|Seite, Rand, Kante
+|北大|Běidà|Peking-Universität
+|城里|chénglǐ|Innenstadt, in der Stadt
+|同事|tóngshì|Arbeitskollege, -kollegin
+|可是|kěshì|aber
+|一般|yìbān|gewöhnlich, üblich, normalerwese; mittelmäßig, nichts Besonderes (sein)
+|附近|fùjìn|in der Nähe, nahebei
+|看见|kànjiàn|jn./etw. sehen, erblicken
+|父亲|fùqīn(qin)|Vater
+|见面|jiànmiàn|sich treffen, sich sehen
+|母亲|mǔqīn(qin)|Mutter
+|干|gàn|etw. tun, machen
+|重|zhòng|schwer, gewichtig (sein)
+|父母|fùmǔ|Eltern
+|猜|cāi|vermuten, raten, (dass ...)
+|长大|zhǎngdà|aufwachsen, heranwachsen
+|黑板|hēibǎn|Wandtafel
+|美|měi|schön, hübsch (sein)
+|草书|cǎoshū|kursorische Schnellschrift, Grasschrift
+|可惜|kěxī|leider, bedauerlich; schade, (dass ...)
+|擦|cā|etw. reiben, (ab-, trocken-)wischen
