@@ -31,17 +31,17 @@ void DrawingPad::draw( int x, int y )
 {
     const int height = 3;
     const int width = 5;
-    u8 buffer[width*height] = { 0x00, 0x1f, 0x4f, 0x1f, 0x00,
-                                0x00, 0x4f, 0xff, 0x4f, 0x00,
-                                0x00, 0x1f, 0x4f, 0x1f, 0x00 };
+    u8 buffer[width*height] = { 0x00, 0x07, 0x10, 0x07, 0x00,
+                                0x00, 0x10, 0xef, 0x10, 0x00,
+                                0x00, 0x07, 0x10, 0x07, 0x00 };
     for( int row=0; row<height; row++ )
     {
         for( int pixel=(x%2 ? 0 : 1); pixel<width-1; pixel+=2 )
         {
             u16* bg_gfx_ptr = bgGetGfxPtr(this->bg3);
             u16* base_address = bg_gfx_ptr
-                    + ( row + y /*- width/2*/ ) * this->res_x/2
-                    + pixel/2 + x/2 /*- width/2/2*/;
+                    + ( row + y - height/2 ) * this->res_x/2
+                    + pixel/2 + x/2 - (width-1)/2/2;
             if( base_address < bg_gfx_ptr
                 || base_address > bg_gfx_ptr+this->res_x*this->res_y-2 )
             {
@@ -65,6 +65,9 @@ void DrawingPad::draw_line( int x1, int y1, int x2, int y2 )
     double yd = y2-y1;
     int steps = abs(xd) > abs(yd) ? abs(xd) : abs(yd);
     this->draw( x1, y1 );
+    // große Striche durch Sensorfehler ignorieren:
+    if( steps > 40 )
+        return;
     for( int i=1; i<=steps; i++ )
     {
         this->draw( x1+i*xd/steps, y1+i*yd/steps );

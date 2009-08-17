@@ -12,26 +12,31 @@
 #include "lesson.h"
 #include "drawing_pad.h"
 
+#define DEBUG 0
+
 int main()
 {
-    init_all_words_lesson();
-    //consoleDemoInit();
-
+#if DEBUG
+    consoleDemoInit();
+#else
     DrawingPad dp;
+#endif
+    
+    init_all_words_lesson();
 
     bool fat_initialized = fatInitDefault();
     FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf" );
 	if( !fat_initialized )
 	{
 	    std::cout << "error initializing fat driver" << std::endl;
-	    while( true ) swiWaitForVBlank();
+	    //while( true ) swiWaitForVBlank();
 	}
       
     touchPosition old_touch;
     touchRead( &old_touch );
     Lesson& lesson = all_words_lesson;
     Lesson::iterator word_it = lesson.begin();
-    (*word_it)->render( ft );
+    if( fat_initialized ) (*word_it)->render( ft );
     bool touched = false;
     while( true )
     {
@@ -48,7 +53,7 @@ int main()
                 {
                     word_it--;
                     std::cout << "prev" << std::endl;
-                    (*word_it)->render( ft );
+                    if( fat_initialized ) (*word_it)->render( ft );
                 }
             }
             else if( touch.px > (ft.res_x-15) && touch.py < 15 )
@@ -57,7 +62,7 @@ int main()
                 if( word_it != lesson.end() )
                 {
                     std::cout << "next" << std::endl;
-                    (*word_it)->render( ft );
+                    if( fat_initialized ) (*word_it)->render( ft );
                 }
                 else
                 {
@@ -66,15 +71,21 @@ int main()
             }
             else if( touch.px > (ft.res_x-15) && touch.py > (ft.res_y-15) )
             {
+#if ! DEBUG
                 dp.clear();
+#endif
             }
             else if( touched )
             {
+#if ! DEBUG
                 dp.draw_line( touch.px, touch.py, old_touch.px, old_touch.py );
+#endif
             }
             else
             {
+#if ! DEBUG
                 dp.draw( touch.px, touch.py );
+#endif
             }
             std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
             old_touch = touch;

@@ -4,11 +4,13 @@
 import sys
 
 print """
+#include <iostream>
 #include "lesson.h"
 
 Lesson all_words_lesson("Alle Wörter");
 void init_all_words_lesson()
 {
+    int count = 0;
     Word* word;"""
 
 def escape( text ):
@@ -24,7 +26,8 @@ for line in sys.stdin:
     print """
     word = new Word( "%(hanzi)s", "%(pinyin)s" );
     word->translations["de"] = "%(de)s";
-    all_words_lesson.push_back( word );""" \
+    all_words_lesson.push_back( word );
+    std::cout << "#" << ++count << std::endl;""" \
         % locals()
     
 print """
