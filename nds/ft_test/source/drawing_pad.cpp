@@ -29,34 +29,32 @@ void DrawingPad::clear()
 
 void DrawingPad::draw( int x, int y )
 {
-    const int width = 3;
-    u8 buffer[width*width] = { 0x2f, 0x7f, 0x2f,
-                               0x7f, 0xff, 0x7f,
-                               0x2f, 0x7f, 0x2f };
-    for( int row=0; row<width; row++ )
+    const int height = 3;
+    const int width = 5;
+    u8 buffer[width*height] = { 0x00, 0x1f, 0x4f, 0x1f, 0x00,
+                                0x00, 0x4f, 0xff, 0x4f, 0x00,
+                                0x00, 0x1f, 0x4f, 0x1f, 0x00 };
+    for( int row=0; row<height; row++ )
     {
-        for( int pixel=0; pixel<width; pixel+=2 )
+        for( int pixel=(x%2 ? 0 : 1); pixel<width-1; pixel+=2 )
         {
-            u16 value = 0x0000;
-            if( pixel < width-1 )
-            {
-                value = (buffer[row*width+pixel+1] << 8)
-                            + buffer[row*width+pixel];
-            }
-            else
-            {
-                value = buffer[row*width+pixel];
-            }
             u16* bg_gfx_ptr = bgGetGfxPtr(this->bg3);
             u16* base_address = bg_gfx_ptr
                     + ( row + y /*- width/2*/ ) * this->res_x/2
-                    + (u16)round( (double)pixel/2.0 + (double)x/2.0 ) /*- width/2/2*/;
+                    + pixel/2 + x/2 /*- width/2/2*/;
             if( base_address < bg_gfx_ptr
                 || base_address > bg_gfx_ptr+this->res_x*this->res_y-2 )
             {
                 return;
             }
-            *base_address |= value;
+            u16 ov = *base_address;
+            u8 ov1 = ov & 0x00ff;
+            u8 ov2 = (ov & 0xff00) >> 8;
+            u8 nv1 = ov1 + buffer[row*width+pixel];
+            u8 nv2 = ov2 + buffer[row*width+pixel+1];
+            *base_address = ((nv1 >= ov1) ? nv1 : 0xff)
+                         + (((nv2 >= ov2) ? nv2 : 0xff) << 8);
+//            *base_address = nv1 + (nv2 << 8);
         }
     }
 }
