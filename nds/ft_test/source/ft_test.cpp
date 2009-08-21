@@ -11,12 +11,15 @@
 #include "unicode.h"
 #include "lesson.h"
 #include "drawing_pad.h"
+#include "time.h"
 
 #define DEBUG 0
 
-const std::string save_state_name = "ft_test.sav";
+const std::string STATE_FILE_NAME = "ft_test.sav";
+const int MIN_SAVE_PERIOD = 5;
+const int AUTO_SAVE_PERIOD = 30;
 
-union SaveState
+union State
 {
     struct
     {
@@ -24,7 +27,37 @@ union SaveState
     } data;
     char sugar_cube[4096];
 };
-SaveState save_state;
+State state;
+
+void save_state( int word_index )
+{
+    FILE* stf = fopen( STATE_FILE_NAME.c_str(), "w" );
+    if( stf )
+    {
+        state.data.word_index = word_index;
+        std::cout << "writing: " << STATE_FILE_NAME << std::endl;
+        fwrite( &state, sizeof(state), 1, stf );
+        fflush( stf );
+        fclose( stf );
+    }
+    else std::cout << "error opening: " << STATE_FILE_NAME << std::endl;
+}
+
+int load_state()
+{
+    FILE* stf = fopen( STATE_FILE_NAME.c_str(), "r" );
+    if( stf )
+    {
+        std::cout << "reading: " << STATE_FILE_NAME << std::endl;
+        fread( &state, sizeof(state), 1, stf );
+        int word_index = state.data.word_index;
+        fclose( stf );
+        return word_index;
+    }
+    else std::cout << "error opening: " << STATE_FILE_NAME << std::endl;
+    return 0;
+}
+
 
 int main()
 {
@@ -52,29 +85,34 @@ int main()
     int word_index = 0;
     if( fat_initialized )
     {
-        FILE* stf = fopen( save_state_name.c_str(), "r" );
-        if( stf )
-        {
-            fread( &save_state, sizeof(save_state), 1, stf );
-            word_index = save_state.data.word_index;
-            fclose( stf );
-        }
-        else std::cout << "error opening: " << save_state_name << std::endl;
+        word_index = load_state();
         for( int i=0; i<word_index && word_it!=lesson.end(); i++ )
         {
             word_it++;
         }
         if( word_it == lesson.end() )
         {
-            std::cout << "warning: " << save_state_name << " id out of bounds" << std::endl;
+            std::cout << "warning: " << STATE_FILE_NAME << " id out of bounds" << std::endl;
             word_it--;
         }
         (*word_it)->render( ft );
     }
       
     bool touched = false;
+    time_t curr_time = time(0);
+    time_t prev_time = curr_time;
+    int prev_saved_word_index = word_index;
     while( true )
     {
+        curr_time = time(0);
+        if( fat_initialized 
+            && curr_time > (prev_time + AUTO_SAVE_PERIOD)
+            && word_index != prev_saved_word_index )
+        {
+            save_state( word_index );
+            prev_time = curr_time;
+            prev_saved_word_index = word_index;
+         }
         scanKeys();
         touchPosition touch;
         touchRead( &touch );
@@ -89,7 +127,17 @@ int main()
                     word_it--;
                     word_index--;
                     std::cout << "prev" << std::endl;
-                    if( fat_initialized ) (*word_it)->render( ft );
+                    if( fat_initialized ) 
+                    {
+                        (*word_it)->render( ft );
+                        if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
+                            && word_index != prev_saved_word_index )
+                        {
+                            save_state( word_index );
+                            prev_time = curr_time;
+                            prev_saved_word_index = word_index;
+                        }
+                    }
                 }
             }
             else if( touch.px > (ft.res_x-15) && touch.py < 15 )
@@ -99,7 +147,17 @@ int main()
                 if( word_it != lesson.end() )
                 {
                     std::cout << "next" << std::endl;
-                    if( fat_initialized ) (*word_it)->render( ft );
+                    if( fat_initialized ) 
+                    {
+                        (*word_it)->render( ft );
+                        if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
+                            && word_index != prev_saved_word_index )
+                        {
+                            save_state( word_index );
+                            prev_time = curr_time;
+                            prev_saved_word_index = word_index;
+                        }
+                    }
                 }
                 else
                 {
@@ -116,17 +174,13 @@ int main()
             else if( touch.px < 15 && touch.py > (ft.res_y-15) )
             {
                 std::cout << "save" << std::endl;
-                if( fat_initialized )
+                if( fat_initialized 
+                    && curr_time > (prev_time + MIN_SAVE_PERIOD)
+                    && word_index != prev_saved_word_index )
                 {
-                    FILE* stf = fopen( save_state_name.c_str(), "w" );
-                    if( stf )
-                    {
-                        save_state.data.word_index = word_index;
-                        fwrite( &save_state, sizeof(save_state), 1, stf );
-                        fflush( stf );
-                        fclose( stf );
-                    }
-                    else std::cout << "error opening: " << save_state_name << std::endl;
+                    save_state( word_index );
+                    prev_time = curr_time;
+                    prev_saved_word_index = word_index;
                 }
             }
             else if( touched )
