@@ -173,15 +173,7 @@ int main()
             }
             else if( touch.px < 15 && touch.py > (ft.res_y-15) )
             {
-                std::cout << "save" << std::endl;
-                if( fat_initialized 
-                    && curr_time > (prev_time + MIN_SAVE_PERIOD)
-                    && word_index != prev_saved_word_index )
-                {
-                    save_state( word_index );
-                    prev_time = curr_time;
-                    prev_saved_word_index = word_index;
-                }
+                std::cout << "menu" << std::endl;
             }
             else if( touched )
             {
