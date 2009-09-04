@@ -169,15 +169,13 @@ int main()
             else if( touch.px > (ft.res_x-15) && touch.py > (ft.res_y-15) )
             {
 #if ! DEBUG
-                dp.clear();
+                dp.render_buttons();
+                //dp.clear();
 #endif
             }
             else if( touch.px < 15 && touch.py > (ft.res_y-15) )
             {
                 std::cout << "menu" << std::endl;
-#if ! DEBUG
-                dp.render_buttons();
-#endif
             }
             else if( touched )
             {
