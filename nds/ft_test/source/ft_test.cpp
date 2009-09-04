@@ -65,6 +65,7 @@ int main()
     consoleDemoInit();
 #else
     DrawingPad dp;
+    dp.render_buttons();
 #endif
     
     init_all_words_lesson();
@@ -174,6 +175,9 @@ int main()
             else if( touch.px < 15 && touch.py > (ft.res_y-15) )
             {
                 std::cout << "menu" << std::endl;
+#if ! DEBUG
+                dp.render_buttons();
+#endif
             }
             else if( touched )
             {
@@ -184,7 +188,7 @@ int main()
             else
             {
 #if ! DEBUG
-                dp.draw( touch.px, touch.py );
+                dp.draw_point( touch.px, touch.py );
 #endif
             }
             std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
