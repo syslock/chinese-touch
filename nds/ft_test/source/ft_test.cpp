@@ -98,8 +98,9 @@ int main()
         }
         (*word_it)->render( ft );
     }
-      
-    bool touched = false;
+    
+    bool dragged = false;
+    bool restart_line = false;
     time_t curr_time = time(0);
     time_t prev_time = curr_time;
     int prev_saved_word_index = word_index;
@@ -119,83 +120,130 @@ int main()
         touchRead( &touch );
         int area = touch.px * touch.z2 / touch.z1 - touch.px;
         if( keysCurrent() & KEY_TOUCH 
-                && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
+            && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
         {
             if( touch.px < 15 && touch.py < 15 )
             {
-                if( word_it != lesson.begin() )
+                if( !dragged )
                 {
-                    word_it--;
-                    word_index--;
-                    std::cout << "prev" << std::endl;
-                    if( fat_initialized ) 
+                    if( word_it != lesson.begin() )
                     {
-                        (*word_it)->render( ft );
-                        if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
-                            && word_index != prev_saved_word_index )
+                        word_it--;
+                        word_index--;
+                        std::cout << "prev" << std::endl;
+                        if( fat_initialized ) 
                         {
-                            save_state( word_index );
-                            prev_time = curr_time;
-                            prev_saved_word_index = word_index;
+                            (*word_it)->render( ft );
+                            if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
+                                && word_index != prev_saved_word_index )
+                            {
+                                save_state( word_index );
+                                prev_time = curr_time;
+                                prev_saved_word_index = word_index;
+                            }
                         }
                     }
-                }
+                } else restart_line = true;
             }
             else if( touch.px > (ft.res_x-15) && touch.py < 15 )
             {
-                word_it++;
-                word_index++;
-                if( word_it != lesson.end() )
+                if( !dragged )
                 {
-                    std::cout << "next" << std::endl;
-                    if( fat_initialized ) 
+                    word_it++;
+                    word_index++;
+                    if( word_it != lesson.end() )
                     {
-                        (*word_it)->render( ft );
-                        if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
-                            && word_index != prev_saved_word_index )
+                        std::cout << "next" << std::endl;
+                        if( fat_initialized ) 
                         {
-                            save_state( word_index );
-                            prev_time = curr_time;
-                            prev_saved_word_index = word_index;
+                            (*word_it)->render( ft );
+                            if( curr_time > (prev_time + AUTO_SAVE_PERIOD) 
+                                && word_index != prev_saved_word_index )
+                            {
+                                save_state( word_index );
+                                prev_time = curr_time;
+                                prev_saved_word_index = word_index;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    word_it--;
-                    word_index--;
-                }
+                    else
+                    {
+                        word_it--;
+                        word_index--;
+                    }
+                } else restart_line = true;
             }
             else if( touch.px > (ft.res_x-15) && touch.py > (ft.res_y-15) )
             {
+                if( !dragged )
+                {
 #if ! DEBUG
-                dp.render_buttons();
-                //dp.clear();
+                    dp.render_buttons();
+                    //dp.clear();
 #endif
+                } else restart_line = true;
             }
             else if( touch.px < 15 && touch.py > (ft.res_y-15) )
             {
-                std::cout << "menu" << std::endl;
+                if( !dragged )
+                {
+                    std::cout << "menu" << std::endl;
+                } else restart_line = true;
             }
-            else if( touched )
+            else if( touch.py < 20 && touch.px > 84 && touch.px < 108 ) // hanzi
+            {
+                if( !dragged )
+                {
+                    lesson.toggle_hanzi();
+                    if( fat_initialized ) 
+                    {
+                        (*word_it)->render( ft );
+                    }
+                } else restart_line = true;
+            }
+            else if( touch.py < 20 && touch.px > 114 && touch.px < 138 ) // pinyin
+            {
+                if( !dragged )
+                {
+                    lesson.toggle_pinyin();
+                    if( fat_initialized ) 
+                    {
+                        (*word_it)->render( ft );
+                    }
+                } else restart_line = true;
+            }
+            else if( touch.py < 20 && touch.px > 144 && touch.px < 168 ) // translation
+            {
+                if( !dragged )
+                {
+                    lesson.toggle_translation();
+                    if( fat_initialized ) 
+                    {
+                        (*word_it)->render( ft );
+                    }
+                } else restart_line = true;
+            }
+            else if( !dragged || restart_line )
+            {
+                restart_line = false;
+#if ! DEBUG
+                dp.draw_point( touch.px, touch.py );
+                old_touch = touch;
+#endif
+            }
+            else if( dragged )
             {
 #if ! DEBUG
                 dp.draw_line( touch.px, touch.py, old_touch.px, old_touch.py );
-#endif
-            }
-            else
-            {
-#if ! DEBUG
-                dp.draw_point( touch.px, touch.py );
+                old_touch = touch;
 #endif
             }
             std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
-            old_touch = touch;
-            touched = true;
+            dragged = true;
         }
         if( keysUp() & KEY_TOUCH )
         {
-            touched = false;
+            dragged = false;
         }
         swiWaitForVBlank();
     }

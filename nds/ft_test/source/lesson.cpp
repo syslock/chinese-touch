@@ -12,17 +12,41 @@ void Word::render( FreetypeRenderer& ft )
     RenderStyle render_style;
     render_style.center_x = true;
     int top = 10;
-    RenderRect rect = ft.render( this->hanzi, ft.han_face, 32, 0, top, &render_style );
-    top += rect.height;
+    int size = 32;
+    if( this->lesson->render_hanzi )
+    {
+        RenderRect rect = ft.render( this->hanzi, ft.han_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+    else
+    {
+        top += size;
+    }
     
     // 3. render pinyin in variable width
     top += 10;
-    rect = ft.render( this->pinyin, ft.han_face, 16, 0, top, &render_style );
-    top += rect.height;
+    size = 16;
+    if( this->lesson->render_pinyin )
+    {
+        RenderRect rect = ft.render( this->pinyin, ft.han_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+    else
+    {
+        top += size;
+    }
     
     // 4. render translation in variable width
     top += 10;
-    rect = ft.render( this->translations["de"], ft.latin_face, 9, 0, top, &render_style );
-    top += rect.height;
+    size = 9;
+    if( this->lesson->render_translation )
+    {
+        RenderRect rect = ft.render( this->translations["de"], ft.latin_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+    else
+    {
+        top += size;
+    }
 }
 

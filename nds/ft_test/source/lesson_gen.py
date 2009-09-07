@@ -24,7 +24,7 @@ for line in sys.stdin:
     pinyin = escape( word[1] )
     de = escape( word[2] )
     print """
-    word = new Word( "%(hanzi)s", "%(pinyin)s" );
+    word = new Word( "%(hanzi)s", "%(pinyin)s", &all_words_lesson );
     word->translations["de"] = "%(de)s";
     all_words_lesson.push_back( word );
     std::cout << "#" << ++count << std::endl;""" \
