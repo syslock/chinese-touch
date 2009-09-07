@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "drawing_pad.h"
-#include "test_256.h"
+#include "buttons_128.h"
 
 DrawingPad::DrawingPad() : res_x(256), res_y(192)
 {
@@ -37,8 +37,8 @@ void DrawingPad::render_buttons()
 {
     u16* base_address = bgGetGfxPtr( this->bg3 );
     //memset( base_address, 0, 256*265 );
-    dmaCopy( test_256Bitmap, base_address, 256*256 );
-    dmaCopy( test_256Pal, BG_PALETTE_SUB, 128*2 );
+    dmaCopy( buttons_128Bitmap, base_address, 256*256 );
+    dmaCopy( buttons_128Pal, BG_PALETTE_SUB, 128*2 );
 }
 
 void DrawingPad::draw_point( int x, int y )
