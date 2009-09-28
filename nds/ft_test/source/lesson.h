@@ -37,10 +37,11 @@ public:
 };
 
 class Book;
+// Für die Lektion nehmen wir einfach 'ne Liste zwecks Reihenfolgeerhaltung:
 class Lesson : public std::list<Word*>
 {
 public:
-    Lesson( const std::string& _name, Book* _book ) : name(_name), 
+    Lesson( int _number, Book* _book ) : number(_number), 
         render_hanzi(true), render_pinyin(true), render_translation(true),
         book(_book) {};
     void toggle_hanzi() { this->render_hanzi = !this->render_hanzi; }
@@ -55,7 +56,8 @@ public:
 };
 
 class Library;
-class Book : public std::list<Lesson*>
+// Bücher bilden Lektionsnummern auf Lektionsobjekte ab:
+class Book : public std::map<int,Lesson*>
 {
 public:
     Book( const std::string& _name, Library* _library ) : name(_name),
@@ -67,7 +69,8 @@ public:
     Library* library;
 };
 
-class Library : public std::list<Book*>
+// Die Buchsammlung bildet Buchnamen auf Buchobjekte ab:
+class Library : public std::map<std::string,Book*>
 {
 public:
     Library( bool _fat_initialized ) : fat_initialized(_fat_initialized) {}

@@ -3,6 +3,8 @@
 #include <nds.h>
 
 #include "freetype_renderer.h"
+#include "config.h"
+#include "error_console.h"
 
 #undef __FTERRORS_H__
 #define FT_ERROR_START_LIST     ErrorMap ft_errors; void FT_Init_Errors(){
@@ -33,21 +35,26 @@ FreetypeRenderer::FreetypeRenderer( const std::string& han_font,
     this->error = FT_Init_FreeType( &this->library );
     if( this->error )
     {
+	    ErrorConsole::init();
         std::cout << "error initializing freetype: " << ft_errors[this->error] 
                     << std::endl;
         return;
     }
-    this->error = FT_New_Face( this->library, han_font.c_str(), 0, &this->han_face );
+    std::string _han_font = BASE_DIR + han_font;
+    std::string _latin_font = BASE_DIR + latin_font;
+    this->error = FT_New_Face( this->library, _han_font.c_str(), 0, &this->han_face );
     if( this->error )
     {
-        std::cout << "error loading chinese font: " << han_font << " (" 
+	    ErrorConsole::init();
+        std::cout << "error loading chinese font: " << _han_font << " (" 
                 << ft_errors[this->error] << ")" << std::endl;
         return;
     }
-    this->error = FT_New_Face( this->library, latin_font.c_str(), 0, &this->latin_face );
+    this->error = FT_New_Face( this->library, _latin_font.c_str(), 0, &this->latin_face );
     if( this->error )
     {
-        std::cout << "error loading chinese font: " << latin_font << " (" 
+	    ErrorConsole::init();
+        std::cout << "error loading latin font: " << _latin_font << " (" 
                 << ft_errors[this->error] << ")" << std::endl;
         return;
     }

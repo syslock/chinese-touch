@@ -96,7 +96,7 @@ void Library::rescan()
             }
             Book* book = new Book( book_name, this );
             book->parse_config( book_conf_path );
-            this->push_back( book );
+            (*this)[ book_name ] = book;
             std::cout << "book: " << book_path << std::endl;
             DIR* lessons_dir = opendir( lessons_path.c_str() );
             if( !lessons_dir )
@@ -135,9 +135,9 @@ void Library::rescan()
                         {
                             std::cout << "lesson #" << lesson_number << ": " << lesson_path << std::endl;
                         }
-                        Lesson* lesson = new Lesson( lesson_name, book );
+                        Lesson* lesson = new Lesson( lesson_number, book );
                         lesson->parse_config( lesson_path );
-                        book->push_back( lesson );
+                        (*book)[ lesson_number ] = lesson;
                     }
                 }
             }

@@ -5,7 +5,8 @@
 
 #define PROGRAM_NAME "hanzi_trainer"
 #define CONFIG_STRING_SIZE 50
-#define CONFIG_FILE_NAME PROGRAM_NAME "/" PROGRAM_NAME ".conf"
+#define BASE_DIR "/" PROGRAM_NAME "/"
+#define CONFIG_FILE_NAME BASE_DIR PROGRAM_NAME ".conf"
 
 extern bool global_fat_initialized;
 

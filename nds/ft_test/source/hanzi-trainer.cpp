@@ -12,6 +12,7 @@
 #include "lesson.h"
 #include "drawing_pad.h"
 #include "config.h"
+#include "error_console.h"
 
 #ifndef DEBUG
 #define DEBUG 0
@@ -21,8 +22,7 @@
 int main()
 {
 #if DEBUG
-    consoleDemoInit();
-    std::cout << "console initialized" << std::endl;
+    ErrorConsole::init();
 #else
     DrawingPad dp;
     dp.render_buttons();
@@ -34,6 +34,7 @@ int main()
     FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf" );
 	if( !global_fat_initialized )
 	{
+	    ErrorConsole::init();
 	    std::cout << "error initializing fat driver" << std::endl;
 	    //while( true ) swiWaitForVBlank();
 	}
@@ -51,18 +52,23 @@ int main()
     std::cout << "scanning complete" << std::endl;
     if( !library.size() )
     {
+	    ErrorConsole::init();
         std::cout << "warning: empty library" << std::endl;
-        library.push_back( new Book("dummy book", &library) );
+        std::string book_name = "dummy book";
+        library[ book_name ] = new Book( book_name, &library);
     }
-    Book& book = **library.begin();
+    Book& book = *library.begin()->second;
     if( !book.size() )
     {
+	    ErrorConsole::init();
         std::cout << "warning: empty book \"" << book.name << "\"" << std::endl;
-        book.push_back( new Lesson("dummy lesson", &book) );
+        int lesson_number = 1;
+        book[ lesson_number ] = new Lesson( lesson_number, &book );
     }
-    Lesson& lesson = **book.begin();
+    Lesson& lesson = *book.begin()->second;
     if( !lesson.size() )
     {
+	    ErrorConsole::init();
         std::cout << "warning: empty lesson \"" << lesson.name << "\"" << std::endl;
         Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
         Definition* definition = new Definition();
@@ -78,23 +84,20 @@ int main()
     if( global_fat_initialized )
     {
         word_index = config.get_current_word_number();
-        for( int i=0; i<word_index && word_it!=lesson.end(); i++ )
-        {
-            word_it++;
-        }
+        for( word_it=lesson.begin(); (*word_it)->number < word_index 
+                && word_it!=lesson.end(); word_it++ );
         if( word_it == lesson.end() )
         {
+	        ErrorConsole::init();
             std::cout << "warning: " << CONFIG_FILE_NAME << " id out of bounds" << std::endl;
             word_it--;
         }
+        word_index = (*word_it)->number;
         (*word_it)->render( ft );
     }
     
     bool dragged = false;
     bool restart_line = false;
-    time_t curr_time = time(0);
-    time_t prev_time = curr_time;
-    int prev_saved_word_index = word_index;
     while( true )
     {
         config.save_position( *word_it );

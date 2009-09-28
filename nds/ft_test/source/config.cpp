@@ -9,14 +9,16 @@ Config::Config()
  : previous_word(0), changed(false)
 {
     this->prev_time = time(0);
+    memset( (void*)&this->data, 0, sizeof(this->data) );
 }
 
 void Config::save_position( Word* word )
 {
-    if( !word || (previous_word == word) )
+    if( !word || (previous_word == word && !this->changed) )
     {
         return;
     }
+    previous_word = word;
     this->changed = true;
     this->data.config.current_word_number = word->number;
     this->data.config.current_lesson_number = word->lesson->number;
@@ -32,6 +34,8 @@ void Config::save_position( Word* word )
 void Config::save()
 {
     time_t curr_time = time(0);
+    //std::cout << "curr_time: " << curr_time << std::endl;
+    //std::cout << "prev+auto: " << this->prev_time + Config::AUTO_SAVE_PERIOD << std::endl;
     if( curr_time > (this->prev_time + Config::AUTO_SAVE_PERIOD)
         && this->changed )
     {
@@ -42,8 +46,12 @@ void Config::save()
 
 void Config::save_really()
 {
-    if( !global_fat_initialized ) 
+    std::cout << "Config::save_really()" << std::endl;
+    if( !global_fat_initialized )
+    {
+        std::cout << "warning: cannot save without fat" << std::endl;
         return;
+    }
     FILE* f = fopen( CONFIG_FILE_NAME, "w" );
     if( f )
     {
