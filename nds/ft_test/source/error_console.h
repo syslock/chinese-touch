@@ -1,11 +1,7 @@
 #ifndef ERROR_CONSOLE_H
 #define ERROR_CONSOLE_H
 
-typedef enum 
-{
-    SCREEN_MAIN,
-    SCREEN_SUB
-} Screen;
+#include "screen.h"
 
 class ErrorConsole
 {

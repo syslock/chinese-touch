@@ -13,6 +13,7 @@
 #include "drawing_pad.h"
 #include "config.h"
 #include "error_console.h"
+#include "lesson_menu.h"
 
 #ifndef DEBUG
 #define DEBUG 0
@@ -23,25 +24,17 @@ int main()
 {
 #if DEBUG
     ErrorConsole::init();
-#else
-    DrawingPad dp;
-    dp.render_buttons();
 #endif
     
     std::cout << "initializing fat driver" << std::endl;
     global_fat_initialized = fatInitDefault();
-    std::cout << "initializing freetype" << std::endl;
-    FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf" );
 	if( !global_fat_initialized )
 	{
 	    ErrorConsole::init();
 	    std::cout << "error initializing fat driver" << std::endl;
-	    //while( true ) swiWaitForVBlank();
 	}
-     
-    touchPosition old_touch;
-    touchRead( &old_touch );
-    std::cout << "initializing config" << std::endl;
+
+	std::cout << "initializing config" << std::endl;
     Config config;
     std::cout << "loading config" << std::endl;
     config.load();
@@ -57,7 +50,42 @@ int main()
         std::string book_name = "dummy book";
         library[ book_name ] = new Book( book_name, &library);
     }
-    Book& book = *library.begin()->second;
+
+	/* Testlauf des Lektionsauswahlmenüs: */
+	std::cout << "initializing lesson menu" << std::endl;
+	LessonMenu lesson_menu( "ukai.ttf", "VeraSe.ttf" );
+
+	touchPosition old_touch;
+    touchRead( &old_touch );
+	bool dragged = false;
+	while( true )
+	{
+        scanKeys();
+        touchPosition touch;
+        touchRead( &touch );
+        int area = touch.px * touch.z2 / touch.z1 - touch.px;
+        if( keysCurrent() & KEY_TOUCH 
+            && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
+        {
+            dragged = true;
+		}
+        if( keysUp() & KEY_TOUCH )
+        {
+            dragged = false;
+			break;
+        }
+		swiWaitForVBlank();
+	}
+
+	/* Testlauf des Vokabeltrainers mit statischer Lektion und 
+		gespeichertem Wortindex: */
+	std::cout << "initializing drawing pad" << std::endl;
+	DrawingPad dp;
+    dp.render_buttons();
+	std::cout << "initializing word view" << std::endl;
+    FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf", SCREEN_MAIN );
+     
+	Book& book = *library.begin()->second;
     if( !book.size() )
     {
 	    ErrorConsole::init();
@@ -78,8 +106,8 @@ int main()
         word->definitions[ definition->lang ] = definition;
         lesson.push_back( word );
     }
-    Lesson::iterator word_it = lesson.begin();
 
+	Lesson::iterator word_it = lesson.begin();
     int word_index = (*word_it)->number;
     if( global_fat_initialized )
     {
@@ -96,7 +124,8 @@ int main()
         (*word_it)->render( ft );
     }
     
-    bool dragged = false;
+    touchRead( &old_touch );
+	dragged = false;
     bool restart_line = false;
     while( true )
     {

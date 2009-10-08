@@ -15,19 +15,30 @@
 
 
 FreetypeRenderer::FreetypeRenderer( const std::string& han_font, 
-        const std::string& latin_font ) : dpi_x(100), dpi_y(100), 
-                        res_x(256), res_y(192)
+	const std::string& latin_font, Screen screen ) 
+		: dpi_x(100), dpi_y(100), res_x(256), res_y(192)
 {
-    // FIXME: FreetypeRenderer sollte unabhängig vom Zielgerät funktionieren:
+	u16* bg_palette;
     // set the mode for 2 text layers and two extended background layers
-	videoSetMode(MODE_5_2D);
-    vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
-	this->bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+	if( screen == SCREEN_MAIN )
+	{
+		videoSetMode(MODE_5_2D);
+		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+		this->bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+		bg_palette = BG_PALETTE;
+	}
+	else /*if( screen == SCREEN_SUB )*/
+	{
+		videoSetModeSub(MODE_5_2D);
+		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+		this->bg3 = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
+		bg_palette = BG_PALETTE_SUB;
+	}
 	// lineare 15-bit-graupalette mit 256 indizes aufbauen:
 	for( int i=0; i<256; i++ )
 	{
 	    int value = (int)( ((double)i)*(double)(1<<5)/256.0 );
-	    BG_PALETTE[255-i] = /*(1 << 15) |*/ (value << 10) | (value << 5) | value;
+	    bg_palette[255-i] = /*(1 << 15) |*/ (value << 10) | (value << 5) | value;
 	}
 
     FT_Init_Errors();

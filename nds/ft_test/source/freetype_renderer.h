@@ -8,6 +8,7 @@
 #include FT_FREETYPE_H
 
 #include "unicode.h"
+#include "screen.h"
 
 typedef std::map<int,const char*> ErrorMap;
 extern ErrorMap ft_errors;
@@ -34,7 +35,8 @@ class FreetypeRenderer
 {
 public:
     FreetypeRenderer( const std::string& han_font, 
-                    const std::string& latin_font );
+                    const std::string& latin_font,
+					  Screen screen );
     ~FreetypeRenderer();
     RenderRect render( const std::string& text, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0 );
