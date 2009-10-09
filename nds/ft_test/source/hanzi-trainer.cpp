@@ -50,10 +50,12 @@ int main()
         std::string book_name = "dummy book";
         library[ book_name ] = new Book( book_name, &library);
     }
+	std::cout << "initializing Freetype" << std::endl;
+    FreetypeRenderer* ft = new FreetypeRenderer( "ukai.ttf", "VeraSe.ttf" );
 
 	/* Testlauf des Lektionsauswahlmenüs: */
 	std::cout << "initializing lesson menu" << std::endl;
-	LessonMenu lesson_menu( "ukai.ttf", "VeraSe.ttf" );
+	LessonMenu* lesson_menu = new LessonMenu( *ft );
 
 	touchPosition old_touch;
     touchRead( &old_touch );
@@ -76,6 +78,7 @@ int main()
         }
 		swiWaitForVBlank();
 	}
+	delete lesson_menu;
 
 	/* Testlauf des Vokabeltrainers mit statischer Lektion und 
 		gespeichertem Wortindex: */
@@ -83,7 +86,8 @@ int main()
 	DrawingPad dp;
     dp.render_buttons();
 	std::cout << "initializing word view" << std::endl;
-    FreetypeRenderer ft( "ukai.ttf", "VeraSe.ttf", SCREEN_MAIN );
+	RenderScreen word_view;
+	ft->init_screen( SCREEN_MAIN, word_view );
      
 	Book& book = *library.begin()->second;
     if( !book.size() )
@@ -121,7 +125,7 @@ int main()
             word_it--;
         }
         word_index = (*word_it)->number;
-        (*word_it)->render( ft );
+        (*word_it)->render( *ft, word_view );
     }
     
     touchRead( &old_touch );
@@ -147,11 +151,11 @@ int main()
                         word_index--;
                         std::cout << "prev" << std::endl;
                         config.save_position( *word_it );
-                        (*word_it)->render( ft );
+                        (*word_it)->render( *ft, word_view );
                     }
                 } else restart_line = true;
             }
-            else if( touch.px > (ft.res_x-15) && touch.py < 15 )
+            else if( touch.px > (ft->res_x-15) && touch.py < 15 )
             {
                 if( !dragged )
                 {
@@ -161,7 +165,7 @@ int main()
                     {
                         std::cout << "next" << std::endl;
                         config.save_position( *word_it );
-                        (*word_it)->render( ft );
+                        (*word_it)->render( *ft, word_view );
                     }
                     else
                     {
@@ -170,7 +174,7 @@ int main()
                     }
                 } else restart_line = true;
             }
-            else if( touch.px > (ft.res_x-15) && touch.py > (ft.res_y-15) )
+            else if( touch.px > (ft->res_x-15) && touch.py > (ft->res_y-15) )
             {
                 if( !dragged )
                 {
@@ -180,7 +184,7 @@ int main()
 #endif
                 } else restart_line = true;
             }
-            else if( touch.px < 15 && touch.py > (ft.res_y-15) )
+            else if( touch.px < 15 && touch.py > (ft->res_y-15) )
             {
                 if( !dragged )
                 {
@@ -194,7 +198,7 @@ int main()
                     lesson.toggle_hanzi();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( ft );
+                        (*word_it)->render( *ft, word_view );
                     }
                 } else restart_line = true;
             }
@@ -205,7 +209,7 @@ int main()
                     lesson.toggle_pinyin();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( ft );
+                        (*word_it)->render( *ft, word_view );
                     }
                 } else restart_line = true;
             }
@@ -216,7 +220,7 @@ int main()
                     lesson.toggle_translation();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( ft );
+                        (*word_it)->render( *ft, word_view );
                     }
                 } else restart_line = true;
             }
@@ -244,5 +248,6 @@ int main()
         }
         swiWaitForVBlank();
     }
+	delete ft;
     return 0;
 }

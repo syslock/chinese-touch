@@ -7,6 +7,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <nds.h>
+
 #include "unicode.h"
 #include "screen.h"
 
@@ -31,14 +33,30 @@ public:
     int x, y, width, height;
 };
 
+class RenderScreen
+{
+public:
+	RenderScreen() : id(0), base_address(0), palette(0) {}
+	void init( int _id )
+	{
+		this->id = _id;
+		this->base_address = bgGetGfxPtr( _id );
+	}
+public:
+	int id;
+	u16* base_address;
+	u16* palette;
+};
+
 class FreetypeRenderer
 {
 public:
     FreetypeRenderer( const std::string& han_font, 
-                    const std::string& latin_font,
-					  Screen screen );
+                    const std::string& latin_font );
     ~FreetypeRenderer();
-    RenderRect render( const std::string& text, FT_Face& face, int pixel_size, 
+	void init_screen( Screen screen, RenderScreen& render_screen );
+	void clear_screen( const RenderScreen& render_screen );
+    RenderRect render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0 );
 public:
     FT_Error error;

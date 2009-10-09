@@ -15,32 +15,9 @@
 
 
 FreetypeRenderer::FreetypeRenderer( const std::string& han_font, 
-	const std::string& latin_font, Screen screen ) 
+	const std::string& latin_font ) 
 		: dpi_x(100), dpi_y(100), res_x(256), res_y(192)
-{
-	u16* bg_palette;
-    // set the mode for 2 text layers and two extended background layers
-	if( screen == SCREEN_MAIN )
-	{
-		videoSetMode(MODE_5_2D);
-		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
-		this->bg3 = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-		bg_palette = BG_PALETTE;
-	}
-	else /*if( screen == SCREEN_SUB )*/
-	{
-		videoSetModeSub(MODE_5_2D);
-		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		this->bg3 = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-		bg_palette = BG_PALETTE_SUB;
-	}
-	// lineare 15-bit-graupalette mit 256 indizes aufbauen:
-	for( int i=0; i<256; i++ )
-	{
-	    int value = (int)( ((double)i)*(double)(1<<5)/256.0 );
-	    bg_palette[255-i] = /*(1 << 15) |*/ (value << 10) | (value << 5) | value;
-	}
-
+{	
     FT_Init_Errors();
     std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
     this->error = FT_Init_FreeType( &this->library );
@@ -88,6 +65,37 @@ FreetypeRenderer::~FreetypeRenderer()
     FT_Done_FreeType( this->library );
 }
 
+void FreetypeRenderer::init_screen( Screen screen, RenderScreen& render_screen )
+{
+    // set the mode for 2 text layers and two extended background layers
+	if( screen == SCREEN_MAIN )
+	{
+		videoSetMode(MODE_5_2D);
+		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+		render_screen.init( bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0) );
+		render_screen.palette = BG_PALETTE;
+	}
+	else /*if( screen == SCREEN_SUB )*/
+	{
+		videoSetModeSub(MODE_5_2D);
+		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+		render_screen.init( bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0) );
+		render_screen.palette = BG_PALETTE_SUB;
+	}
+	// lineare 15-bit-graupalette mit 256 indizes aufbauen:
+	for( int i=0; i<256; i++ )
+	{
+	    int value = (int)( ((double)i)*(double)(1<<5)/256.0 );
+	    render_screen.palette[255-i] = /*(1 << 15) |*/ (value << 10) | (value << 5) | value;
+	}
+}
+
+void FreetypeRenderer::clear_screen( const RenderScreen& render_screen )
+{
+    // 1. clear background buffer with background color
+    memset( render_screen.base_address, 0, 256*265 );
+}
+
 class RenderChar
 {
 public:
@@ -103,7 +111,7 @@ public:
 };
 typedef std::list<RenderChar*> RenderCharList;
 
-RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face, 
+RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style )
 {
     // 1. unicode conversion
@@ -289,7 +297,7 @@ RenderRect FreetypeRenderer::render( const std::string& text, FT_Face& face,
                 {
                     value = bitmap.buffer[row*bitmap.pitch+pixel];
                 }
-                u16* bg_gfx_ptr = bgGetGfxPtr(this->bg3);
+                u16* bg_gfx_ptr = render_screen.base_address;
                 u16* base_address = bg_gfx_ptr
                         + (row+(line_height-glyph->bitmap_top))*this->res_x/2
                         + pixel/2 + glyph->bitmap_left/2;

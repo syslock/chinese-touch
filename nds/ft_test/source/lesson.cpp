@@ -12,11 +12,9 @@
 #include "lesson.h"
 #include "config.h"
 
-void Word::render( FreetypeRenderer& ft )
+void Word::render( FreetypeRenderer& ft, const RenderScreen& render_screen )
 {
-    // 1. clear background buffer with background color
-    u16* base_address = bgGetGfxPtr(ft.bg3);
-    memset( base_address, 0, 256*265 );
+	ft.clear_screen( render_screen );
     
     // 2. render hanzi in the faces suggested layout (e.g. fixed width)
     RenderStyle render_style;
@@ -25,7 +23,7 @@ void Word::render( FreetypeRenderer& ft )
     int size = 32;
     if( this->lesson->render_hanzi )
     {
-        RenderRect rect = ft.render( this->hanzi, ft.han_face, size, 0, top, &render_style );
+        RenderRect rect = ft.render( render_screen, this->hanzi, ft.han_face, size, 0, top, &render_style );
         top += rect.height;
     }
     else
@@ -38,7 +36,7 @@ void Word::render( FreetypeRenderer& ft )
     size = 16;
     if( this->lesson->render_pinyin )
     {
-        RenderRect rect = ft.render( this->pinyin, ft.han_face, size, 0, top, &render_style );
+        RenderRect rect = ft.render( render_screen, this->pinyin, ft.han_face, size, 0, top, &render_style );
         top += rect.height;
     }
     else
@@ -51,7 +49,7 @@ void Word::render( FreetypeRenderer& ft )
     size = 9;
     if( this->lesson->render_translation && this->definitions.count("de") )
     {
-        RenderRect rect = ft.render( this->definitions["de"]->translation, ft.latin_face, size, 0, top, &render_style );
+        RenderRect rect = ft.render( render_screen, this->definitions["de"]->translation, ft.latin_face, size, 0, top, &render_style );
         top += rect.height;
     }
     else
