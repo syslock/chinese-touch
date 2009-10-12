@@ -25,8 +25,7 @@ int main()
 #if DEBUG
     ErrorConsole::init();
 #endif
-    
-    std::cout << "initializing fat driver" << std::endl;
+	std::cout << "initializing fat driver" << std::endl;
     global_fat_initialized = fatInitDefault();
 	if( !global_fat_initialized )
 	{
@@ -55,7 +54,8 @@ int main()
 
 	/* Testlauf des Lektionsauswahlmenüs: */
 	std::cout << "initializing lesson menu" << std::endl;
-	LessonMenu* lesson_menu = new LessonMenu( *ft );
+	LessonMenu* lesson_menu = new LessonMenu( *ft, library );
+	lesson_menu->render();
 
 	touchPosition old_touch;
     touchRead( &old_touch );
@@ -101,7 +101,7 @@ int main()
     if( !lesson.size() )
     {
 	    ErrorConsole::init();
-        std::cout << "warning: empty lesson \"" << lesson.name << "\"" << std::endl;
+        std::cout << "warning: empty lesson \"" << lesson.title << "\"" << std::endl;
         Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
         Definition* definition = new Definition();
         definition->lang = "de";

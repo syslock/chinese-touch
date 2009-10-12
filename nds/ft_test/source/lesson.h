@@ -48,8 +48,9 @@ public:
     void toggle_pinyin() { this->render_pinyin = !this->render_pinyin; }
     void toggle_translation() { this->render_translation = !this->render_translation; }
     void parse_config( const std::string& lesson_file_name );
+    void parse_dictionary( const std::string& lesson_file_name );
 public:
-    std::string name;
+    std::string title, description;
     int number;
     bool render_hanzi, render_pinyin, render_translation;
     Book* book;
@@ -64,7 +65,7 @@ public:
         library(_library) {}
     void parse_config( const std::string& book_conf_file_name );
 public:
-    std::string name, description, author, publisher, isbn;
+    std::string name, title, description, author, publisher, isbn;
     int year;
     Library* library;
 };

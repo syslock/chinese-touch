@@ -124,19 +124,31 @@ void Library::rescan()
                     {
                         lesson_extension = lesson_name.substr( rdot_pos+1 );
                     }
-                    if( lesson_extension == "lesson" )
-                    {
-                        std::stringstream lesson_number_stringstream( lesson_name.substr(0, ldot_pos) );
-                        int lesson_number = -1;
-                        lesson_number_stringstream >> lesson_number;
-                        if( lesson_number != -1 )
-                        {
-                            std::cout << "lesson #" << lesson_number << ": " << lesson_path << std::endl;
-                        }
-                        Lesson* lesson = new Lesson( lesson_number, book );
-                        lesson->parse_config( lesson_path );
-                        (*book)[ lesson_number ] = lesson;
-                    }
+					std::stringstream lesson_number_stringstream( lesson_name.substr(0, ldot_pos) );
+					int lesson_number = -1;
+					lesson_number_stringstream >> lesson_number;
+					if( lesson_number > 0 )
+					{
+						std::cout << "lesson #" << lesson_number << ": " << lesson_path << std::endl;
+						Lesson* lesson;
+						if( book->count(lesson_number) )
+						{
+							lesson = (*book)[ lesson_number ];
+						}
+						else
+						{
+							lesson = new Lesson( lesson_number, book );
+							(*book)[ lesson_number ] = lesson;
+						}
+						if( lesson_extension == "dict" )
+						{
+							lesson->parse_dictionary( lesson_path );
+						}
+						else if( lesson_extension == "conf" )
+						{
+							lesson->parse_config( lesson_path );
+						}
+					}
                 }
             }
             closedir( lessons_dir );
@@ -146,15 +158,79 @@ void Library::rescan()
 }
 
 
-void Book::parse_config( const std::string& book_conf_file_name )
+void Book::parse_config( const std::string& conf_file_name )
 {
-    // TODO
+	std::ifstream book_conf_file( conf_file_name.c_str() );
+	char line_buffer[1024];
+	std::string key, value;
+	while( book_conf_file.good() )
+	{
+		book_conf_file.getline( line_buffer, sizeof(line_buffer) );
+		std::string line = line_buffer;
+		std::string::size_type equals_pos = line.find( '=' );
+		if( equals_pos != std::string::npos )
+		{
+			key = line.substr( 0, equals_pos );
+			value = line.substr( equals_pos+1 );
+			if( key=="title" )
+			{
+				this->title = value;
+			}
+			else if( key=="description" )
+			{
+				this->description = value;
+			}
+			else if( key=="author" )
+			{
+				this->author = value;
+			}
+			else if( key=="publisher" )
+			{
+				this->publisher = value;
+			}
+			else if( key=="isbn" )
+			{
+				this->isbn = value;
+			}
+			else if( key=="year" )
+			{
+				this->year = atoi( value.c_str() );
+			}
+		}
+	}
 }
 
 
-void Lesson::parse_config( const std::string& lesson_file_name )
+void Lesson::parse_config( const std::string& conf_file_name )
 {
-    std::ifstream shengci_file( lesson_file_name.c_str() );
+	std::ifstream lesson_conf_file( conf_file_name.c_str() );
+	char line_buffer[1024];
+	std::string key, value;
+	while( lesson_conf_file.good() )
+	{
+		lesson_conf_file.getline( line_buffer, sizeof(line_buffer) );
+		std::string line = line_buffer;
+		std::string::size_type equals_pos = line.find( '=' );
+		if( equals_pos != std::string::npos )
+		{
+			key = line.substr( 0, equals_pos );
+			value = line.substr( equals_pos+1 );
+			if( key=="title" )
+			{
+				this->title = value;
+			}
+			else if( key=="description" )
+			{
+				this->description = value;
+			}
+		}
+	}
+}
+
+
+void Lesson::parse_dictionary( const std::string& dict_file_name )
+{
+    std::ifstream shengci_file( dict_file_name.c_str() );
     char line_buffer[1024];
     std::string hanzi, pinyin;
     Definition definition;
