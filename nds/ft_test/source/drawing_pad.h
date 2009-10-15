@@ -1,3 +1,6 @@
+#ifndef DRAWING_PAD_H
+#define DRAWING_PAD_H
+
 class DrawingPad
 {
 public:
@@ -12,3 +15,4 @@ public:
     int res_x, res_y;
 };
 
+#endif // DRAWING_PAD_H

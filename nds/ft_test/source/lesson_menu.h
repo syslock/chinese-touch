@@ -4,6 +4,20 @@
 #include "freetype_renderer.h"
 #include "lesson.h"
 
+class LessonMenuChoice
+{
+	public:
+		std::string book_name;
+		int lesson_num;
+		enum ContentType
+		{
+			CONTENT_TYPE_NEW_WORDS,
+			CONTENT_TYPE_GRAMMAR,
+			CONTENT_TYPE_TEXT,
+			CONTENT_TYPE_EXERCISES
+		} content_type;
+};
+
 class LessonMenu
 {
 public:
@@ -16,6 +30,7 @@ public:
 	LessonMenu( FreetypeRenderer& _ft, Library& _library );
 	~LessonMenu();
 	void render();
+	void run_for_user_choice( LessonMenuChoice& choice );
 };
 
 

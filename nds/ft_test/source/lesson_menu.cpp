@@ -50,7 +50,7 @@ void LessonMenu::render()
 				oam_entry++,	// oam entry to set
 				5, top, 	// position
 				0, 			// priority
-				0,			// alpha
+				15,			// alpha
 				SpriteSize_32x32, // size
 				SpriteColorFormat_Bmp, // format
 				this->book_sprite_vram, // vram address
@@ -69,7 +69,7 @@ void LessonMenu::render()
 					oam_entry++,	// oam entry to set
 					5, top, 	// position
 					0, 			// priority
-					0,			// alpha
+					15,			// alpha
 					SpriteSize_32x32, // size
 					SpriteColorFormat_Bmp, // format
 					this->lesson_sprite_vram, // vram address
@@ -85,4 +85,30 @@ void LessonMenu::render()
 	}
 	swiWaitForVBlank();
 	oamUpdate( &oamSub );
+}
+
+void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
+{
+	this->render();
+	touchPosition old_touch;
+    touchRead( &old_touch );
+	bool dragged = false;
+	while( true )
+	{
+        scanKeys();
+        touchPosition touch;
+        touchRead( &touch );
+        int area = touch.px * touch.z2 / touch.z1 - touch.px;
+        if( keysCurrent() & KEY_TOUCH 
+            && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
+        {
+            dragged = true;
+		}
+        if( keysUp() & KEY_TOUCH )
+        {
+            dragged = false;
+			break;
+        }
+		swiWaitForVBlank();
+	}
 }
