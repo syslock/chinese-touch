@@ -18,9 +18,21 @@ NewWords::NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Confi
 			&& word_it!=lesson.end(); word_it++ );
 	if( word_it == lesson.end() )
 	{
-		ErrorConsole::init();
 		std::cout << "warning: " << CONFIG_FILE_NAME << " id out of bounds" << std::endl;
-		word_it--;
+		if( word_it != this->lesson.begin() )
+			word_it--;
+		else
+		{
+			std::cout << "warning: empty lesson \"" << lesson.title << "\"" << std::endl;
+			Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
+			Definition* definition = new Definition();
+			definition->lang = "de";
+			definition->translation = "Chinesische Schrift";
+			definition->word_type = "N";
+			word->definitions[ definition->lang ] = definition;
+			this->lesson.push_back( word );
+			this->word_it = this->lesson.begin();
+		}
 	}
 	word_index = (*word_it)->number;
 	(*word_it)->render( this->freetype_renderer, word_view );
@@ -33,7 +45,7 @@ void NewWords::run_until_exit()
     touchRead( &old_touch );
 	bool dragged = false;
     bool restart_line = false;
-    while( true )
+    while( word_it != this->lesson.end() )
     {
         this->config.save_position( *word_it );
         scanKeys();

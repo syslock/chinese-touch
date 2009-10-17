@@ -9,18 +9,40 @@
 class LessonMenuChoice
 {
 	public:
-		std::string book_name;
-		int lesson_num;
+		Book* book;
+		Lesson* lesson;
 		enum ContentType
 		{
+			CONTENT_TYPE_NONE,
 			CONTENT_TYPE_NEW_WORDS,
 			CONTENT_TYPE_GRAMMAR,
 			CONTENT_TYPE_TEXT,
 			CONTENT_TYPE_EXERCISES
 		} content_type;
+	public:
+		LessonMenuChoice() : book(0), lesson(0), 
+			content_type(CONTENT_TYPE_NONE) {}
 };
 
-typedef std::map<int,RenderScreenBuffer*> SurfaceCache;
+class MenuEntry
+{
+	public:
+		RenderScreenBuffer* text_surface;
+		Book* book;
+		Lesson* lesson;
+	public:
+		MenuEntry() : text_surface( new RenderScreenBuffer(200, 32) ),
+						book(0), lesson(0) {}
+		~MenuEntry()
+		{
+			delete this->text_surface;
+		}
+};
+class MenuList : public std::map<int,MenuEntry*>
+{
+	public:
+		~MenuList();
+};
 
 class LessonMenu
 {
@@ -28,7 +50,7 @@ public:
 	FreetypeRenderer& freetype_renderer;
 	Library& library;
 	RenderScreen info_screen, menu_screen;
-	SurfaceCache text_surface_cache;
+	MenuList menu_list;
 	u16* book_sprite_vram;
 	u16* lesson_sprite_vram;
 	int y_offset;
@@ -38,6 +60,7 @@ public:
 	~LessonMenu();
 	void render( Screen screen );
 	void run_for_user_choice( LessonMenuChoice& choice );
+	MenuEntry* get_entry_by_pos( int x, int y );
 };
 
 

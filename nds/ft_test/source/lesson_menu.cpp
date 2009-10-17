@@ -1,8 +1,26 @@
+#include <math.h>
+
 #include "lesson_menu.h"
 #include "screen.h"
 // compiled-in sprite data:
 #include "text-x-generic.h"
 #include "accessories-dictionary.h"
+
+
+MenuList::~MenuList()
+{
+	for( MenuList::iterator e_it=this->begin(); 
+		e_it!=this->end(); e_it++ )
+	{
+		if( e_it->second )
+		{
+			delete e_it->second;
+			e_it->second=0;
+		}
+	}
+	this->clear();
+}
+
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library )
 	: freetype_renderer(_freetype_renderer), library(_library), book_sprite_vram(0), 
@@ -33,16 +51,6 @@ LessonMenu::~LessonMenu()
 {
 	oamFreeGfx( &oamSub, this->book_sprite_vram );
 	oamFreeGfx( &oamSub, this->lesson_sprite_vram );
-	for( SurfaceCache::iterator s_it=this->text_surface_cache.begin(); 
-		s_it!=this->text_surface_cache.end(); s_it++ )
-	{
-		if( s_it->second )
-		{
-			delete s_it->second;
-			s_it->second=0;
-		}
-	}
-	this->text_surface_cache.clear();
 }
 
 void LessonMenu::render( Screen screen )
@@ -60,7 +68,7 @@ void LessonMenu::render( Screen screen )
 		oamClear( &oamSub, 0, 0 );
 		int top = this->y_offset;
 		int oam_entry = 0;
-		int menu_entry = 1;
+		int list_id = 1;
 		for( Library::iterator book_it = this->library.begin(); 
 			book_it != this->library.end() && top < 192; book_it++ )
 		{
@@ -81,24 +89,26 @@ void LessonMenu::render( Screen screen )
 						0			// apply mosaic
 					);
 				RenderScreenBuffer *surface;
-				if( this->text_surface_cache.count(menu_entry) )
+				if( this->menu_list.count(list_id) )
 				{
-					surface = this->text_surface_cache[menu_entry];
+					surface = this->menu_list[list_id]->text_surface;
 				}
 				else
 				{
-					surface = new RenderScreenBuffer( 200, 32 );
-					this->text_surface_cache[menu_entry] = surface;
+					MenuEntry* entry = new MenuEntry();
+					entry->book = book_it->second;
+					this->menu_list[list_id] = entry;
+					surface = entry->text_surface;
 					RenderStyle render_style;
 					RenderRect rect = this->freetype_renderer.render( *surface, book_it->second->title, 
 						this->freetype_renderer.han_face, 10, 0, 0, &render_style );
 				}
 				surface->render_to( this->menu_screen, 50, top );
 			}
-			menu_entry++;
+			list_id++;
 			top += 32;
 			for( Book::iterator lesson_it = book_it->second->begin();
-				lesson_it != book_it->second->end() && top < 192; lesson_it++, menu_entry++, top+=32 )
+				lesson_it != book_it->second->end() && top < 192; lesson_it++, list_id++, top+=32 )
 			{
 				if( top > -32 )
 				{
@@ -117,14 +127,16 @@ void LessonMenu::render( Screen screen )
 							0			// apply mosaic
 						);
 					RenderScreenBuffer *surface;
-					if( this->text_surface_cache.count(menu_entry) )
+					if( this->menu_list.count(list_id) )
 					{
-						surface = this->text_surface_cache[menu_entry];
+						surface = this->menu_list[list_id]->text_surface;
 					}
 					else
 					{
-						surface = new RenderScreenBuffer( 200, 32 );
-						this->text_surface_cache[menu_entry] = surface;
+						MenuEntry* entry = new MenuEntry();
+						entry->lesson = lesson_it->second;
+						this->menu_list[list_id] = entry;
+						surface = entry->text_surface;
 						RenderStyle render_style;
 						RenderRect rect = this->freetype_renderer.render( *surface, lesson_it->second->title, 
 							this->freetype_renderer.han_face, 10, 0, 0, &render_style );
@@ -154,18 +166,32 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
         if( keysCurrent() & KEY_TOUCH 
             && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
         {
+			int y_diff = touch.py - old_touch.py;
 			if( dragged )
 			{
-				int y_diff = touch.py - old_touch.py;
 				this->y_offset += y_diff;
 				this->v_y = y_diff;
 				this->render( SCREEN_SUB );
 			}
-            else if( !dragged && touch.px > (this->menu_screen.res_x-15) && touch.py < 15 )
+            else if( !dragged && abs(y_diff) < 5 )
 			{
-				return;
+				MenuEntry* entry = this->get_entry_by_pos( touch.px, touch.py );
+				if( entry )
+				{
+					if( entry->lesson )
+					{
+						choice.book = entry->lesson->book;
+						choice.lesson = entry->lesson;
+						choice.content_type = LessonMenuChoice::CONTENT_TYPE_NEW_WORDS;
+						return;
+					}
+				}
 			}
-            dragged = true;
+			else if( !dragged && abs(y_diff) >= 5 )
+			{
+				dragged = true;
+				// wird bei keysUp() & KEY_TOUCH wieder auf false gesetzt
+			}
 			old_touch = touch;
 		}
 		else if( this->v_y )
@@ -183,4 +209,11 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
         }
 		swiWaitForVBlank();
 	}
+}
+
+MenuEntry* LessonMenu::get_entry_by_pos( int x, int y )
+{
+	int id = (y-this->y_offset)/32+1;
+	if( this->menu_list.count(id) ) return this->menu_list[id];
+	else return 0;
 }
