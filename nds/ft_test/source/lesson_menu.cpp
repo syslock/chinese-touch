@@ -33,31 +33,38 @@ LessonMenu::~LessonMenu()
 {
 	oamFreeGfx( &oamSub, this->book_sprite_vram );
 	oamFreeGfx( &oamSub, this->lesson_sprite_vram );
+	for( SurfaceCache::iterator s_it=this->text_surface_cache.begin(); 
+		s_it!=this->text_surface_cache.end(); s_it++ )
+	{
+		if( s_it->second )
+		{
+			delete s_it->second;
+			s_it->second=0;
+		}
+	}
+	this->text_surface_cache.clear();
 }
 
 void LessonMenu::render( Screen screen )
 {
 	if( screen == SCREEN_MAIN )
 	{
-		this->freetype_renderer.clear_screen( this->info_screen );
+		this->info_screen.clear();
 		RenderStyle render_style;
 		this->freetype_renderer.render( this->info_screen, "你好Main！", 
 			this->freetype_renderer.han_face, 12, 0, 0, &render_style );
 	}
 	else if( screen == SCREEN_SUB )
 	{
-		this->freetype_renderer.clear_screen( this->menu_screen );
+		this->menu_screen.clear();
 		oamClear( &oamSub, 0, 0 );
 		int top = this->y_offset;
 		int oam_entry = 0;
+		int menu_entry = 1;
 		for( Library::iterator book_it = this->library.begin(); 
 			book_it != this->library.end() && top < 192; book_it++ )
 		{
-			if( top < -32 )
-			{
-				top += 32;
-			}
-			else
+			if( top > -32 )
 			{
 				oamSet( &oamSub, 	// sub display
 						oam_entry++,	// oam entry to set
@@ -73,19 +80,27 @@ void LessonMenu::render( Screen screen )
 						0, 0, 		// vflip, hflip
 						0			// apply mosaic
 					);
-				//RenderRect rect = this->freetype_renderer.render( this->menu_screen, 
-				//	book_it->second->title, this->freetype_renderer.han_face, 10, 50, top, &render_style );
-				RenderRect rect(0,0,0,0);
-				top += rect.height<32 ? 32 : rect.height;
-			}
-			for( Book::iterator lesson_it = book_it->second->begin();
-				lesson_it != book_it->second->end() && top < 192; lesson_it++ )
-			{
-				if( top < -32 )
+				RenderScreenBuffer *surface;
+				if( this->text_surface_cache.count(menu_entry) )
 				{
-					top += 32;
+					surface = this->text_surface_cache[menu_entry];
 				}
 				else
+				{
+					surface = new RenderScreenBuffer( 200, 32 );
+					this->text_surface_cache[menu_entry] = surface;
+					RenderStyle render_style;
+					RenderRect rect = this->freetype_renderer.render( *surface, book_it->second->title, 
+						this->freetype_renderer.han_face, 10, 0, 0, &render_style );
+				}
+				surface->render_to( this->menu_screen, 50, top );
+			}
+			menu_entry++;
+			top += 32;
+			for( Book::iterator lesson_it = book_it->second->begin();
+				lesson_it != book_it->second->end() && top < 192; lesson_it++, menu_entry++, top+=32 )
+			{
+				if( top > -32 )
 				{
 					oamSet( &oamSub, 	// sub display
 							oam_entry++,	// oam entry to set
@@ -101,10 +116,20 @@ void LessonMenu::render( Screen screen )
 							0, 0, 		// vflip, hflip
 							0			// apply mosaic
 						);
-					//RenderRect rect = this->freetype_renderer.render( this->menu_screen, lesson_it->second->title, 
-					//	this->freetype_renderer.han_face, 10, 50, top, &render_style );
-					RenderRect rect(0,0,0,0);
-					top += rect.height<32 ? 32 : rect.height;
+					RenderScreenBuffer *surface;
+					if( this->text_surface_cache.count(menu_entry) )
+					{
+						surface = this->text_surface_cache[menu_entry];
+					}
+					else
+					{
+						surface = new RenderScreenBuffer( 200, 32 );
+						this->text_surface_cache[menu_entry] = surface;
+						RenderStyle render_style;
+						RenderRect rect = this->freetype_renderer.render( *surface, lesson_it->second->title, 
+							this->freetype_renderer.han_face, 10, 0, 0, &render_style );
+					}
+					surface->render_to( this->menu_screen, 50, top );
 				}
 			}
 		}
@@ -134,7 +159,7 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 				this->y_offset += touch.py - old_touch.py;
 				this->render( SCREEN_SUB );
 			}
-            else if( !dragged && touch.px > (this->freetype_renderer.res_x-15) && touch.py < 15 )
+            else if( !dragged && touch.px > (this->menu_screen.res_x-15) && touch.py < 15 )
 			{
 				return;
 			}

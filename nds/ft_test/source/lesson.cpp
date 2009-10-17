@@ -12,9 +12,9 @@
 #include "lesson.h"
 #include "config.h"
 
-void Word::render( FreetypeRenderer& ft, const RenderScreen& render_screen )
+void Word::render( FreetypeRenderer& ft, RenderScreen& render_screen )
 {
-	ft.clear_screen( render_screen );
+	render_screen.clear();
     
     // 2. render hanzi in the faces suggested layout (e.g. fixed width)
     RenderStyle render_style;

@@ -27,7 +27,7 @@ public:
             Lesson* _lesson, int _number ) 
         : hanzi(_hanzi), pinyin(_pinyin), successes(0), errors(0), 
         lesson(_lesson), number(_number) {};
-    void render( FreetypeRenderer& ft, const RenderScreen& render_screen );
+    void render( FreetypeRenderer& ft, RenderScreen& render_screen );
 public:
     std::string hanzi, pinyin;
     Definitions definitions;

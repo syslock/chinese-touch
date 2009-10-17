@@ -57,7 +57,7 @@ void NewWords::run_until_exit()
                     }
                 } else restart_line = true;
             }
-            else if( touch.px > (this->freetype_renderer.res_x-15) && touch.py < 15 )
+            else if( touch.px > (this->word_view.res_x-15) && touch.py < 15 )
             {
                 if( !dragged )
                 {
@@ -76,7 +76,7 @@ void NewWords::run_until_exit()
                     }
                 } else restart_line = true;
             }
-            else if( touch.px > (this->freetype_renderer.res_x-15) && touch.py > (this->freetype_renderer.res_y-15) )
+            else if( touch.px > (this->word_view.res_x-15) && touch.py > (this->word_view.res_y-15) )
             {
                 if( !dragged )
                 {
@@ -86,7 +86,7 @@ void NewWords::run_until_exit()
 #endif
                 } else restart_line = true;
             }
-            else if( touch.px < 15 && touch.py > (this->freetype_renderer.res_y-15) )
+            else if( touch.px < 15 && touch.py > (this->word_view.res_y-15) )
             {
                 if( !dragged )
                 {

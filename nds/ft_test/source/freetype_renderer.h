@@ -36,17 +36,39 @@ public:
 class RenderScreen
 {
 public:
-	RenderScreen() : id(0), base_address(0), palette(0) {}
+	RenderScreen( int _res_x=256, int _res_y=192 ) 
+		: id(0), base_address(0), palette(0), 
+			res_x(_res_x), res_y(_res_y) {}
 	void init( int _id )
 	{
 		this->id = _id;
 		this->base_address = bgGetGfxPtr( _id );
 	}
+	void clear();
 public:
 	int id;
 	u16* base_address;
 	u16* palette;
+    int res_x, res_y;
 };
+
+class RenderScreenBuffer : public RenderScreen
+{
+public:
+	RenderScreenBuffer( int _res_x, int _res_y )
+		: RenderScreen( _res_x, _res_y )
+	{
+		int size = this->res_x*this->res_y*1;
+		this->base_address = (u16*)malloc( size );
+		this->clear();
+	}
+	~RenderScreenBuffer()
+	{
+		free( this->base_address );
+	}
+	void render_to( RenderScreen& dest, int x, int y );
+};
+
 
 class FreetypeRenderer
 {
@@ -55,7 +77,6 @@ public:
                     const std::string& latin_font );
     ~FreetypeRenderer();
 	void init_screen( Screen screen, RenderScreen& render_screen );
-	void clear_screen( const RenderScreen& render_screen );
     RenderRect render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0 );
 public:
@@ -63,8 +84,6 @@ public:
     FT_Face han_face, latin_face;
     FT_Library library;
     int dpi_x, dpi_y;
-    int bg3;
-    int res_x, res_y;
 };
 
 #endif // FREETYPE_RENDERER_H

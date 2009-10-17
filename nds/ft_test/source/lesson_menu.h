@@ -1,6 +1,8 @@
 #ifndef LESSON_MENU_H
 #define LESSON_MENU_H
 
+#include <map>
+
 #include "freetype_renderer.h"
 #include "lesson.h"
 
@@ -18,12 +20,15 @@ class LessonMenuChoice
 		} content_type;
 };
 
+typedef std::map<int,RenderScreenBuffer*> SurfaceCache;
+
 class LessonMenu
 {
 public:
 	FreetypeRenderer& freetype_renderer;
 	Library& library;
 	RenderScreen info_screen, menu_screen;
+	SurfaceCache text_surface_cache;
 	u16* book_sprite_vram;
 	u16* lesson_sprite_vram;
 	int y_offset;

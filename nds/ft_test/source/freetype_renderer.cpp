@@ -16,7 +16,7 @@
 
 FreetypeRenderer::FreetypeRenderer( const std::string& han_font, 
 	const std::string& latin_font ) 
-		: dpi_x(100), dpi_y(100), res_x(256), res_y(192)
+		: dpi_x(100), dpi_y(100)
 {	
     FT_Init_Errors();
     std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
@@ -90,10 +90,44 @@ void FreetypeRenderer::init_screen( Screen screen, RenderScreen& render_screen )
 	}
 }
 
-void FreetypeRenderer::clear_screen( const RenderScreen& render_screen )
+void RenderScreen::clear()
 {
     // 1. clear background buffer with background color
-    memset( render_screen.base_address, 0, 256*265 );
+    memset( this->base_address, 0, this->res_x*this->res_y*1 );
+}
+
+void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
+{
+	// 16-bit-aligned to allow copying to vram:
+	char* buffer = (char*)this->base_address;
+	for( int row=0; row<this->res_y; row++ )
+	{
+		for( int pixel=0; pixel<this->res_x; pixel+=2 )
+		{
+#if 0
+			if( x+pixel > 0 && x+pixel+1 < dest.res_x && y+row > 0 && y+row < dest.res_y )
+#endif
+			u16 value = 0;
+			if( pixel < this->res_x-1 )
+			{
+				value = (buffer[row*this->res_x+pixel+1] << 8)
+							+ buffer[row*this->res_x+pixel];
+			}
+			else
+			{
+				value = buffer[row*this->res_x+pixel];
+			}
+			u16* base_address = dest.base_address
+					+ (row+y)*dest.res_x/2
+					+ pixel/2 + x/2;
+			if( base_address < dest.base_address
+				|| base_address > dest.base_address+dest.res_x*dest.res_y-2 )
+			{
+				continue;
+			}
+			*base_address |= value;
+		}
+	}
 }
 
 class RenderChar
@@ -110,6 +144,7 @@ public:
     RenderChar* curr_line_end_char;
 };
 typedef std::list<RenderChar*> RenderCharList;
+
 
 RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style )
@@ -141,7 +176,9 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
             char_it!=char_list.end(); char_it++ )
     {
         // Load Char
+#ifdef DEBUG
         std::cout << "character code: " << *char_it << std::endl;
+#endif
         //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
         FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
         if( !glyph_index )
@@ -185,7 +222,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     RenderCharList::iterator last_line_it = render_char_list.begin();
     int x_correction = 0;
     int y_correction = 0;
-    int x_limit = this->res_x;
+    int x_limit = render_screen.res_x;
     int line_count = 1;
     if( render_style && render_style->center_x )
     {
@@ -194,16 +231,18 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
             rchar_it!=render_char_list.end(); rchar_it++ )
     {
+#ifdef DEBUG
         std::cout << "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
             << " y=" << (*rchar_it)->y << " xc=" << x_correction 
             << " yc=" << y_correction << std::endl;
+#endif
         (*rchar_it)->x += x_correction;
         (*rchar_it)->y += y_correction;
         if( (*rchar_it)->char_code == 32 )
         {
             prev_whitespace_it = rchar_it;
         }
-        if( (*rchar_it)->x+(*rchar_it)->width > this->res_x )
+        if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x )
         {
             // go back to previous white space if possible and adjust 
             // correction values for next line
@@ -248,7 +287,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         {
             if( (*rchar_it)->curr_line_end_char )
             {
-                x_correction = ( this->res_x - x 
+                x_correction = ( render_screen.res_x - x 
                         - (*rchar_it)->curr_line_end_char->x
                         - (*rchar_it)->curr_line_end_char->width ) / 2;
             }
@@ -299,10 +338,10 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
                 }
                 u16* bg_gfx_ptr = render_screen.base_address;
                 u16* base_address = bg_gfx_ptr
-                        + (row+(line_height-glyph->bitmap_top))*this->res_x/2
+                        + (row+(line_height-glyph->bitmap_top))*render_screen.res_x/2
                         + pixel/2 + glyph->bitmap_left/2;
                 if( base_address < bg_gfx_ptr
-                    || base_address > bg_gfx_ptr+this->res_x*this->res_y-2 )
+                    || base_address > bg_gfx_ptr+render_screen.res_x*render_screen.res_y-2 )
                 {
                     continue;
                 }
