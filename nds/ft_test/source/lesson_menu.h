@@ -21,15 +21,16 @@ class LessonMenuChoice
 class LessonMenu
 {
 public:
-	FreetypeRenderer& ft;
+	FreetypeRenderer& freetype_renderer;
 	Library& library;
 	RenderScreen info_screen, menu_screen;
 	u16* book_sprite_vram;
 	u16* lesson_sprite_vram;
+	int y_offset;
 public:
-	LessonMenu( FreetypeRenderer& _ft, Library& _library );
+	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library );
 	~LessonMenu();
-	void render();
+	void render( Screen screen );
 	void run_for_user_choice( LessonMenuChoice& choice );
 };
 
