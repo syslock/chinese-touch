@@ -32,6 +32,7 @@ public:
 	u16* book_sprite_vram;
 	u16* lesson_sprite_vram;
 	int y_offset;
+	int v_y;
 public:
 	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library );
 	~LessonMenu();

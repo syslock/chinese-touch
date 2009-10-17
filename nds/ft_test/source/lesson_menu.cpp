@@ -6,7 +6,7 @@
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library )
 	: freetype_renderer(_freetype_renderer), library(_library), book_sprite_vram(0), 
-		lesson_sprite_vram(0), y_offset(5)
+		lesson_sprite_vram(0), y_offset(5), v_y(0)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
@@ -156,7 +156,9 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
         {
 			if( dragged )
 			{
-				this->y_offset += touch.py - old_touch.py;
+				int y_diff = touch.py - old_touch.py;
+				this->y_offset += y_diff;
+				this->v_y = y_diff;
 				this->render( SCREEN_SUB );
 			}
             else if( !dragged && touch.px > (this->menu_screen.res_x-15) && touch.py < 15 )
@@ -165,6 +167,15 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 			}
             dragged = true;
 			old_touch = touch;
+		}
+		else if( this->v_y )
+		{
+			int resistance = this->v_y / 4;
+			if( !resistance ) resistance = this->v_y / 2;
+			if( !resistance ) resistance = this->v_y;
+			this->v_y -= resistance;
+			this->y_offset += this->v_y;
+			this->render( SCREEN_SUB );
 		}
         if( keysUp() & KEY_TOUCH )
         {
