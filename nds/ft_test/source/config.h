@@ -35,7 +35,6 @@ protected:
     void save_really();
 protected:
     static const int MIN_SAVE_PERIOD = 5;
-    static const int AUTO_SAVE_PERIOD = 30;
     ConfigData data;
     Word* previous_word;
     bool changed;

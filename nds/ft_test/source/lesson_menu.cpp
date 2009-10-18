@@ -22,14 +22,13 @@ MenuList::~MenuList()
 }
 
 
-LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library )
-	: freetype_renderer(_freetype_renderer), library(_library), book_sprite_vram(0), 
-		lesson_sprite_vram(0), y_offset(5), v_y(0)
+LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
+	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
+		book_sprite_vram(0), lesson_sprite_vram(0), y_offset(5), v_y(0)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 
-	//videoSetModeSub( MODE_5_2D );
 	vramSetBankD( VRAM_D_SUB_SPRITE );
 	oamInit( &oamSub, SpriteMapping_Bmp_1D_128, 0 );
 	oamEnable( &oamSub );
@@ -44,6 +43,42 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library 
 			this->book_sprite_vram[i] |= 1<<15;
 		if( this->lesson_sprite_vram[i] )
 			this->lesson_sprite_vram[i] |= 1<<15;
+	}
+	
+	// Menü zur gespeicherten Position bewegen:
+	std::string config_book_name = this->config.get_current_book_name();
+	int config_lesson_number = this->config.get_current_lesson_number();
+	if( config_book_name.length() )
+	{
+		bool found = false;
+		// tatsächlichen Wert nur verändern, wenn wir auch was finden:
+		int _y_offset = 0;
+		for( Library::iterator book_it=this->library.begin();
+			book_it!=this->library.end(); book_it++, _y_offset-=32 )
+		{
+			if( config_lesson_number )
+			{
+				_y_offset -= 32;
+				for( Book::iterator lesson_it=book_it->second->begin();
+					lesson_it!=book_it->second->end(); lesson_it++, _y_offset-=32 )
+				{
+					if( book_it->first == config_book_name 
+						&& lesson_it->first == config_lesson_number )
+					{
+						found = true;
+						this->y_offset = _y_offset;
+						// Stück zurück und leichten Impuls setzen um das Vorspulen zu verdeutlichen:
+						this->y_offset+=20;
+						this->v_y=-5;
+						break;
+					}
+				}
+			}
+			if( found )
+			{
+				break;
+			}
+		}
 	}
 }
 

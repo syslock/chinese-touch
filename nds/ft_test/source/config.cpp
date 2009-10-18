@@ -23,6 +23,7 @@ void Config::save_position( Word* word )
     this->data.config.current_word_number = word->number;
     this->data.config.current_lesson_number = word->lesson->number;
     const std::string& book_name = word->lesson->book->name;
+	memset( (void*)&this->data.config.current_book_name, 0, CONFIG_STRING_SIZE );
     memcpy( this->data.config.current_book_name, 
         book_name.c_str(),
         book_name.length() < CONFIG_STRING_SIZE ? book_name.length() 
@@ -36,7 +37,7 @@ void Config::save()
     time_t curr_time = time(0);
     //std::cout << "curr_time: " << curr_time << std::endl;
     //std::cout << "prev+auto: " << this->prev_time + Config::AUTO_SAVE_PERIOD << std::endl;
-    if( curr_time > (this->prev_time + Config::AUTO_SAVE_PERIOD)
+    if( curr_time > (this->prev_time + Config::MIN_SAVE_PERIOD)
         && this->changed )
     {
         this->save_really();

@@ -20,7 +20,7 @@
 #define DEBUG 0
 #endif
 
-
+ 
 int main()
 {
 #if DEBUG
@@ -68,7 +68,7 @@ int main()
 		{
 			/* Testlauf des Lektionsauswahlmenüs: */
 			std::cout << "initializing lesson menu" << std::endl;
-			LessonMenu* lesson_menu = new LessonMenu( *ft, library );
+			LessonMenu* lesson_menu = new LessonMenu( *ft, library, config );
 			LessonMenuChoice lesson_menu_choice;
 			lesson_menu->run_for_user_choice( lesson_menu_choice );
 			delete lesson_menu;

@@ -8,22 +8,26 @@
 
 NewWords::NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config )
 	: freetype_renderer(_freetype_renderer), lesson(_lesson), 
-		word_it(lesson.begin()), word_index((*word_it)->number), 
+		word_it(lesson.begin()), word_index(0), 
 		config(_config)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_view );
 
-	word_index = this->config.get_current_word_number();
-	for( word_it=lesson.begin(); (*word_it)->number < word_index 
-			&& word_it!=lesson.end(); word_it++ );
-	if( word_it == lesson.end() )
+	if( this->config.get_current_book_name()==this->lesson.book->name
+		&& this->config.get_current_lesson_number()==this->lesson.number )
+	{
+		this->word_index = this->config.get_current_word_number();
+	}
+	for( this->word_it=this->lesson.begin(); (*this->word_it)->number < this->word_index 
+			&& this->word_it!=this->lesson.end(); this->word_it++ );
+	if( this->word_it == this->lesson.end() )
 	{
 		std::cout << "warning: " << CONFIG_FILE_NAME << " id out of bounds" << std::endl;
-		if( word_it != this->lesson.begin() )
-			word_it--;
+		if( this->word_it != this->lesson.begin() )
+			this->word_it--;
 		else
 		{
-			std::cout << "warning: empty lesson \"" << lesson.title << "\"" << std::endl;
+			std::cout << "warning: empty lesson \"" << this->lesson.title << "\"" << std::endl;
 			Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
 			Definition* definition = new Definition();
 			definition->lang = "de";
@@ -34,8 +38,8 @@ NewWords::NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Confi
 			this->word_it = this->lesson.begin();
 		}
 	}
-	word_index = (*word_it)->number;
-	(*word_it)->render( this->freetype_renderer, word_view );
+	this->word_index = (*this->word_it)->number;
+	(*this->word_it)->render( this->freetype_renderer, this->word_view );
 }
 
 void NewWords::run_until_exit()
@@ -45,9 +49,9 @@ void NewWords::run_until_exit()
     touchRead( &old_touch );
 	bool dragged = false;
     bool restart_line = false;
-    while( word_it != this->lesson.end() )
+    while( this->word_it != this->lesson.end() )
     {
-        this->config.save_position( *word_it );
+        this->config.save_position( *this->word_it );
         scanKeys();
         touchPosition touch;
         touchRead( &touch );
@@ -59,13 +63,13 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-                    if( word_it != lesson.begin() )
+                    if( this->word_it != this->lesson.begin() )
                     {
-                        word_it--;
-                        word_index--;
+                        this->word_it--;
+                        this->word_index--;
                         std::cout << "prev" << std::endl;
-                        this->config.save_position( *word_it );
-                        (*word_it)->render( this->freetype_renderer, word_view );
+                        this->config.save_position( *this->word_it );
+                        (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
                 } else restart_line = true;
             }
@@ -73,18 +77,18 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-                    word_it++;
-                    word_index++;
-                    if( word_it != lesson.end() )
+                    this->word_it++;
+                    this->word_index++;
+                    if( this->word_it != this->lesson.end() )
                     {
                         std::cout << "next" << std::endl;
-                        this->config.save_position( *word_it );
-                        (*word_it)->render( this->freetype_renderer, word_view );
+                        this->config.save_position( *this->word_it );
+                        (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
                     else
                     {
-                        word_it--;
-                        word_index--;
+                        this->word_it--;
+                        this->word_index--;
                     }
                 } else restart_line = true;
             }
@@ -102,6 +106,7 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
+					this->config.save_position( *this->word_it );
 					return;
                 } else restart_line = true;
             }
@@ -109,10 +114,10 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-                    lesson.toggle_hanzi();
+                    this->lesson.toggle_hanzi();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( this->freetype_renderer, word_view );
+                        (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
                 } else restart_line = true;
             }
@@ -120,10 +125,10 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-                    lesson.toggle_pinyin();
+                    this->lesson.toggle_pinyin();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( this->freetype_renderer, word_view );
+                        (*word_it)->render( this->freetype_renderer, this->word_view );
                     }
                 } else restart_line = true;
             }
@@ -131,10 +136,10 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-                    lesson.toggle_translation();
+                    this->lesson.toggle_translation();
                     if( global_fat_initialized ) 
                     {
-                        (*word_it)->render( this->freetype_renderer, word_view );
+                        (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
                 } else restart_line = true;
             }

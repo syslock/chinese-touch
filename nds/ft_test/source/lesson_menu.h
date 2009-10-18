@@ -5,6 +5,7 @@
 
 #include "freetype_renderer.h"
 #include "lesson.h"
+#include "config.h"
 
 class LessonMenuChoice
 {
@@ -49,6 +50,7 @@ class LessonMenu
 public:
 	FreetypeRenderer& freetype_renderer;
 	Library& library;
+	Config& config;
 	RenderScreen info_screen, menu_screen;
 	MenuList menu_list;
 	u16* book_sprite_vram;
@@ -56,7 +58,7 @@ public:
 	int y_offset;
 	int v_y;
 public:
-	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library );
+	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config );
 	~LessonMenu();
 	void render( Screen screen );
 	void run_for_user_choice( LessonMenuChoice& choice );
