@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <string.h>
 #include <iomanip>
@@ -7,6 +6,7 @@
 #include <nds.h>
 #include <fat.h>
 
+#include "hanzi-trainer.h"
 #include "freetype_renderer.h"
 #include "unicode.h"
 #include "lesson.h"
@@ -16,11 +16,6 @@
 #include "lesson_menu.h"
 #include "new_words.h"
 
-#ifndef DEBUG
-#define DEBUG 0
-#endif
-
- 
 int main()
 {
 #if DEBUG

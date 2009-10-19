@@ -2,6 +2,7 @@
 #define ERROR_CONSOLE_H
 
 #include <exception>
+#include <iostream>
 
 #include "screen.h"
 
@@ -21,8 +22,6 @@ class ErrorConsole
 {
 public:
     static void init( Screen=SCREEN_SUB );
-public:
-    static bool initialized;
 };
 
 #endif

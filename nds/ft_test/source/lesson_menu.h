@@ -31,15 +31,23 @@ class MenuEntry
 		RenderScreenBuffer* text_surface;
 		Book* book;
 		Lesson* lesson;
+		bool exploded;
+		int top;
+		int last_frame_rendered;
+		static int BASE_HEIGHT;
+		static int ACTIVE_HEIGHT;
+		static int FONT_SIZE;
+		static int TEXT_X_OFFSET;
 	public:
-		MenuEntry() : text_surface( new RenderScreenBuffer(200, 32) ),
-						book(0), lesson(0) {}
+		MenuEntry() : text_surface( new RenderScreenBuffer(200, MenuEntry::BASE_HEIGHT) ),
+						book(0), lesson(0), exploded(false), top(0), last_frame_rendered(0) {}
 		~MenuEntry()
 		{
 			delete this->text_surface;
 		}
+		void render_text( FreetypeRenderer& ft, const std::string& text );
 };
-class MenuList : public std::map<int,MenuEntry*>
+class MenuList : public std::map<void*,MenuEntry*>
 {
 	public:
 		~MenuList();
@@ -57,12 +65,14 @@ public:
 	u16* lesson_sprite_vram;
 	int y_offset;
 	int v_y;
+	void* active_list_id;
+	int frame_count;
 public:
 	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config );
 	~LessonMenu();
 	void render( Screen screen );
 	void run_for_user_choice( LessonMenuChoice& choice );
-	MenuEntry* get_entry_by_pos( int x, int y );
+	MenuList::iterator get_entry_by_pos( int x, int y );
 };
 
 

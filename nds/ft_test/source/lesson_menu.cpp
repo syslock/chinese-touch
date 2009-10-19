@@ -1,10 +1,26 @@
 #include <math.h>
+#include <sstream>
 
+#include "hanzi-trainer.h"
 #include "lesson_menu.h"
 #include "screen.h"
+#include "error_console.h"
 // compiled-in sprite data:
 #include "text-x-generic.h"
 #include "accessories-dictionary.h"
+
+
+int MenuEntry::BASE_HEIGHT = 32;
+int MenuEntry::ACTIVE_HEIGHT = 50;
+int MenuEntry::FONT_SIZE = 10;
+int MenuEntry::TEXT_X_OFFSET = 50;
+
+void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
+{
+	RenderStyle render_style;
+	RenderRect rect = ft.render( *this->text_surface, text,
+		ft.han_face, MenuEntry::FONT_SIZE, 0, 0, &render_style );
+}
 
 
 MenuList::~MenuList()
@@ -24,9 +40,14 @@ MenuList::~MenuList()
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
-		book_sprite_vram(0), lesson_sprite_vram(0), y_offset(5), v_y(0)
+		book_sprite_vram(0), lesson_sprite_vram(0), y_offset(5), v_y(0), active_list_id(0),
+		frame_count(0)
 {
+#if DEBUG
+	ErrorConsole::init( SCREEN_MAIN );
+#else
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
+#endif
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 
 	vramSetBankD( VRAM_D_SUB_SPRITE );
@@ -48,34 +69,41 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	// Menü zur gespeicherten Position bewegen:
 	std::string config_book_name = this->config.get_current_book_name();
 	int config_lesson_number = this->config.get_current_lesson_number();
-	if( config_book_name.length() )
+	if( config_book_name.length() && config_lesson_number )
 	{
 		bool found = false;
 		// tatsächlichen Wert nur verändern, wenn wir auch was finden:
 		int _y_offset = 0;
 		for( Library::iterator book_it=this->library.begin();
-			book_it!=this->library.end(); book_it++, _y_offset-=32 )
+			book_it!=this->library.end(); 
+			book_it++, _y_offset-=MenuEntry::BASE_HEIGHT )
 		{
-			if( config_lesson_number )
+			_y_offset -= MenuEntry::BASE_HEIGHT;
+			for( Book::iterator lesson_it=book_it->second->begin();
+				lesson_it!=book_it->second->end(); 
+				lesson_it++, _y_offset-=MenuEntry::BASE_HEIGHT )
 			{
-				_y_offset -= 32;
-				for( Book::iterator lesson_it=book_it->second->begin();
-					lesson_it!=book_it->second->end(); lesson_it++, _y_offset-=32 )
+				if( book_it->first == config_book_name 
+					&& lesson_it->first == config_lesson_number )
 				{
-					if( book_it->first == config_book_name 
-						&& lesson_it->first == config_lesson_number )
-					{
-						found = true;
-						this->y_offset = _y_offset;
-						// Stück zurück und leichten Impuls setzen um das Vorspulen zu verdeutlichen:
-						this->y_offset+=20;
-						this->v_y=-5;
-						break;
-					}
+					found = true;
+					this->active_list_id = static_cast<void*>( lesson_it->second );
+					this->y_offset = _y_offset;
+					// Stück zurück und leichten Impuls setzen um das Vorspulen zu verdeutlichen:
+					this->y_offset+=20;
+					this->v_y=-5;
+					break;
 				}
 			}
 			if( found )
 			{
+				/* Menüeintrag für das enthaltende Buch anlegen und ausklappen 
+					(den Rest macht die Rendermethode...) */
+				MenuEntry* entry = new MenuEntry();
+				entry->book = book_it->second;
+				entry->exploded = true;
+				this->menu_list[ static_cast<void*>(entry->book) ] = entry;
+				entry->render_text( this->freetype_renderer, entry->book->title );
 				break;
 			}
 		}
@@ -90,12 +118,15 @@ LessonMenu::~LessonMenu()
 
 void LessonMenu::render( Screen screen )
 {
+	this->frame_count++;
 	if( screen == SCREEN_MAIN )
 	{
+#if !DEBUG
 		this->info_screen.clear();
 		RenderStyle render_style;
 		this->freetype_renderer.render( this->info_screen, "你好Main！", 
 			this->freetype_renderer.han_face, 12, 0, 0, &render_style );
+#endif
 	}
 	else if( screen == SCREEN_SUB )
 	{
@@ -103,11 +134,12 @@ void LessonMenu::render( Screen screen )
 		oamClear( &oamSub, 0, 0 );
 		int top = this->y_offset;
 		int oam_entry = 0;
-		int list_id = 1;
 		for( Library::iterator book_it = this->library.begin(); 
-			book_it != this->library.end() && top < 192; book_it++ )
+			book_it != this->library.end() && top < this->menu_screen.res_y; 
+			book_it++ )
 		{
-			if( top > -32 )
+			void* book_id = static_cast<void*>( book_it->second );
+			if( top > -MenuEntry::ACTIVE_HEIGHT )
 			{
 				oamSet( &oamSub, 	// sub display
 						oam_entry++,	// oam entry to set
@@ -123,60 +155,69 @@ void LessonMenu::render( Screen screen )
 						0, 0, 		// vflip, hflip
 						0			// apply mosaic
 					);
-				RenderScreenBuffer *surface;
-				if( this->menu_list.count(list_id) )
+				MenuEntry* entry;
+				if( this->menu_list.count( book_id ) )
 				{
-					surface = this->menu_list[list_id]->text_surface;
+					entry = this->menu_list[ book_id ];
 				}
 				else
 				{
-					MenuEntry* entry = new MenuEntry();
+					entry = new MenuEntry();
 					entry->book = book_it->second;
-					this->menu_list[list_id] = entry;
-					surface = entry->text_surface;
-					RenderStyle render_style;
-					RenderRect rect = this->freetype_renderer.render( *surface, book_it->second->title, 
-						this->freetype_renderer.han_face, 10, 0, 0, &render_style );
+					this->menu_list[ book_id ] = entry;
+					entry->render_text( this->freetype_renderer, book_it->second->title );
 				}
-				surface->render_to( this->menu_screen, 50, top );
+				entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, top );
+				entry->top = top;
+				entry->last_frame_rendered = this->frame_count;
 			}
-			list_id++;
-			top += 32;
-			for( Book::iterator lesson_it = book_it->second->begin();
-				lesson_it != book_it->second->end() && top < 192; lesson_it++, list_id++, top+=32 )
+			if( book_id == this->active_list_id )
+				top += MenuEntry::ACTIVE_HEIGHT;
+			else
+				top += MenuEntry::BASE_HEIGHT;
+			if( this->menu_list[book_id]->exploded )
 			{
-				if( top > -32 )
+				for( Book::iterator lesson_it = book_it->second->begin();
+					lesson_it != book_it->second->end() && top < this->menu_screen.res_y; 
+					lesson_it++ )
 				{
-					oamSet( &oamSub, 	// sub display
-							oam_entry++,	// oam entry to set
-							5, top, 	// position
-							0, 			// priority
-							15,			// alpha
-							SpriteSize_32x32, // size
-							SpriteColorFormat_Bmp, // format
-							this->lesson_sprite_vram, // vram address
-							0, 			// rotation index
-							0,			// double size
-							0, 			// hide
-							0, 0, 		// vflip, hflip
-							0			// apply mosaic
-						);
-					RenderScreenBuffer *surface;
-					if( this->menu_list.count(list_id) )
+					void* lesson_id = static_cast<void*>( lesson_it->second );
+					if( top > -MenuEntry::ACTIVE_HEIGHT )
 					{
-						surface = this->menu_list[list_id]->text_surface;
+						oamSet( &oamSub, 	// sub display
+								oam_entry++,	// oam entry to set
+								5, top, 	// position
+								0, 			// priority
+								15,			// alpha
+								SpriteSize_32x32, // size
+								SpriteColorFormat_Bmp, // format
+								this->lesson_sprite_vram, // vram address
+								0, 			// rotation index
+								0,			// double size
+								0, 			// hide
+								0, 0, 		// vflip, hflip
+								0			// apply mosaic
+							);
+						MenuEntry* entry;
+						if( this->menu_list.count( lesson_id ) )
+						{
+							entry = this->menu_list[ lesson_id ];
+						}
+						else
+						{
+							entry = new MenuEntry();
+							entry->lesson = lesson_it->second;
+							this->menu_list[ lesson_id ] = entry;
+							entry->render_text( this->freetype_renderer, lesson_it->second->title );
+						}
+						entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, top );
+						entry->top = top;
+						entry->last_frame_rendered = this->frame_count;
 					}
+					if( lesson_id == this->active_list_id )
+						top += MenuEntry::ACTIVE_HEIGHT;
 					else
-					{
-						MenuEntry* entry = new MenuEntry();
-						entry->lesson = lesson_it->second;
-						this->menu_list[list_id] = entry;
-						surface = entry->text_surface;
-						RenderStyle render_style;
-						RenderRect rect = this->freetype_renderer.render( *surface, lesson_it->second->title, 
-							this->freetype_renderer.han_face, 10, 0, 0, &render_style );
-					}
-					surface->render_to( this->menu_screen, 50, top );
+						top += MenuEntry::BASE_HEIGHT;
 				}
 			}
 		}
@@ -191,28 +232,43 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 	this->render( SCREEN_SUB );
 	touchPosition old_touch;
     touchRead( &old_touch );
-	bool dragged = false;
+	bool touched = false;
+	int old_y_offset = this->y_offset;
 	while( true )
 	{
         scanKeys();
         touchPosition touch;
         touchRead( &touch );
         int area = touch.px * touch.z2 / touch.z1 - touch.px;
-        if( keysCurrent() & KEY_TOUCH 
-            && (touch.px!=old_touch.px || touch.py!=old_touch.py) )
+        if( keysCurrent() & KEY_TOUCH )
         {
-			int y_diff = touch.py - old_touch.py;
-			if( dragged )
+			if( !touched ) 
 			{
-				this->y_offset += y_diff;
-				this->v_y = y_diff;
-				this->render( SCREEN_SUB );
+				touched = true;
+				old_touch = touch;
+				old_y_offset = this->y_offset;
 			}
-            else if( !dragged && abs(y_diff) < 5 )
+			int y_diff = touch.py - old_touch.py;
+			this->y_offset += y_diff;
+			this->v_y = y_diff;
+			this->render( SCREEN_SUB );
+			old_touch = touch;
+		}
+		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 2 )
+		{
+			touched = false;
+			MenuList::iterator entry_it = this->get_entry_by_pos( old_touch.px, old_touch.py );
+			if( entry_it!=this->menu_list.end() )
 			{
-				MenuEntry* entry = this->get_entry_by_pos( touch.px, touch.py );
-				if( entry )
+				void* entry_id = entry_it->first;
+				MenuEntry* entry = entry_it->second;
+				if( entry_id == this->active_list_id )
 				{
+					if( entry->book )
+					{
+						entry->exploded = !entry->exploded;
+						this->render( SCREEN_SUB );
+					}
 					if( entry->lesson )
 					{
 						choice.book = entry->lesson->book;
@@ -221,16 +277,16 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 						return;
 					}
 				}
+				else
+				{
+					this->active_list_id = entry_id;
+					this->render( SCREEN_SUB );
+				}
 			}
-			else if( !dragged && abs(y_diff) >= 5 )
-			{
-				dragged = true;
-				// wird bei keysUp() & KEY_TOUCH wieder auf false gesetzt
-			}
-			old_touch = touch;
 		}
 		else if( this->v_y )
 		{
+			touched = false;
 			int resistance = this->v_y / 4;
 			if( !resistance ) resistance = this->v_y / 2;
 			if( !resistance ) resistance = this->v_y;
@@ -238,17 +294,36 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 			this->y_offset += this->v_y;
 			this->render( SCREEN_SUB );
 		}
-        if( keysUp() & KEY_TOUCH )
+        else
         {
-            dragged = false;
+			touched = false;
         }
 		swiWaitForVBlank();
 	}
 }
 
-MenuEntry* LessonMenu::get_entry_by_pos( int x, int y )
+MenuList::iterator LessonMenu::get_entry_by_pos( int x, int y )
 {
-	int id = (y-this->y_offset)/32+1;
-	if( this->menu_list.count(id) ) return this->menu_list[id];
-	else return 0;
+#if DEBUG
+	std::cout << "get_entry_by_pos(" << x << "," << y << ")" << std::endl;
+#endif
+	for( MenuList::iterator entry_it = this->menu_list.begin();
+		entry_it != this->menu_list.end(); 
+		entry_it++ )
+	{
+		MenuEntry* entry = entry_it->second;
+		if( entry->last_frame_rendered==this->frame_count )
+		{
+			int next_top;
+			if( entry_it->first==this->active_list_id )
+				next_top = entry->top + MenuEntry::ACTIVE_HEIGHT;
+			else 
+				next_top = entry->top + MenuEntry::BASE_HEIGHT;
+			if( y >= entry->top && y < next_top )
+			{
+				return entry_it;
+			}
+		}
+	}
+	return this->menu_list.end();
 }

@@ -3,28 +3,29 @@
 
 #include "error_console.h"
 
-bool ErrorConsole::initialized = false;
 
 void ErrorConsole::init( Screen screen )
 {
-    if( !ErrorConsole::initialized )
-    {
-        switch( screen )
-        {
-            case SCREEN_SUB: 
-            {  
-                consoleDemoInit();
-                std::cout << "console intialized" << std::endl;
-                break; 
-            }
-            case SCREEN_MAIN: 
-            {
-                consoleDemoInit(); 
-                std::cout << "console intialized" << std::endl;
-                std::cout << "warning: initializing error console on main is not implemented" << std::endl; 
-                break;
-            }
-        }
-    }
-    ErrorConsole::initialized = true;
+	switch( screen )
+	{
+		case SCREEN_SUB: 
+		{
+			videoSetModeSub( MODE_5_2D );
+			vramSetBankC( VRAM_C_SUB_BG );
+			consoleDemoInit();
+			consoleSelect( consoleGetDefault() );
+			std::cout << "sub console intialized" << std::endl;
+			break; 
+		}
+		case SCREEN_MAIN: 
+		{
+			videoSetMode(MODE_5_2D | DISPLAY_SCREEN_BASE(2));
+			vramSetBankB(VRAM_B_MAIN_BG);
+			PrintConsole topScreen = *consoleInit( 0, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 8, true, true );
+			topScreen.fontBgMap = BG_MAP_RAM(4 + 64);
+			consoleSelect(&topScreen);
+			std::cout << "main console intialized" << std::endl;
+			break;
+		}
+	}
 }
