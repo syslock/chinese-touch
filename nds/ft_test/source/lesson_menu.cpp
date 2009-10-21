@@ -1,5 +1,6 @@
 #include <math.h>
 #include <sstream>
+#include <nds/arm9/image.h>
 
 #include "hanzi-trainer.h"
 #include "lesson_menu.h"
@@ -8,17 +9,20 @@
 // compiled-in sprite data:
 #include "text-x-generic.h"
 #include "accessories-dictionary.h"
+#include "menu_button.h"
 
 
 int MenuEntry::BASE_HEIGHT = 32;
-int MenuEntry::ACTIVE_HEIGHT = 50;
+int MenuEntry::ACTIVE_HEIGHT = 52;
 int MenuEntry::FONT_SIZE = 10;
 int MenuEntry::TEXT_X_OFFSET = 50;
+int MenuEntry::BUTTON_GAP = 6;
 
 void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
 {
 	RenderStyle render_style;
-	RenderRect rect = ft.render( *this->text_surface, text,
+	//render_style.linebreak = false;
+	ft.render( *this->text_surface, text,
 		ft.han_face, MenuEntry::FONT_SIZE, 0, 0, &render_style );
 }
 
@@ -37,11 +41,27 @@ MenuList::~MenuList()
 	this->clear();
 }
 
+void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
+{
+	int dest_offset = 0;
+	for( int tlin=0; tlin<2; tlin++ )
+		for( int trow=0; trow<4; trow++ )
+			for( int plin=0; plin<8; plin++ )
+				for( int prow=0; prow<8; prow++, dest_offset++ )
+				{
+					int source_offset = (32*8*tlin)+(plin*4+trow)*8+prow;
+					//int dest_offset = plin*8+prow+64*trow+256*tlin;
+					dest_buffer[dest_offset] = source_buffer[source_offset];
+				}
+}
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
 		book_sprite_vram(0), lesson_sprite_vram(0), y_offset(5), v_y(0), active_list_id(0),
-		frame_count(0)
+		frame_count(0), 
+		shengci_text(32,16), yufa_text(32,16), kewen_text(32,16), lianxi_text(32,16), 
+		shengci_sprite_vram(0), yufa_sprite_vram(0), kewen_sprite_vram(0), lianxi_sprite_vram(0),
+		button_sprite_vram(0)
 {
 #if DEBUG
 	ErrorConsole::init( SCREEN_MAIN );
@@ -50,21 +70,61 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 #endif
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 
+	// unteren Bildschirm für Spritenutzung initialisieren:
 	vramSetBankD( VRAM_D_SUB_SPRITE );
 	oamInit( &oamSub, SpriteMapping_Bmp_1D_128, 0 );
+	oamAllocReset( &oamSub );
 	oamEnable( &oamSub );
+	// vorgerenderte Spritegrafiken laden:
 	this->book_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
 	dmaCopy( accessories_dictionaryBitmap, this->book_sprite_vram, 32*32*2 );
 	this->lesson_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
 	dmaCopy( text_x_genericBitmap, this->lesson_sprite_vram, 32*32*2 );
-	// Alpha-Bits setzen, wo überhaupt was zu sehen ist:
+	this->button_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( menu_buttonBitmap, this->button_sprite_vram, 32*16*2 );
+	// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
 	for( int i=0; i<32*32; i++ )
 	{
 		if( this->book_sprite_vram[i] )
 			this->book_sprite_vram[i] |= 1<<15;
 		if( this->lesson_sprite_vram[i] )
 			this->lesson_sprite_vram[i] |= 1<<15;
+		if( this->button_sprite_vram[i] )
+			this->button_sprite_vram[i] |= 1<<15;
 	}
+
+	// Palette für 8-Bit-Sprites wie Hintergrundpalette initialisieren:
+	dmaCopy( this->menu_screen.palette, SPRITE_PALETTE_SUB, 256*2 );
+
+	// VRAM für 8-Bit-Button-Sprites reservieren:
+	this->shengci_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+	this->yufa_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+	this->kewen_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+	this->lianxi_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+
+	// Beschriftungen für Ladeknöpfe vorrendern:
+	RenderStyle render_style;
+	this->freetype_renderer.render( this->shengci_text, "生词",
+		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+	this->freetype_renderer.render( this->yufa_text, "语法",
+		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+	this->freetype_renderer.render( this->kewen_text, "课文",
+		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+	this->freetype_renderer.render( this->lianxi_text, "练习",
+		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+
+	// FIXME: dmaCopy broken? needs VBlank? before? after? *confused*
+	// Spritekonvertierung:
+	// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
+	u8 conversion_buffer[32*16];
+	tile_32x16_8bpp_sprite( (u8*)(this->shengci_text.base_address), conversion_buffer );
+	memcpy( this->shengci_sprite_vram, conversion_buffer, 32*16*1 );
+	tile_32x16_8bpp_sprite( (u8*)(this->yufa_text.base_address), conversion_buffer );
+	memcpy( this->yufa_sprite_vram, conversion_buffer, 32*16*1 );
+	tile_32x16_8bpp_sprite( (u8*)(this->kewen_text.base_address), conversion_buffer );
+	memcpy( this->kewen_sprite_vram, conversion_buffer, 32*16*1 );
+	tile_32x16_8bpp_sprite( (u8*)(this->lianxi_text.base_address), conversion_buffer );
+	memcpy( this->lianxi_sprite_vram, conversion_buffer, 32*16*1 );
 	
 	// Menü zur gespeicherten Position bewegen:
 	std::string config_book_name = this->config.get_current_book_name();
@@ -114,6 +174,11 @@ LessonMenu::~LessonMenu()
 {
 	oamFreeGfx( &oamSub, this->book_sprite_vram );
 	oamFreeGfx( &oamSub, this->lesson_sprite_vram );
+	oamFreeGfx( &oamSub, this->shengci_sprite_vram );
+	oamFreeGfx( &oamSub, this->yufa_sprite_vram );
+	oamFreeGfx( &oamSub, this->kewen_sprite_vram );
+	oamFreeGfx( &oamSub, this->lianxi_sprite_vram );
+	oamFreeGfx( &oamSub, this->book_sprite_vram );
 }
 
 void LessonMenu::render( Screen screen )
@@ -171,10 +236,7 @@ void LessonMenu::render( Screen screen )
 				entry->top = top;
 				entry->last_frame_rendered = this->frame_count;
 			}
-			if( book_id == this->active_list_id )
-				top += MenuEntry::ACTIVE_HEIGHT;
-			else
-				top += MenuEntry::BASE_HEIGHT;
+			top += MenuEntry::BASE_HEIGHT;
 			if( this->menu_list[book_id]->exploded )
 			{
 				for( Book::iterator lesson_it = book_it->second->begin();
@@ -182,6 +244,7 @@ void LessonMenu::render( Screen screen )
 					lesson_it++ )
 				{
 					void* lesson_id = static_cast<void*>( lesson_it->second );
+					MenuEntry* entry = 0;
 					if( top > -MenuEntry::ACTIVE_HEIGHT )
 					{
 						oamSet( &oamSub, 	// sub display
@@ -198,7 +261,6 @@ void LessonMenu::render( Screen screen )
 								0, 0, 		// vflip, hflip
 								0			// apply mosaic
 							);
-						MenuEntry* entry;
 						if( this->menu_list.count( lesson_id ) )
 						{
 							entry = this->menu_list[ lesson_id ];
@@ -214,10 +276,46 @@ void LessonMenu::render( Screen screen )
 						entry->top = top;
 						entry->last_frame_rendered = this->frame_count;
 					}
-					if( lesson_id == this->active_list_id )
+					if( entry && entry->lesson && (lesson_id == this->active_list_id) )
+					{
+						if( top > -MenuEntry::ACTIVE_HEIGHT )
+						{
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->shengci_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->yufa_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->kewen_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+							oamSet( &oamSub, oam_entry++,
+									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->lianxi_sprite_vram,
+									0, 0, 0, 0, 0, 0 );
+						}
 						top += MenuEntry::ACTIVE_HEIGHT;
-					else
-						top += MenuEntry::BASE_HEIGHT;
+					}
+					else top += MenuEntry::BASE_HEIGHT;
 				}
 			}
 		}
@@ -262,13 +360,13 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 			{
 				void* entry_id = entry_it->first;
 				MenuEntry* entry = entry_it->second;
+				if( entry->book )
+				{
+					entry->exploded = !entry->exploded;
+					this->render( SCREEN_SUB );
+				}
 				if( entry_id == this->active_list_id )
 				{
-					if( entry->book )
-					{
-						entry->exploded = !entry->exploded;
-						this->render( SCREEN_SUB );
-					}
 					if( entry->lesson )
 					{
 						choice.book = entry->lesson->book;
@@ -315,7 +413,7 @@ MenuList::iterator LessonMenu::get_entry_by_pos( int x, int y )
 		if( entry->last_frame_rendered==this->frame_count )
 		{
 			int next_top;
-			if( entry_it->first==this->active_list_id )
+			if( entry->lesson && entry_it->first==this->active_list_id )
 				next_top = entry->top + MenuEntry::ACTIVE_HEIGHT;
 			else 
 				next_top = entry->top + MenuEntry::BASE_HEIGHT;

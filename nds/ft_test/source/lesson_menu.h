@@ -38,6 +38,7 @@ class MenuEntry
 		static int ACTIVE_HEIGHT;
 		static int FONT_SIZE;
 		static int TEXT_X_OFFSET;
+		static int BUTTON_GAP;
 	public:
 		MenuEntry() : text_surface( new RenderScreenBuffer(200, MenuEntry::BASE_HEIGHT) ),
 						book(0), lesson(0), exploded(false), top(0), last_frame_rendered(0) {}
@@ -67,6 +68,12 @@ public:
 	int v_y;
 	void* active_list_id;
 	int frame_count;
+	RenderScreenBuffer shengci_text, yufa_text, kewen_text, lianxi_text;
+	u16* shengci_sprite_vram;
+	u16* yufa_sprite_vram;
+	u16* kewen_sprite_vram;
+	u16* lianxi_sprite_vram;
+	u16* button_sprite_vram;
 public:
 	LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config );
 	~LessonMenu();
