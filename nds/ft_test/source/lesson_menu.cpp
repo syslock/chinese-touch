@@ -10,6 +10,7 @@
 #include "text-x-generic.h"
 #include "accessories-dictionary.h"
 #include "menu_button.h"
+#include "menu_button_colors.h"
 
 
 int MenuEntry::BASE_HEIGHT = 32;
@@ -67,8 +68,10 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	ErrorConsole::init( SCREEN_MAIN );
 #else
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
+	this->info_screen.clear();
 #endif
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
+	this->menu_screen.clear();
 
 	// unteren Bildschirm für Spritenutzung initialisieren:
 	vramSetBankD( VRAM_D_SUB_SPRITE );
@@ -94,7 +97,7 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	}
 
 	// Palette für 8-Bit-Sprites wie Hintergrundpalette initialisieren:
-	dmaCopy( this->menu_screen.palette, SPRITE_PALETTE_SUB, 256*2 );
+	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
 
 	// VRAM für 8-Bit-Button-Sprites reservieren:
 	this->shengci_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
@@ -104,14 +107,15 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 
 	// Beschriftungen für Ladeknöpfe vorrendern:
 	RenderStyle render_style;
+	render_style.center_x = true;
 	this->freetype_renderer.render( this->shengci_text, "生词",
-		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
 	this->freetype_renderer.render( this->yufa_text, "语法",
-		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
 	this->freetype_renderer.render( this->kewen_text, "课文",
-		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
 	this->freetype_renderer.render( this->lianxi_text, "练习",
-		this->freetype_renderer.han_face, 9, 3, 2, &render_style );
+		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
 
 	// FIXME: dmaCopy broken? needs VBlank? before? after? *confused*
 	// Spritekonvertierung:
@@ -195,7 +199,6 @@ void LessonMenu::render( Screen screen )
 	}
 	else if( screen == SCREEN_SUB )
 	{
-		this->menu_screen.clear();
 		oamClear( &oamSub, 0, 0 );
 		int top = this->y_offset;
 		int oam_entry = 0;
@@ -232,7 +235,6 @@ void LessonMenu::render( Screen screen )
 					this->menu_list[ book_id ] = entry;
 					entry->render_text( this->freetype_renderer, book_it->second->title );
 				}
-				entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, top );
 				entry->top = top;
 				entry->last_frame_rendered = this->frame_count;
 			}
@@ -272,7 +274,6 @@ void LessonMenu::render( Screen screen )
 							this->menu_list[ lesson_id ] = entry;
 							entry->render_text( this->freetype_renderer, lesson_it->second->title );
 						}
-						entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, top );
 						entry->top = top;
 						entry->last_frame_rendered = this->frame_count;
 					}
@@ -282,7 +283,7 @@ void LessonMenu::render( Screen screen )
 						{
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
-									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
@@ -290,7 +291,7 @@ void LessonMenu::render( Screen screen )
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
-									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
@@ -298,7 +299,7 @@ void LessonMenu::render( Screen screen )
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
-									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
@@ -306,7 +307,7 @@ void LessonMenu::render( Screen screen )
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
-									1, 15, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
+									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
 									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
@@ -319,8 +320,19 @@ void LessonMenu::render( Screen screen )
 				}
 			}
 		}
+		// gepufferte Bilddaten einblenden bzw. in den VRAM kopieren:
 		swiWaitForVBlank();
 		oamUpdate( &oamSub );
+		this->menu_screen.clear();
+		for( MenuList::iterator entry_it = this->menu_list.begin();
+			entry_it != this->menu_list.end(); entry_it++ )
+		{
+			MenuEntry* entry = entry_it->second;
+			if( entry->last_frame_rendered == this->frame_count )
+			{
+				entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, entry->top );
+			}
+		}
 	}
 }
 
@@ -347,9 +359,12 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 				old_y_offset = this->y_offset;
 			}
 			int y_diff = touch.py - old_touch.py;
-			this->y_offset += y_diff;
-			this->v_y = y_diff;
-			this->render( SCREEN_SUB );
+			if( y_diff )
+			{
+				this->y_offset += y_diff;
+				this->v_y = y_diff;
+				this->render( SCREEN_SUB );
+			}
 			old_touch = touch;
 		}
 		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 2 )

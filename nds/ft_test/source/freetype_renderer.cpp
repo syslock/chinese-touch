@@ -102,11 +102,9 @@ void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
 	char* buffer = (char*)this->base_address;
 	for( int row=0; row<this->res_y; row++ )
 	{
+		// FIXME: Optimierung durch zeilenweises dmaCopy?
 		for( int pixel=0; pixel<this->res_x; pixel+=2 )
 		{
-#if 0
-			if( x+pixel > 0 && x+pixel+1 < dest.res_x && y+row > 0 && y+row < dest.res_y )
-#endif
 			u16 value = 0;
 			if( pixel < this->res_x-1 )
 			{
