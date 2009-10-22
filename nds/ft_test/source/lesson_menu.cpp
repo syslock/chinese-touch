@@ -194,9 +194,72 @@ void LessonMenu::render( Screen screen )
 	{
 #if !DEBUG
 		this->info_screen.clear();
+		std::string category = "Willkommen zu";
+		std::string title = "“汉字老师”";
+		std::string description = "Lektionsauswahl: Tippe ein Buch oder eine Lektion auf dem unteren Bildschirm an!";
+		std::string stats_text;
+		if( this->menu_list.count(this->active_list_id) )
+		{
+			MenuEntry* entry = this->menu_list[ this->active_list_id ];
+			if( entry->book )
+			{
+				category = "Lehrbuch";
+				title = entry->book->title;
+				description = entry->book->description;
+				int word_count = 0;
+				for( Book::iterator lesson_it = entry->book->begin();
+					lesson_it != entry->book->end(); lesson_it++ )
+				{
+					Lesson* lesson = lesson_it->second;
+					word_count += lesson->size();
+				}
+				std::stringstream stats_stream;
+				stats_stream << "enthält " << entry->book->size() << " Lektionen und " << word_count << " Vokabeln";
+				stats_text = stats_stream.str();
+			}
+			else if( entry->lesson )
+			{
+				category = "Lektion";
+				title = entry->lesson->title;
+				description = entry->lesson->description;
+				std::stringstream stats_stream;
+				stats_stream << "enthält " << entry->lesson->size() << " Vokabeln";
+				stats_text = stats_stream.str();
+			}
+		}
+		int top = 0;
 		RenderStyle render_style;
-		this->freetype_renderer.render( this->info_screen, "你好Main！", 
-			this->freetype_renderer.han_face, 12, 0, 0, &render_style );
+		RenderRect rect(0,0,0,0);
+		top += 3;
+		if( category.length() )
+		{
+			rect = this->freetype_renderer.render( this->info_screen, category, 
+				this->freetype_renderer.han_face, 10, 3, top, &render_style );
+			top += rect.height;
+		} else top += 15;
+		top += 15;
+		if( title.length() )
+		{
+			render_style.center_x = true;
+			rect = this->freetype_renderer.render( this->info_screen, title, 
+				this->freetype_renderer.han_face, 16, 0, top, &render_style );
+			top += rect.height;
+			render_style.center_x = false;
+		} else top += 24;
+		top += 15;
+		if( description.length() )
+		{
+			rect = this->freetype_renderer.render( this->info_screen, description, 
+				this->freetype_renderer.han_face, 9, 3, top, &render_style );
+			top += rect.height;
+		} else top += 15;
+		top += 15;
+		if( stats_text.length() )
+		{
+			rect = this->freetype_renderer.render( this->info_screen, stats_text, 
+				this->freetype_renderer.han_face, 8, 3, top, &render_style );
+			top += rect.height;
+		} else top += 15;
 #endif
 	}
 	else if( screen == SCREEN_SUB )
@@ -411,6 +474,7 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 				{
 					this->active_list_id = entry_id;
 					this->render( SCREEN_SUB );
+					this->render( SCREEN_MAIN );
 				}
 			}
 		}
