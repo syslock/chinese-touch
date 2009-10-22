@@ -72,6 +72,8 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 #endif
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 	this->menu_screen.clear();
+	// Farbindex 0 der Hintergrundpalette auf hellblau für's Highlight setzen:
+	this->menu_screen.palette[0] = 31<<10|28<<5|28;
 
 	// unteren Bildschirm für Spritenutzung initialisieren:
 	vramSetBankD( VRAM_D_SUB_SPRITE );
@@ -323,13 +325,28 @@ void LessonMenu::render( Screen screen )
 		// gepufferte Bilddaten einblenden bzw. in den VRAM kopieren:
 		swiWaitForVBlank();
 		oamUpdate( &oamSub );
-		this->menu_screen.clear();
+		this->menu_screen.clear( 1 );
 		for( MenuList::iterator entry_it = this->menu_list.begin();
 			entry_it != this->menu_list.end(); entry_it++ )
 		{
 			MenuEntry* entry = entry_it->second;
 			if( entry->last_frame_rendered == this->frame_count )
 			{
+				if( entry_it->first == this->active_list_id )
+				{
+					int highlight_height=1;
+					if( entry->book ) highlight_height = MenuEntry::BASE_HEIGHT;
+					else if( entry->lesson ) highlight_height = MenuEntry::ACTIVE_HEIGHT;
+					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top+1)/2, 
+							0, 
+							this->menu_screen.res_x*(highlight_height-1) );
+					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top)/2, 
+							64, 
+							this->menu_screen.res_x );
+					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top+highlight_height)/2, 
+							64, 
+							this->menu_screen.res_x );
+				}
 				entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, entry->top );
 			}
 		}

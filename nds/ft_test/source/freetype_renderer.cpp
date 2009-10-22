@@ -90,10 +90,10 @@ void FreetypeRenderer::init_screen( Screen screen, RenderScreen& render_screen )
 	}
 }
 
-void RenderScreen::clear()
+void RenderScreen::clear( int color )
 {
     // 1. clear background buffer with background color
-    memset( this->base_address, 0, this->res_x*this->res_y*1 );
+    memset( this->base_address, color, this->res_x*this->res_y*1 );
 }
 
 void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )

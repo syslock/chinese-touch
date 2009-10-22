@@ -43,8 +43,9 @@ public:
 	{
 		this->id = _id;
 		this->base_address = bgGetGfxPtr( _id );
+		bgSetPriority( _id, 2 );
 	}
-	void clear();
+	void clear( int color=0 );
 public:
 	int id;
 	u16* base_address;
