@@ -105,6 +105,14 @@ void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
 		// FIXME: Optimierung durch zeilenweises dmaCopy?
 		for( int pixel=0; pixel<this->res_x; pixel+=2 )
 		{
+			u16* base_address = dest.base_address
+					+ (row+y)*dest.res_x/2
+					+ pixel/2 + x/2;
+			if( (base_address < dest.base_address)
+				|| (base_address > (dest.base_address+dest.res_x*dest.res_y-2)) )
+			{
+				continue;
+			}
 			u16 value = 0;
 			if( pixel < this->res_x-1 )
 			{
@@ -114,14 +122,6 @@ void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
 			else
 			{
 				value = buffer[row*this->res_x+pixel];
-			}
-			u16* base_address = dest.base_address
-					+ (row+y)*dest.res_x/2
-					+ pixel/2 + x/2;
-			if( base_address < dest.base_address
-				|| base_address > dest.base_address+dest.res_x*dest.res_y-2 )
-			{
-				continue;
 			}
 			*base_address |= value;
 		}

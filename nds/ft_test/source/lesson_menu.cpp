@@ -144,23 +144,26 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 			book_it!=this->library.end(); 
 			book_it++, _y_offset-=MenuEntry::BASE_HEIGHT )
 		{
-			_y_offset -= MenuEntry::BASE_HEIGHT;
-			for( Book::iterator lesson_it=book_it->second->begin();
-				lesson_it!=book_it->second->end(); 
-				lesson_it++, _y_offset-=MenuEntry::BASE_HEIGHT )
+			// geht davon aus, dass nur das selektierte Buch ausgeklappt ist:
+			if( book_it->first == config_book_name )
 			{
-				if( book_it->first == config_book_name 
-					&& lesson_it->first == config_lesson_number )
+				for( Book::iterator lesson_it=book_it->second->begin();
+					lesson_it!=book_it->second->end(); 
+					lesson_it++, _y_offset-=MenuEntry::BASE_HEIGHT )
 				{
-					found = true;
-					this->active_list_id = static_cast<void*>( lesson_it->second );
-					this->y_offset = _y_offset;
-					// Stück zurück und leichten Impuls setzen um das Vorspulen zu verdeutlichen:
-					this->y_offset+=20;
-					this->v_y=-5;
-					break;
+					if( lesson_it->first == config_lesson_number )
+					{
+						_y_offset -= MenuEntry::BASE_HEIGHT;
+						found = true;
+						this->active_list_id = static_cast<void*>( lesson_it->second );
+						this->y_offset = _y_offset;
+						// Stück zurück und leichten Impuls setzen um das Vorspulen zu verdeutlichen:
+						this->y_offset+=20;
+						this->v_y=-5;
+						break;
+					}
 				}
-			}
+		}
 			if( found )
 			{
 				/* Menüeintrag für das enthaltende Buch anlegen und ausklappen 
@@ -272,7 +275,14 @@ void LessonMenu::render( Screen screen )
 			book_it++ )
 		{
 			void* book_id = static_cast<void*>( book_it->second );
-			if( top > -MenuEntry::ACTIVE_HEIGHT )
+			MenuEntry* book_entry = 0;
+			// book_entry holen, wenn bereits verfügbar, was bei initial ausgeklappten Büchern
+			// der Fall sein sollte, wenn der Konstruktor sie bereits vorgerendert hat:
+			if( this->menu_list.count( book_id ) )
+			{
+				book_entry = this->menu_list[ book_id ];
+			}
+			if( top > -MenuEntry::BASE_HEIGHT )
 			{
 				oamSet( &oamSub, 	// sub display
 						oam_entry++,	// oam entry to set
@@ -288,30 +298,28 @@ void LessonMenu::render( Screen screen )
 						0, 0, 		// vflip, hflip
 						0			// apply mosaic
 					);
-				MenuEntry* entry;
-				if( this->menu_list.count( book_id ) )
+				// book_entry anlegen, falls nicht schon früher geschehen,
+				// da wir ihn nun wirklich brauchen:
+				if( !book_entry )
 				{
-					entry = this->menu_list[ book_id ];
+					book_entry = new MenuEntry();
+					book_entry->book = book_it->second;
+					this->menu_list[ book_id ] = book_entry;
+					book_entry->render_text( this->freetype_renderer, book_it->second->title );
 				}
-				else
-				{
-					entry = new MenuEntry();
-					entry->book = book_it->second;
-					this->menu_list[ book_id ] = entry;
-					entry->render_text( this->freetype_renderer, book_it->second->title );
-				}
-				entry->top = top;
-				entry->last_frame_rendered = this->frame_count;
+				book_entry->top = top;
+				book_entry->last_frame_rendered = this->frame_count;
 			}
 			top += MenuEntry::BASE_HEIGHT;
-			if( this->menu_list[book_id]->exploded )
+			// Inhalte von Büchern, die nicht gerendert wurden, werden ignoriert:
+			if( book_entry && book_entry->exploded )
 			{
 				for( Book::iterator lesson_it = book_it->second->begin();
 					lesson_it != book_it->second->end() && top < this->menu_screen.res_y; 
 					lesson_it++ )
 				{
 					void* lesson_id = static_cast<void*>( lesson_it->second );
-					MenuEntry* entry = 0;
+					MenuEntry* lesson_entry = 0;
 					if( top > -MenuEntry::ACTIVE_HEIGHT )
 					{
 						oamSet( &oamSub, 	// sub display
@@ -330,19 +338,19 @@ void LessonMenu::render( Screen screen )
 							);
 						if( this->menu_list.count( lesson_id ) )
 						{
-							entry = this->menu_list[ lesson_id ];
+							lesson_entry = this->menu_list[ lesson_id ];
 						}
 						else
 						{
-							entry = new MenuEntry();
-							entry->lesson = lesson_it->second;
-							this->menu_list[ lesson_id ] = entry;
-							entry->render_text( this->freetype_renderer, lesson_it->second->title );
+							lesson_entry = new MenuEntry();
+							lesson_entry->lesson = lesson_it->second;
+							this->menu_list[ lesson_id ] = lesson_entry;
+							lesson_entry->render_text( this->freetype_renderer, lesson_it->second->title );
 						}
-						entry->top = top;
-						entry->last_frame_rendered = this->frame_count;
+						lesson_entry->top = top;
+						lesson_entry->last_frame_rendered = this->frame_count;
 					}
-					if( entry && entry->lesson && (lesson_id == this->active_list_id) )
+					if( lesson_entry && lesson_entry->lesson && (lesson_id == this->active_list_id) )
 					{
 						if( top > -MenuEntry::ACTIVE_HEIGHT )
 						{
@@ -397,18 +405,33 @@ void LessonMenu::render( Screen screen )
 			{
 				if( entry_it->first == this->active_list_id )
 				{
-					int highlight_height=1;
+					int highlight_height=2;
 					if( entry->book ) highlight_height = MenuEntry::BASE_HEIGHT;
 					else if( entry->lesson ) highlight_height = MenuEntry::ACTIVE_HEIGHT;
-					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top+1)/2, 
-							0, 
-							this->menu_screen.res_x*(highlight_height-1) );
-					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top)/2, 
-							64, 
-							this->menu_screen.res_x );
-					memset( this->menu_screen.base_address+this->menu_screen.res_x*(entry->top+highlight_height)/2, 
-							64, 
-							this->menu_screen.res_x );
+					int render_top = entry->top;
+					if( render_top<0 )
+					{
+						highlight_height += render_top;
+						render_top = 0;
+					}
+					if( highlight_height >= 2 )
+					{
+						memset( this->menu_screen.base_address+this->menu_screen.res_x*(render_top+1)/2, 
+								0, 
+								this->menu_screen.res_x*(highlight_height-2) );
+					}
+					if( entry->top == render_top )
+					{
+						memset( this->menu_screen.base_address+this->menu_screen.res_x*(render_top)/2, 
+								64, 
+								this->menu_screen.res_x );
+					}
+					if( highlight_height >= 1 )
+					{
+						memset( this->menu_screen.base_address+this->menu_screen.res_x*(render_top+highlight_height-1)/2, 
+								64, 
+								this->menu_screen.res_x );
+					}
 				}
 				entry->text_surface->render_to( this->menu_screen, MenuEntry::TEXT_X_OFFSET, entry->top );
 			}
