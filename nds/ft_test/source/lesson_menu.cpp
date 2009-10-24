@@ -229,7 +229,9 @@ void LessonMenu::render( Screen screen )
 		}
 		else
 		{
+			author = "Hànzì-Trainer";
 			title = "汉字教练";
+			publisher = "ein erweiterbares Sprachlernprogramm von Thomas Frenzel";
 			description = "Lektionsauswahl: Tippe ein Buch oder eine Lektion auf dem unteren Bildschirm an!";
 			std::stringstream stats_stream;
 			int lesson_count = 0;
