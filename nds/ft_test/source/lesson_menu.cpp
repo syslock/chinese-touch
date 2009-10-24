@@ -197,17 +197,15 @@ void LessonMenu::render( Screen screen )
 	{
 #if !DEBUG
 		this->info_screen.clear();
-		std::string category = "Willkommen zu";
-		std::string title = "“汉字老师”";
-		std::string description = "Lektionsauswahl: Tippe ein Buch oder eine Lektion auf dem unteren Bildschirm an!";
-		std::string stats_text;
+		std::string author, title, publisher, description, stats_text;
 		if( this->menu_list.count(this->active_list_id) )
 		{
 			MenuEntry* entry = this->menu_list[ this->active_list_id ];
 			if( entry->book )
 			{
-				category = "Lehrbuch";
+				author = entry->book->author;
 				title = entry->book->title;
+				publisher = entry->book->publisher;
 				description = entry->book->description;
 				int word_count = 0;
 				for( Book::iterator lesson_it = entry->book->begin();
@@ -222,7 +220,6 @@ void LessonMenu::render( Screen screen )
 			}
 			else if( entry->lesson )
 			{
-				category = "Lektion";
 				title = entry->lesson->title;
 				description = entry->lesson->description;
 				std::stringstream stats_stream;
@@ -230,39 +227,61 @@ void LessonMenu::render( Screen screen )
 				stats_text = stats_stream.str();
 			}
 		}
+		else
+		{
+			title = "汉字教练";
+			description = "Lektionsauswahl: Tippe ein Buch oder eine Lektion auf dem unteren Bildschirm an!";
+			std::stringstream stats_stream;
+			int lesson_count = 0;
+			for( Library::iterator book_it = this->library.begin();
+				book_it != this->library.end(); book_it++ )
+			{
+				lesson_count += book_it->second->size();
+			}
+			stats_stream << "Es stehen " << lesson_count << " Lektionen in " << this->library.size() << " Büchern zur Auswahl." ;
+			stats_text = stats_stream.str();
+		}
 		int top = 0;
-		RenderStyle render_style;
 		RenderRect rect(0,0,0,0);
 		top += 3;
-		if( category.length() )
+		if( author.length() )
 		{
-			rect = this->freetype_renderer.render( this->info_screen, category, 
-				this->freetype_renderer.han_face, 10, 3, top, &render_style );
-			top += rect.height;
-		} else top += 15;
-		top += 15;
+			RenderStyle render_style;
+			render_style.center_x = true;
+			rect = this->freetype_renderer.render( this->info_screen, author, 
+				this->freetype_renderer.han_face, 12, 0, top, &render_style );
+			top += rect.height+15;
+		}
 		if( title.length() )
 		{
+			RenderStyle render_style;
 			render_style.center_x = true;
 			rect = this->freetype_renderer.render( this->info_screen, title, 
 				this->freetype_renderer.han_face, 16, 0, top, &render_style );
-			top += rect.height;
-			render_style.center_x = false;
-		} else top += 24;
-		top += 15;
+			top += rect.height+15;
+		} else top += 24+15;
+		if( publisher.length() )
+		{
+			RenderStyle render_style;
+			render_style.center_x = true;
+			rect = this->freetype_renderer.render( this->info_screen, publisher, 
+				this->freetype_renderer.han_face, 8, 0, top, &render_style );
+			top += rect.height+15;
+		}
 		if( description.length() )
 		{
+			RenderStyle render_style;
 			rect = this->freetype_renderer.render( this->info_screen, description, 
-				this->freetype_renderer.han_face, 9, 3, top, &render_style );
-			top += rect.height;
-		} else top += 15;
-		top += 15;
+				this->freetype_renderer.han_face, 10, 3, top, &render_style );
+			top += rect.height+15;
+		}
 		if( stats_text.length() )
 		{
+			RenderStyle render_style;
 			rect = this->freetype_renderer.render( this->info_screen, stats_text, 
 				this->freetype_renderer.han_face, 8, 3, top, &render_style );
-			top += rect.height;
-		} else top += 15;
+			top += rect.height+15;
+		}
 #endif
 	}
 	else if( screen == SCREEN_SUB )
