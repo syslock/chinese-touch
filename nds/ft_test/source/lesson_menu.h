@@ -71,6 +71,7 @@ public:
 	RenderScreen info_screen, menu_screen;
 	MenuList menu_list;
 	u16* book_sprite_vram;
+	u16* open_book_sprite_vram;
 	u16* lesson_sprite_vram;
 	int y_offset;
 	int v_y;

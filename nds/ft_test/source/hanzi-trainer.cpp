@@ -78,8 +78,7 @@ int main()
 			}
 			else
 			{
-				ErrorConsole::init();
-				std::cout << "LessonMenu returned invalid choice!" << std::endl;
+				throw Error( "LessonMenu returned invalid choice!" );
 			}
 		}
 		catch( std::exception& e )

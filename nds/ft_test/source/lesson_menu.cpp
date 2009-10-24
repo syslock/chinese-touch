@@ -9,6 +9,7 @@
 // compiled-in sprite data:
 #include "text-x-generic.h"
 #include "accessories-dictionary.h"
+#include "accessories-dictionary-open.h"
 #include "menu_button.h"
 #include "menu_button_colors.h"
 
@@ -96,8 +97,8 @@ void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
-		book_sprite_vram(0), lesson_sprite_vram(0), y_offset(5), v_y(0), active_list_id(0),
-		frame_count(0), 
+		book_sprite_vram(0), open_book_sprite_vram(0), lesson_sprite_vram(0), 
+		y_offset(5), v_y(0), active_list_id(0), frame_count(0), 
 		shengci_text(32,16), yufa_text(32,16), kewen_text(32,16), lianxi_text(32,16), 
 		shengci_sprite_vram(0), yufa_sprite_vram(0), kewen_sprite_vram(0), lianxi_sprite_vram(0),
 		button_sprite_vram(0)
@@ -121,6 +122,8 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	// vorgerenderte Spritegrafiken laden:
 	this->book_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
 	dmaCopy( accessories_dictionaryBitmap, this->book_sprite_vram, 32*32*2 );
+	this->open_book_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
+	dmaCopy( accessories_dictionary_openBitmap, this->open_book_sprite_vram, 32*32*2 );
 	this->lesson_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
 	dmaCopy( text_x_genericBitmap, this->lesson_sprite_vram, 32*32*2 );
 	this->button_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
@@ -130,6 +133,8 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	{
 		if( this->book_sprite_vram[i] )
 			this->book_sprite_vram[i] |= 1<<15;
+		if( this->open_book_sprite_vram[i] )
+			this->open_book_sprite_vram[i] |= 1<<15;
 		if( this->lesson_sprite_vram[i] )
 			this->lesson_sprite_vram[i] |= 1<<15;
 		if( this->button_sprite_vram[i] )
@@ -343,20 +348,16 @@ void LessonMenu::render( Screen screen )
 			}
 			if( top > -MenuEntry::BASE_HEIGHT )
 			{
-				oamSet( &oamSub, 	// sub display
-						oam_entry++,	// oam entry to set
-						5, top, 	// position
-						0, 			// priority
-						15,			// alpha
-						SpriteSize_32x32, // size
-						SpriteColorFormat_Bmp, // format
-						this->book_sprite_vram, // vram address
-						0, 			// rotation index
-						0,			// double size
-						0, 			// hide
-						0, 0, 		// vflip, hflip
-						0			// apply mosaic
-					);
+				if( book_entry && book_entry->exploded )
+				{
+					oamSet( &oamSub, oam_entry++, 5, top, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, 
+							this->open_book_sprite_vram, 0, 0, 0, 0, 0, 0 );
+				}
+				else
+				{
+					oamSet( &oamSub, oam_entry++, 5, top, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, 
+							this->book_sprite_vram, 0, 0, 0, 0, 0, 0 );
+				}
 				// book_entry anlegen, falls nicht schon früher geschehen,
 				// da wir ihn nun wirklich brauchen:
 				if( !book_entry )
