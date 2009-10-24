@@ -69,7 +69,8 @@ int main()
 			delete lesson_menu;
 
 			/* Testlauf des Vokabeltrainers: */
-			if( lesson_menu_choice.lesson )
+			if( lesson_menu_choice.lesson 
+				&& lesson_menu_choice.content_type==LessonMenuChoice::CONTENT_TYPE_NEW_WORDS )
 			{
 				NewWords* new_words = new NewWords( *ft, *lesson_menu_choice.lesson, config );
 				new_words->run_until_exit();

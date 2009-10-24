@@ -14,7 +14,7 @@ class LessonMenuChoice
 		Lesson* lesson;
 		enum ContentType
 		{
-			CONTENT_TYPE_NONE,
+			CONTENT_TYPE_NONE = 0,
 			CONTENT_TYPE_NEW_WORDS,
 			CONTENT_TYPE_GRAMMAR,
 			CONTENT_TYPE_TEXT,
@@ -39,6 +39,13 @@ class MenuEntry
 		static int FONT_SIZE;
 		static int TEXT_X_OFFSET;
 		static int BUTTON_GAP;
+		static int BUTTON_Y_OFFSET;
+		static int BUTTON_WIDTH;
+		static int BUTTON_HEIGHT;
+		static int SHENGCI_BUTTON_X_OFFSET;
+		static int YUFA_BUTTON_X_OFFSET;
+		static int KEWEN_BUTTON_X_OFFSET;
+		static int LIANXI_BUTTON_X_OFFSET;
 	public:
 		MenuEntry() : text_surface( new RenderScreenBuffer(200, MenuEntry::BASE_HEIGHT) ),
 						book(0), lesson(0), exploded(false), top(0), last_frame_rendered(0) {}
@@ -47,6 +54,7 @@ class MenuEntry
 			delete this->text_surface;
 		}
 		void render_text( FreetypeRenderer& ft, const std::string& text );
+		LessonMenuChoice::ContentType get_content_type_by_pos( int x, int y );
 };
 class MenuList : public std::map<void*,MenuEntry*>
 {

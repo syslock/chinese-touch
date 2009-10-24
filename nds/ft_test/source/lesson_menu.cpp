@@ -18,6 +18,13 @@ int MenuEntry::ACTIVE_HEIGHT = 52;
 int MenuEntry::FONT_SIZE = 10;
 int MenuEntry::TEXT_X_OFFSET = 50;
 int MenuEntry::BUTTON_GAP = 6;
+int MenuEntry::BUTTON_Y_OFFSET = MenuEntry::BASE_HEIGHT+2;
+int MenuEntry::BUTTON_WIDTH = 32;
+int MenuEntry::BUTTON_HEIGHT = 16;
+int MenuEntry::SHENGCI_BUTTON_X_OFFSET = 0 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::YUFA_BUTTON_X_OFFSET = 1 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::KEWEN_BUTTON_X_OFFSET = 2 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::LIANXI_BUTTON_X_OFFSET = 3 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
 
 void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
 {
@@ -26,7 +33,6 @@ void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
 	ft.render( *this->text_surface, text,
 		ft.han_face, MenuEntry::FONT_SIZE, 0, 0, &render_style );
 }
-
 
 MenuList::~MenuList()
 {
@@ -42,6 +48,37 @@ MenuList::~MenuList()
 	this->clear();
 }
 
+/*! \brief returns content type code for clicked lesson contents button */
+LessonMenuChoice::ContentType MenuEntry::get_content_type_by_pos( int x, int y )
+{
+	if( y>=this->top+MenuEntry::BUTTON_Y_OFFSET 
+		&& y<this->top+MenuEntry::BUTTON_Y_OFFSET+MenuEntry::BUTTON_HEIGHT )
+	{
+		if( x>=MenuEntry::SHENGCI_BUTTON_X_OFFSET
+			&& x<MenuEntry::SHENGCI_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		{
+			return LessonMenuChoice::CONTENT_TYPE_NEW_WORDS;
+		}
+		if( x>=MenuEntry::YUFA_BUTTON_X_OFFSET
+			&& x<MenuEntry::YUFA_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		{
+			return LessonMenuChoice::CONTENT_TYPE_GRAMMAR;
+		}
+		if( x>=MenuEntry::KEWEN_BUTTON_X_OFFSET
+			&& x<MenuEntry::KEWEN_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		{
+			return LessonMenuChoice::CONTENT_TYPE_TEXT;
+		}
+		if( x>=MenuEntry::LIANXI_BUTTON_X_OFFSET
+			&& x<MenuEntry::LIANXI_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		{
+			return LessonMenuChoice::CONTENT_TYPE_EXERCISES;
+		}
+	}
+	return LessonMenuChoice::CONTENT_TYPE_NONE;
+}
+
+
 void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
 {
 	int dest_offset = 0;
@@ -55,6 +92,7 @@ void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
 					dest_buffer[dest_offset] = source_buffer[source_offset];
 				}
 }
+
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
@@ -376,35 +414,35 @@ void LessonMenu::render( Screen screen )
 						if( top > -MenuEntry::ACTIVE_HEIGHT )
 						{
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::SHENGCI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*0, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::SHENGCI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->shengci_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::YUFA_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*1, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::YUFA_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->yufa_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::KEWEN_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*2, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::KEWEN_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->kewen_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::LIANXI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 							oamSet( &oamSub, oam_entry++,
-									MenuEntry::TEXT_X_OFFSET+(32+MenuEntry::BUTTON_GAP)*3, top+MenuEntry::BASE_HEIGHT+2, 	// position
+									MenuEntry::LIANXI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
 									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->lianxi_sprite_vram,
 									0, 0, 0, 0, 0, 0 );
 						}
@@ -510,8 +548,16 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 					{
 						choice.book = entry->lesson->book;
 						choice.lesson = entry->lesson;
-						choice.content_type = LessonMenuChoice::CONTENT_TYPE_NEW_WORDS;
-						return;
+						choice.content_type = entry->get_content_type_by_pos( old_touch.px, old_touch.py );
+						if( choice.content_type )
+						{
+							return;
+						}
+						else
+						{
+							this->render( SCREEN_SUB );
+							this->render( SCREEN_MAIN );
+						}
 					}
 				}
 				else
