@@ -29,18 +29,15 @@ bool utf8_to_ucs4( const unsigned char* src, CharList& result_list )
             result = *first & 7;
         }
         else return false;
-        //std::cout << "len: " << len << std::endl;
         const unsigned char* next;
         for( next = first + 1;
             *next && ((*next >> 6) == 2) && (next-first<len); 
             next++ )
         {
-            //std::cout << "result*: " << result << std::endl;
             result = result << 6;
             result |= *next & 63;
         }
         first = next;
-        //std::cout << "result: " << result << std::endl;
         result_list.push_back( result );
     }
     return true;

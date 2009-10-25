@@ -12,9 +12,7 @@ DrawingPad::DrawingPad() : res_x(256), res_y(192)
 	videoSetModeSub(MODE_5_2D);
     vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	this->bg2 = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-	std::cout << "bg2: " << this->bg2 << std::endl;
 	this->bg3 = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0,0);
-	std::cout << "bg3: " << this->bg3 << std::endl;
 	// lineare 15-bit-graupalette mit n indizes aufbauen:
 	int greys = 128;
 	for( int i=0; i<greys; i++ )

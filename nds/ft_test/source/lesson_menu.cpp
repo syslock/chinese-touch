@@ -103,12 +103,8 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 		shengci_sprite_vram(0), yufa_sprite_vram(0), kewen_sprite_vram(0), lianxi_sprite_vram(0),
 		button_sprite_vram(0)
 {
-#if DEBUG
-	ErrorConsole::init( SCREEN_MAIN );
-#else
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
 	this->info_screen.clear();
-#endif
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 	this->menu_screen.clear();
 	// Farbindex 0 der Hintergrundpalette auf hellblau für's Highlight setzen:
@@ -238,7 +234,6 @@ void LessonMenu::render( Screen screen )
 	this->frame_count++;
 	if( screen == SCREEN_MAIN )
 	{
-#if !DEBUG
 		this->info_screen.clear();
 		std::string author, title, publisher, description, stats_text;
 		if( this->menu_list.count(this->active_list_id) )
@@ -327,7 +322,6 @@ void LessonMenu::render( Screen screen )
 				this->freetype_renderer.han_face, 8, 3, top, &render_style );
 			top += rect.height+15;
 		}
-#endif
 	}
 	else if( screen == SCREEN_SUB )
 	{
@@ -589,9 +583,7 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 
 MenuList::iterator LessonMenu::get_entry_by_pos( int x, int y )
 {
-#if DEBUG
-	std::cout << "get_entry_by_pos(" << x << "," << y << ")" << std::endl;
-#endif
+	LOG( "get_entry_by_pos(" << x << "," << y << ")" );
 	for( MenuList::iterator entry_it = this->menu_list.begin();
 		entry_it != this->menu_list.end(); 
 		entry_it++ )

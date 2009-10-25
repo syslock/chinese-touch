@@ -19,41 +19,40 @@ FreetypeRenderer::FreetypeRenderer( const std::string& han_font,
 		: dpi_x(100), dpi_y(100)
 {	
     FT_Init_Errors();
-    std::cout << "ft_errors.size(): " << ft_errors.size() << std::endl;
+    LOG( "ft_errors.size(): " << ft_errors.size() );
     this->error = FT_Init_FreeType( &this->library );
     if( this->error )
     {
-	    ErrorConsole::init();
-        std::cout << "error initializing freetype: " << ft_errors[this->error] 
-                    << std::endl;
-        return;
+		std::stringstream msg;
+		msg << "error initializing freetype: " << ft_errors[this->error];
+        throw ERROR( msg.str() );
     }
     std::string _han_font = BASE_DIR + han_font;
     std::string _latin_font = BASE_DIR + latin_font;
     this->error = FT_New_Face( this->library, _han_font.c_str(), 0, &this->han_face );
     if( this->error )
     {
-	    ErrorConsole::init();
-        std::cout << "error loading chinese font: " << _han_font << " (" 
-                << ft_errors[this->error] << ")" << std::endl;
-        return;
+		std::stringstream msg;
+        msg << "error loading chinese font: " << _han_font << " (" 
+                << ft_errors[this->error] << ")";
+		throw ERROR( msg.str() );
     }
     this->error = FT_New_Face( this->library, _latin_font.c_str(), 0, &this->latin_face );
     if( this->error )
     {
-	    ErrorConsole::init();
-        std::cout << "error loading latin font: " << _latin_font << " (" 
-                << ft_errors[this->error] << ")" << std::endl;
-        return;
+		std::stringstream msg;
+        msg << "error loading latin font: " << _latin_font << " (" 
+                << ft_errors[this->error] << ")";
+        throw ERROR( msg.str() );
     }
 #if 0
     // Select charmap
     this->error = FT_Select_Charmap( this->han_face, FT_ENCODING_UNICODE );
     if( this->error )
     {
-        std::cout << "error loading unicode charmap: " << ft_errors[this->error]
-                << std::endl;
-        return;
+		std::stringstream msg;
+        msg << "error loading unicode charmap: " << ft_errors[this->error];
+        throw ERROR( msg.str() );
     }
 #endif   
 }
@@ -152,7 +151,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     RenderCharList render_char_list;
     if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
     {
-        std::cout << "error in utf-8 input (non fatal)" << std::endl;
+        LOG( "error in utf-8 input (non fatal)" );
     }
     if( char_list.size()==0 ) return RenderRect(0,0,0,0);
     
@@ -161,8 +160,9 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     error = FT_Set_Char_Size( face, 0, pixel_size*64, this->dpi_x, this->dpi_y );
     if( error )
     {
-        std::cout << "error setting pixel size: " << ft_errors[error] << std::endl;
-        return RenderRect(0,0,0,0);
+        std::stringstream msg;
+		msg << "error setting pixel size: " << ft_errors[error];
+		throw ERROR( msg.str() );
     }
     
     // 3. compute preliminary character offsets and dimensions
@@ -174,33 +174,31 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
             char_it!=char_list.end(); char_it++ )
     {
         // Load Char
-#ifdef DEBUG
-        std::cout << "character code: " << *char_it << std::endl;
-#endif
+        LOG( "character code: " << *char_it );
         //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
         FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
         if( !glyph_index )
         {
-            std::cout << "error translating character code: " << *char_it << std::endl;
-            return RenderRect(0,0,0,0);
+            std::stringstream msg;
+			msg << "error translating character code: " << *char_it;
+			throw ERROR( msg.str() );
         }
         FT_Set_Transform( face, 0, &pen );
-        //std::cout << "glyph index: " << glyph_index << std::endl;
+        LOG( "glyph index: " << glyph_index );
         error = FT_Load_Glyph( face, glyph_index, FT_LOAD_RENDER );
         if( error )
         {
-            std::cout << "error loading glyph index: " << glyph_index << std::endl;
-            std::cout << ft_errors[error] << std::endl;
-            return RenderRect(0,0,0,0);
+            std::stringstream msg;
+			msg << "error loading glyph index: " << glyph_index << "(" << ft_errors[error] << ")";
+			throw ERROR( msg.str() );
         }
         char buffer[1000];
         FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
-        //std::cout << "glyph name: " << buffer << std::endl;
+        LOG( "glyph name: " << buffer );
         
         FT_GlyphSlot& glyph = face->glyph;
         FT_Bitmap& bitmap = face->glyph->bitmap;
-        //std::cout << "w/r: " << bitmap.width << "/" << bitmap.rows 
-        //            << " t: " << glyph->bitmap_top << std::endl;
+        LOG( "w/r: " << bitmap.width << "/" << bitmap.rows << " t: " << glyph->bitmap_top );
         RenderChar* render_char = new RenderChar( *char_it, glyph_index );
         render_char->width = glyph->advance.x/64;
         render_char->height = bitmap.rows;
@@ -209,7 +207,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         render_char_list.push_back( render_char );
         if( !bitmap.buffer )
         {
-            std::cout << "warning: got no bitmap for current glyph" << std::endl;
+            LOG( "warning: got no bitmap for current glyph" );
         }
         if( bitmap.rows > line_height ) line_height = bitmap.rows;
         pen.x += glyph->advance.x;
@@ -229,11 +227,9 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
             rchar_it!=render_char_list.end(); rchar_it++ )
     {
-#ifdef DEBUG
-        std::cout << "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
+        LOG( "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
             << " y=" << (*rchar_it)->y << " xc=" << x_correction 
-            << " yc=" << y_correction << std::endl;
-#endif
+            << " yc=" << y_correction );
         (*rchar_it)->x += x_correction;
         (*rchar_it)->y += y_correction;
         if( (*rchar_it)->char_code == 32 )
@@ -314,9 +310,10 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         error = FT_Load_Glyph( face, (*rchar_it)->glyph_index, FT_LOAD_RENDER );
         if( error )
         {
-            std::cout << "error loading glyph index: " << (*rchar_it)->glyph_index << std::endl;
-            std::cout << ft_errors[error] << std::endl;
-            return RenderRect(0,0,0,0);
+            std::stringstream msg;
+			msg << "error loading glyph index: " << (*rchar_it)->glyph_index 
+				<< "(" << ft_errors[error];
+			throw ERROR( msg.str() );
         }
         FT_GlyphSlot& glyph = face->glyph;
         FT_Bitmap& bitmap = face->glyph->bitmap;

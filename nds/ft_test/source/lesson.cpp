@@ -11,6 +11,7 @@
 
 #include "lesson.h"
 #include "config.h"
+#include "error_console.h"
 
 void Word::render( FreetypeRenderer& ft, RenderScreen& render_screen )
 {
@@ -65,9 +66,9 @@ void Library::rescan()
     DIR* books_dir = opendir( books_path.c_str() );
     if( !books_dir )
     {
-        std::cout << "failed to open: " << books_path << std::endl;
-        std::cout << strerror(errno) << std::endl;
-        return;
+        std::stringstream msg;
+		msg << "failed to open: " << books_path << " (" << strerror(errno) << ")";
+		throw ERROR( msg.str() );
     }
     struct dirent* books_entry;
     while( (books_entry = readdir(books_dir))!=NULL )
@@ -77,8 +78,8 @@ void Library::rescan()
         std::string book_path = books_path + "/" + book_name;
         if( stat(book_path.c_str(), &book_stat)==-1 )
         {
-            std::cout << "failed to stat: " << books_entry->d_name << std::endl;
-            std::cout << strerror(errno) << std::endl;
+            LOG( "failed to stat: " << books_entry->d_name );
+            LOG( strerror(errno) );
             continue;
         }
         if( S_ISDIR(book_stat.st_mode) && book_name!="." && book_name!=".." )
@@ -88,19 +89,19 @@ void Library::rescan()
             struct stat book_conf_stat;
             if( stat(book_conf_path.c_str(), &book_conf_stat)==-1 )
             {
-                std::cout << "failed to open (read): " << book_conf_path << std::endl;
-                std::cout << strerror(errno) << std::endl;
+                LOG( "failed to open (read): " << book_conf_path );
+                LOG( strerror(errno) );
                 continue;
             }
             Book* book = new Book( book_name, this );
             book->parse_config( book_conf_path );
             (*this)[ book_name ] = book;
-            std::cout << "book: " << book_path << std::endl;
+            LOG( "book: " << book_path );
             DIR* lessons_dir = opendir( lessons_path.c_str() );
             if( !lessons_dir )
             {
-                std::cout << "failed to open: " << lessons_path << std::endl;
-                std::cout << strerror(errno) << std::endl;
+                LOG( "failed to open: " << lessons_path );
+                LOG( strerror(errno) );
                 continue;
             }
             struct dirent* lessons_entry;
@@ -111,8 +112,8 @@ void Library::rescan()
                 std::string lesson_path = lessons_path + "/" + lesson_name;
                 if( stat(lesson_path.c_str(), &lesson_stat)==-1 )
                 {
-                    std::cout << "failed to stat: " << lessons_entry->d_name << std::endl;
-                    std::cout << strerror(errno) << std::endl;
+                    LOG( "failed to stat: " << lessons_entry->d_name );
+                    LOG( strerror(errno) );
                     continue;
                 }
                 if( !S_ISDIR(lesson_stat.st_mode) )
@@ -129,7 +130,7 @@ void Library::rescan()
 					lesson_number_stringstream >> lesson_number;
 					if( lesson_number > 0 )
 					{
-						std::cout << "lesson #" << lesson_number << ": " << lesson_path << std::endl;
+						LOG( "lesson #" << lesson_number << ": " << lesson_path );
 						Lesson* lesson;
 						if( book->count(lesson_number) )
 						{

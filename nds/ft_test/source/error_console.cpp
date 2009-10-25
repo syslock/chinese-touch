@@ -13,8 +13,8 @@ void ErrorConsole::init( Screen screen )
 			videoSetModeSub( MODE_5_2D );
 			vramSetBankC( VRAM_C_SUB_BG );
 			consoleDemoInit();
-			consoleSelect( consoleGetDefault() );
-			std::cout << "sub console intialized" << std::endl;
+			//consoleSelect( consoleGetDefault() );
+			LOG( "sub console intialized" );
 			break; 
 		}
 		case SCREEN_MAIN: 
@@ -24,7 +24,7 @@ void ErrorConsole::init( Screen screen )
 			PrintConsole topScreen = *consoleInit( 0, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 8, true, true );
 			topScreen.fontBgMap = BG_MAP_RAM(4 + 64);
 			consoleSelect(&topScreen);
-			std::cout << "main console intialized" << std::endl;
+			LOG( "main console intialized" );
 			break;
 		}
 	}

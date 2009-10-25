@@ -22,12 +22,12 @@ NewWords::NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Confi
 			&& this->word_it!=this->lesson.end(); this->word_it++ );
 	if( this->word_it == this->lesson.end() )
 	{
-		std::cout << "warning: " << CONFIG_FILE_NAME << " id out of bounds" << std::endl;
+		LOG( "warning: " << CONFIG_FILE_NAME << " id out of bounds" )
 		if( this->word_it != this->lesson.begin() )
 			this->word_it--;
 		else
 		{
-			std::cout << "warning: empty lesson \"" << this->lesson.title << "\"" << std::endl;
+			LOG( "warning: empty lesson \"" << this->lesson.title << "\"" );
 			Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
 			Definition* definition = new Definition();
 			definition->lang = "de";
@@ -67,7 +67,6 @@ void NewWords::run_until_exit()
                     {
                         this->word_it--;
                         this->word_index--;
-                        std::cout << "prev" << std::endl;
                         this->config.save_position( *this->word_it );
                         (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
@@ -81,7 +80,6 @@ void NewWords::run_until_exit()
                     this->word_index++;
                     if( this->word_it != this->lesson.end() )
                     {
-                        std::cout << "next" << std::endl;
                         this->config.save_position( *this->word_it );
                         (*this->word_it)->render( this->freetype_renderer, this->word_view );
                     }
@@ -96,10 +94,8 @@ void NewWords::run_until_exit()
             {
                 if( !dragged )
                 {
-#if ! DEBUG
                     this->drawing_pad.render_buttons();
                     //this->drawing_pad.clear();
-#endif
                 } else restart_line = true;
             }
             else if( touch.px < 15 && touch.py > (this->word_view.res_y-15) )
@@ -146,19 +142,14 @@ void NewWords::run_until_exit()
             else if( !dragged || restart_line )
             {
                 restart_line = false;
-#if ! DEBUG
                 this->drawing_pad.draw_point( touch.px, touch.py );
                 old_touch = touch;
-#endif
             }
             else if( dragged )
             {
-#if ! DEBUG
                 this->drawing_pad.draw_line( touch.px, touch.py, old_touch.px, old_touch.py );
                 old_touch = touch;
-#endif
             }
-            std::cout << "x: " << touch.px << " y: " << touch.py << " a: " << area << std::endl;
             dragged = true;
         }
         if( keysUp() & KEY_TOUCH )

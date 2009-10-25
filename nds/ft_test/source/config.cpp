@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "config.h"
+#include "error_console.h"
 
 bool global_fat_initialized = false;
 
@@ -35,8 +36,6 @@ void Config::save_position( Word* word )
 void Config::save()
 {
     time_t curr_time = time(0);
-    //std::cout << "curr_time: " << curr_time << std::endl;
-    //std::cout << "prev+auto: " << this->prev_time + Config::AUTO_SAVE_PERIOD << std::endl;
     if( curr_time > (this->prev_time + Config::MIN_SAVE_PERIOD)
         && this->changed )
     {
@@ -47,22 +46,22 @@ void Config::save()
 
 void Config::save_really()
 {
-    std::cout << "Config::save_really()" << std::endl;
+    LOG( "Config::save_really()" );
     if( !global_fat_initialized )
     {
-        std::cout << "warning: cannot save without fat" << std::endl;
+        LOG( "warning: cannot save without fat" );
         return;
     }
     FILE* f = fopen( CONFIG_FILE_NAME, "w" );
     if( f )
     {
-        std::cout << "writing: " << CONFIG_FILE_NAME << std::endl;
+        LOG( "writing: " << CONFIG_FILE_NAME );
         fwrite( &this->data, sizeof(this->data), 1, f );
         fflush( f );
         fclose( f );
         this->changed = false;
     }
-    else std::cout << "error opening: " << CONFIG_FILE_NAME << std::endl;
+    else LOG( "error opening: " << CONFIG_FILE_NAME );
 }
 
 void Config::load()
@@ -71,10 +70,10 @@ void Config::load()
     FILE* f = fopen( CONFIG_FILE_NAME, "r" );
     if( f )
     {
-        std::cout << "reading: " << CONFIG_FILE_NAME << std::endl;
+        LOG( "reading: " << CONFIG_FILE_NAME );
         fread( &this->data, sizeof(this->data), 1, f );
         fclose( f );
     }
-    else std::cout << "error opening: " << CONFIG_FILE_NAME << std::endl;
+    else LOG( "error opening: " << CONFIG_FILE_NAME );
 }
 
