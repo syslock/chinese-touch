@@ -504,6 +504,24 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 	while( true )
 	{
         scanKeys();
+		int pressed = keysDown();
+		int held = keysHeld();
+		if( held & KEY_SELECT && pressed & KEY_UP )
+		{
+			ErrorConsole::init_screen( SCREEN_MAIN );
+		}
+		if( held & KEY_SELECT && pressed & KEY_DOWN )
+		{
+			ErrorConsole::init_screen( SCREEN_SUB );
+		}
+		if( held & KEY_SELECT && pressed & KEY_LEFT )
+		{
+			ErrorConsole::clear();
+		}
+		if( held & KEY_SELECT && pressed & KEY_RIGHT )
+		{
+			ErrorConsole::dump();
+		}
         touchPosition touch;
         touchRead( &touch );
         int area = touch.px * touch.z2 / touch.z1 - touch.px;

@@ -8,11 +8,12 @@
 #include "hanzi-trainer.h"
 #include "screen.h"
 
+extern std::stringstream error_stream;
+
+#define WARN(a) error_stream << "WARNING: " << a << std::endl
 #if DEBUG
-#define INIT_LOG() ErrorConsole::init()
-#define LOG(a) std::cout << a << std::endl
+#define LOG(a) error_stream << a << std::endl
 #else
-#define INIT_LOG()
 #define LOG(a)
 #endif
 
@@ -30,26 +31,15 @@ public:
 	Error( const std::string& msg, const char* _file, int _line, const char* _timestamp ) 
 		: std::string(msg), file(_file), line(_line), timestamp(_timestamp) {}
 	virtual ~Error() throw () {}
-	virtual const char* what()
-	{
-		std::stringstream _full_msg;
-		std::size_t right_slash_pos = this->file.rfind('/');
-		std::string _file;
-		if( right_slash_pos != this->file.npos 
-			&& right_slash_pos < this->file.size()-1 )
-		{
-			_file = this->file.substr( right_slash_pos+1 );
-		}
-		_full_msg << *this << " (" << _file << ":" << this->line << ") [" << this->timestamp << "]";
-		this->full_msg = _full_msg.str();
-		return this->full_msg.c_str();
-	}
+	virtual const char* what();
 };
 
 class ErrorConsole
 {
 public:
-    static void init( Screen=SCREEN_SUB );
+    static void init_screen( Screen=SCREEN_SUB );
+	static void dump();
+	static void clear();
 };
 
 #endif

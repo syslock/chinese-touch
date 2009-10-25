@@ -20,7 +20,6 @@ int main()
 {
 	try
 	{
-		INIT_LOG();
 		LOG( "initializing fat driver" );
 		global_fat_initialized = fatInitDefault();
 		if( !global_fat_initialized )
@@ -35,16 +34,14 @@ int main()
 		LOG( "scanning complete" );
 		if( !library.size() )
 		{
-			ErrorConsole::init();
-			LOG( "warning: empty library" );
+			WARN( "empty library" );
 			std::string book_name = "dummy book";
 			library[ book_name ] = new Book( book_name, &library);
 		}
 		Book& book = *library.begin()->second;
 		if( !book.size() )
 		{
-			ErrorConsole::init();
-			LOG( "warning: empty book \"" <<  book.name << "\"" );
+			WARN( "empty book \"" <<  book.name << "\"" );
 			int lesson_number = 1;
 			book[ lesson_number ] = new Lesson( lesson_number, &book );
 		}
@@ -98,23 +95,24 @@ int main()
 			}
 			catch( Error& e )
 			{
-				RenderScreen error;
-				ft->init_screen( SCREEN_MAIN, error );
-				error.clear();
-				ft->render( error, e.what(), ft->latin_face, 8, 3, 3 );
+				RenderScreen error_screen;
+				ft->init_screen( SCREEN_MAIN, error_screen );
+				error_screen.clear();
+				ft->render( error_screen, e.what(), ft->latin_face, 8, 3, 3 );
+				error_stream << "caught " << e.what() << std::endl;
 				for( int i=0; i<500; i++ ) swiWaitForVBlank();
 			}
 		}
 	}
 	catch( Error& e )
 	{
-		ErrorConsole::init();
-		std::cout << e.what() << std::endl;
+		error_stream << "caught " << e.what() << std::endl;
+		ErrorConsole::init_screen();
 	}
 	catch( std::exception& e )
 	{
-		ErrorConsole::init();
-		std::cout << "unknown std::exception: " << e.what() << std::endl;
+		error_stream << "caught " << e.what() << std::endl;
+		ErrorConsole::init_screen();
 	}
     return 0;
 }

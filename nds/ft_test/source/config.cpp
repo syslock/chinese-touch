@@ -49,7 +49,7 @@ void Config::save_really()
     LOG( "Config::save_really()" );
     if( !global_fat_initialized )
     {
-        LOG( "warning: cannot save without fat" );
+        WARN( "cannot save without fat" );
         return;
     }
     FILE* f = fopen( CONFIG_FILE_NAME, "w" );

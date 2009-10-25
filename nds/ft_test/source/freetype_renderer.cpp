@@ -207,7 +207,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         render_char_list.push_back( render_char );
         if( !bitmap.buffer )
         {
-            LOG( "warning: got no bitmap for current glyph" );
+            LOG( "got no bitmap for current glyph" );
         }
         if( bitmap.rows > line_height ) line_height = bitmap.rows;
         pen.x += glyph->advance.x;

@@ -22,12 +22,12 @@ NewWords::NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Confi
 			&& this->word_it!=this->lesson.end(); this->word_it++ );
 	if( this->word_it == this->lesson.end() )
 	{
-		LOG( "warning: " << CONFIG_FILE_NAME << " id out of bounds" )
+		WARN( CONFIG_FILE_NAME << " id out of bounds" );
 		if( this->word_it != this->lesson.begin() )
 			this->word_it--;
 		else
 		{
-			LOG( "warning: empty lesson \"" << this->lesson.title << "\"" );
+			WARN( "Empty lesson \"" << this->lesson.title << "\". Generating hardcoded test word." );
 			Word* word = new Word( "汉字", "hànzì", &lesson, 0 );
 			Definition* definition = new Definition();
 			definition->lang = "de";

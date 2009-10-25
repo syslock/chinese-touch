@@ -7,6 +7,7 @@
 #define CONFIG_STRING_SIZE 50
 #define BASE_DIR "/" PROGRAM_NAME "/"
 #define CONFIG_FILE_NAME BASE_DIR PROGRAM_NAME ".conf"
+#define LOG_FILE_NAME BASE_DIR PROGRAM_NAME ".log"
 
 extern bool global_fat_initialized;
 
