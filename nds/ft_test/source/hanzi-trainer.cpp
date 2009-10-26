@@ -78,15 +78,15 @@ int main()
 						}
 						case LessonMenuChoice::CONTENT_TYPE_GRAMMAR:
 						{
-							throw ERROR( "Display of grammar texts is still not implemented" );
+							throw ERROR( "Die Anzeige der Grammatik ist noch nicht implementiert" );
 						}
 						case LessonMenuChoice::CONTENT_TYPE_TEXT:
 						{
-							throw ERROR( "Display of lesson texts is still implemented" );
+							throw ERROR( "Die Anzeige von Texten ist noch nicht implementiert" );
 						}
 						case LessonMenuChoice::CONTENT_TYPE_EXERCISES:
 						{
-							throw ERROR( "Display of excercises is still not implemented" );
+							throw ERROR( "Die Anzeige von Übungsaufgaben ist noch nicht implementiert" );
 						}
 						default: throw ERROR( "LessonMenu returned invalid content type!" );
 					}
