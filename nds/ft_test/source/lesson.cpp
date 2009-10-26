@@ -13,7 +13,7 @@
 #include "config.h"
 #include "error_console.h"
 
-void Word::render( FreetypeRenderer& ft, RenderScreen& render_screen )
+void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
 {
 	render_screen.clear();
     
@@ -246,9 +246,9 @@ void Lesson::parse_dictionary( const std::string& dict_file_name )
         {
             if( word_count )
             {
-                Word* word = new Word( hanzi, pinyin, this, word_count );
+                NewWord* word = new NewWord( hanzi, pinyin, this );
                 word->definitions[ definition.lang ] = new Definition( definition );
-                this->push_back( word );
+                this->new_words.push_back( word );
                 hanzi = "";
                 pinyin = "";
                 definition.translation = "";
@@ -260,9 +260,9 @@ void Lesson::parse_dictionary( const std::string& dict_file_name )
         }
         else if( line.substr(0, 2) == "|}" && word_count )
         {
-            Word* word = new Word( hanzi, pinyin, this, word_count );
+            NewWord* word = new NewWord( hanzi, pinyin, this );
             word->definitions[ definition.lang ] = new Definition( definition );
-            this->push_back( word );
+            this->new_words.push_back( word );
             column = 0;
         }
         else if( line.substr(0, 2) == "| " )

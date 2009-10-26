@@ -250,7 +250,7 @@ void LessonMenu::render( Screen screen )
 					lesson_it != entry->book->end(); lesson_it++ )
 				{
 					Lesson* lesson = lesson_it->second;
-					word_count += lesson->size();
+					word_count += lesson->new_words.size();
 				}
 				std::stringstream stats_stream;
 				stats_stream << "enthält " << entry->book->size() << " Lektionen und " << word_count << " Vokabeln";
@@ -261,7 +261,7 @@ void LessonMenu::render( Screen screen )
 				title = entry->lesson->title;
 				description = entry->lesson->description;
 				std::stringstream stats_stream;
-				stats_stream << "enthält " << entry->lesson->size() << " Vokabeln";
+				stats_stream << "enthält " << entry->lesson->new_words.size() << " Vokabeln";
 				stats_text = stats_stream.str();
 			}
 		}

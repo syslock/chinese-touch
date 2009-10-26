@@ -2,43 +2,55 @@
 #define LESSON_H
 
 #include <list>
+#include <vector>
 #include <map>
 #include <string>
 
 #include "freetype_renderer.h"
 
 
+class Lesson;
+
+class Text : public std::string
+{
+public:
+	std::string title;
+	Lesson* lesson;
+public:
+	Text( const std::string& _title, Lesson* _lesson ) : title(_title), lesson(_lesson) {}
+};
+typedef std::vector<Text*> TextVector;
+
 class Definition
 {
 public:
     std::string lang, translation, word_type, comment, example;
 };
-
-
-// Word ist eine Komposition aus einem chinesischen Wort, der zugehörigen 
-// Lautumschrift in Pinyin, sowie einer Abbildung von ISO-Sprachcodes zu in den 
-// jeweiligen Sprachen verfassten Übersetzungen bzw. Definitionen
 typedef std::map<std::string,Definition*> Definitions;
-class Lesson;
-class Word
+
+/*! \brief kapselt eine Vokabel mit allen interessanten Informationen
+	Komposition aus einem chinesischen Wort, der zugehörigen 
+	Lautumschrift in Pinyin, sowie einer Abbildung von ISO-Sprachcodes zu in den 
+	jeweiligen Sprachen verfassten Übersetzungen bzw. Definitionen */
+class NewWord
 {
 public:
-    Word( const std::string& _hanzi, const std::string& _pinyin, 
-            Lesson* _lesson, int _number ) 
+    NewWord( const std::string& _hanzi, const std::string& _pinyin, 
+            Lesson* _lesson ) 
         : hanzi(_hanzi), pinyin(_pinyin), successes(0), errors(0), 
-        lesson(_lesson), number(_number) {};
+        lesson(_lesson) {};
     void render( FreetypeRenderer& ft, RenderScreen& render_screen );
 public:
     std::string hanzi, pinyin;
     Definitions definitions;
     unsigned int successes, errors;
     Lesson* lesson;
-    int number;
 };
+typedef std::vector<NewWord*> NewWordVector;
 
 class Book;
-// Für die Lektion nehmen wir einfach 'ne Liste zwecks Reihenfolgeerhaltung:
-class Lesson : public std::list<Word*>
+
+class Lesson
 {
 public:
     Lesson( int _number, Book* _book ) : number(_number), 
@@ -50,6 +62,10 @@ public:
     void parse_config( const std::string& lesson_file_name );
     void parse_dictionary( const std::string& lesson_file_name );
 public:
+	NewWordVector new_words;
+	TextVector lesson_texts;
+	TextVector grammar_texts;
+	TextVector exercises;
     std::string title, description;
     int number;
     bool render_hanzi, render_pinyin, render_translation;
@@ -57,7 +73,7 @@ public:
 };
 
 class Library;
-// Bücher bilden Lektionsnummern auf Lektionsobjekte ab:
+//! \brief Bücher bilden Lektionsnummern auf Lektionsobjekte ab:
 class Book : public std::map<int,Lesson*>
 {
 public:
@@ -70,7 +86,7 @@ public:
     Library* library;
 };
 
-// Die Buchsammlung bildet Buchnamen auf Buchobjekte ab:
+//! \brief Die Buchsammlung bildet Buchnamen auf Buchobjekte ab:
 class Library : public std::map<std::string,Book*>
 {
 public:

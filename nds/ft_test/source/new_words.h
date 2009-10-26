@@ -6,18 +6,17 @@
 #include "drawing_pad.h"
 #include "config.h"
 
-class NewWords
+class NewWordsViewer
 {
 	public:
 		FreetypeRenderer& freetype_renderer;
 		DrawingPad drawing_pad;
 		RenderScreen word_view;
 		Lesson& lesson;
-		Lesson::iterator word_it;
-		int word_index;
+		unsigned int word_index;
 		Config& config;
 	public:
-		NewWords( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config );
+		NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config );
 		void render();
 		void run_until_exit();
 };

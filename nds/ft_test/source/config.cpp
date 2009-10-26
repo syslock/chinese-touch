@@ -13,7 +13,7 @@ Config::Config()
     memset( (void*)&this->data, 0, sizeof(this->data) );
 }
 
-void Config::save_position( Word* word )
+void Config::save_position( NewWord* word, unsigned int number )
 {
     if( !word || (previous_word == word && !this->changed) )
     {
@@ -21,7 +21,7 @@ void Config::save_position( Word* word )
     }
     previous_word = word;
     this->changed = true;
-    this->data.config.current_word_number = word->number;
+    this->data.config.current_word_number = number;
     this->data.config.current_lesson_number = word->lesson->number;
     const std::string& book_name = word->lesson->book->name;
 	memset( (void*)&this->data.config.current_book_name, 0, CONFIG_STRING_SIZE );

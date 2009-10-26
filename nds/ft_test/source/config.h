@@ -28,7 +28,7 @@ public:
     Config();
     void load();
     void save();
-    void save_position( Word* word );
+    void save_position( NewWord* word, unsigned int number );
     std::string get_current_book_name() { return this->data.config.current_book_name; }
     int get_current_lesson_number() { return this->data.config.current_lesson_number; }
     int get_current_word_number() { return this->data.config.current_word_number; }
@@ -37,7 +37,7 @@ protected:
 protected:
     static const int MIN_SAVE_PERIOD = 5;
     ConfigData data;
-    Word* previous_word;
+    NewWord* previous_word;
     bool changed;
     time_t prev_time;
 };

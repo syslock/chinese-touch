@@ -71,7 +71,7 @@ int main()
 					{
 						case LessonMenuChoice::CONTENT_TYPE_NEW_WORDS:
 						{
-							NewWords* new_words = new NewWords( *ft, *lesson_menu_choice.lesson, config );
+							NewWordsViewer* new_words = new NewWordsViewer( *ft, *lesson_menu_choice.lesson, config );
 							new_words->run_until_exit();
 							delete new_words;
 							break;
