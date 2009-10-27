@@ -179,38 +179,45 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
         if( !glyph_index )
         {
-            std::stringstream msg;
-			msg << "error translating character code: " << *char_it;
-			throw ERROR( msg.str() );
+			if( *char_it==10 )
+			{
+				// include line breaks
+				RenderChar* render_char = new RenderChar( *char_it, glyph_index );
+				render_char->x = pen.x/64;
+				render_char->y = -pen.y/64;
+				render_char_list.push_back( render_char );
+				continue;
+			}
+			WARN(  "error translating character code: " << *char_it );
+			continue;
         }
         FT_Set_Transform( face, 0, &pen );
         LOG( "glyph index: " << glyph_index );
         error = FT_Load_Glyph( face, glyph_index, FT_LOAD_RENDER );
         if( error )
         {
-            std::stringstream msg;
-			msg << "error loading glyph index: " << glyph_index << "(" << ft_errors[error] << ")";
-			throw ERROR( msg.str() );
+			WARN( "error loading glyph index: " << glyph_index << "(" << ft_errors[error] << ")" );
+			continue;
         }
-        char buffer[1000];
+        char buffer[1000]; buffer[0]=0;
         FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
         LOG( "glyph name: " << buffer );
         
-        FT_GlyphSlot& glyph = face->glyph;
-        FT_Bitmap& bitmap = face->glyph->bitmap;
-        LOG( "w/r: " << bitmap.width << "/" << bitmap.rows << " t: " << glyph->bitmap_top );
         RenderChar* render_char = new RenderChar( *char_it, glyph_index );
-        render_char->width = glyph->advance.x/64;
-        render_char->height = bitmap.rows;
         render_char->x = pen.x/64;
         render_char->y = -pen.y/64;
+		FT_GlyphSlot& glyph = face->glyph;
+		FT_Bitmap& bitmap = face->glyph->bitmap;
+		LOG( "w/r: " << bitmap.width << "/" << bitmap.rows << " t: " << glyph->bitmap_top );
+		render_char->width = glyph->advance.x/64;
+		render_char->height = bitmap.rows;
+		if( !bitmap.buffer )
+		{
+			LOG( "got no bitmap for current glyph" );
+		}
+		if( bitmap.rows > line_height ) line_height = bitmap.rows;
+		pen.x += glyph->advance.x;
         render_char_list.push_back( render_char );
-        if( !bitmap.buffer )
-        {
-            LOG( "got no bitmap for current glyph" );
-        }
-        if( bitmap.rows > line_height ) line_height = bitmap.rows;
-        pen.x += glyph->advance.x;
     }
     
     // 4. insert line breaks
@@ -232,11 +239,14 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
             << " yc=" << y_correction );
         (*rchar_it)->x += x_correction;
         (*rchar_it)->y += y_correction;
-        if( (*rchar_it)->char_code == 32 )
+        if( (*rchar_it)->char_code == 32
+			|| (*rchar_it)->char_code == 9 )
         {
             prev_whitespace_it = rchar_it;
         }
-        if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x )
+        if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x 
+			|| ( (*rchar_it)->char_code == 10 
+				&& (*rchar_it)->x > x /*prevent endless loop*/ ) )
         {
             // go back to previous white space if possible and adjust 
             // correction values for next line
@@ -300,6 +310,8 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
             rchar_it!=render_char_list.end(); rchar_it++ )
     {
+		if( !(*rchar_it)->glyph_index )
+			continue;
         int cur_rx = (*rchar_it)->x+(*rchar_it)->width-1;
         if( cur_rx > max_x ) max_x = cur_rx;
         int cur_by = (*rchar_it)->y+(*rchar_it)->height-1;

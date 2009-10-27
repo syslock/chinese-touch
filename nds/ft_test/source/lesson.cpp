@@ -13,52 +13,6 @@
 #include "config.h"
 #include "error_console.h"
 
-void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
-{
-	render_screen.clear();
-    
-    // 2. render hanzi in the faces suggested layout (e.g. fixed width)
-    RenderStyle render_style;
-    render_style.center_x = true;
-    int top = 10;
-    int size = 32;
-    if( this->lesson->render_hanzi )
-    {
-        RenderRect rect = ft.render( render_screen, this->hanzi, ft.han_face, size, 0, top, &render_style );
-        top += rect.height;
-    }
-    else
-    {
-        top += size;
-    }
-    
-    // 3. render pinyin in variable width
-    top += 10;
-    size = 16;
-    if( this->lesson->render_pinyin )
-    {
-        RenderRect rect = ft.render( render_screen, this->pinyin, ft.han_face, size, 0, top, &render_style );
-        top += rect.height;
-    }
-    else
-    {
-        top += size;
-    }
-    
-    // 4. render translation in variable width
-    top += 10;
-    size = 9;
-    if( this->lesson->render_translation && this->definitions.count("de") )
-    {
-        RenderRect rect = ft.render( render_screen, this->definitions["de"]->translation, ft.latin_face, size, 0, top, &render_style );
-        top += rect.height;
-    }
-    else
-    {
-        top += size;
-    }
-}
-
 
 void Library::rescan()
 {
@@ -270,6 +224,12 @@ void Lesson::parse_dictionary( const std::string& dict_file_name )
             column++;
             line = line.substr(2);
         }
+		else
+		{
+			// continuation of multi line field
+			// though prepend previous line brake:
+			line = "\n" + line;
+		}
         switch( column )
         {
         case 1: hanzi.append( line ); break;

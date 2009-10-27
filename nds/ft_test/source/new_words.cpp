@@ -6,6 +6,77 @@
 #include "config.h"
 #include "error_console.h"
 
+
+void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
+{
+	render_screen.clear();
+    
+    // render hanzi centered
+    RenderStyle render_style;
+    render_style.center_x = true;
+    int top = 5;
+    int size = 32;
+    if( this->lesson->render_hanzi )
+    {
+        RenderRect rect = ft.render( render_screen, this->hanzi, ft.han_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+    else
+    {
+        top += size*1.2;
+    }
+    top += 10;
+    
+    // render pinyin centered
+    size = 14;
+    if( this->lesson->render_pinyin )
+    {
+        RenderRect rect = ft.render( render_screen, this->pinyin, ft.han_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+    else
+    {
+        top += size*1.2;
+    }
+    top += 10;
+    
+	std::string lang = "de";
+	
+    // render word type
+    size = 7;
+    if( this->lesson->render_translation && this->lesson->render_word_type 
+		&& this->definitions.count(lang) && this->definitions[lang]->word_type.length() )
+    {
+        RenderRect rect = ft.render( render_screen, this->definitions[lang]->word_type, ft.latin_face, size, 0, top, &render_style );
+        top += rect.height+5;
+    }
+
+	unsigned int char_limit = 100;
+
+    // render first n characters of translation
+    size = 9;
+    if( this->lesson->render_translation && this->definitions.count(lang) 
+		&& this->definitions[lang]->translation.length() )
+    {
+		std::string text = this->definitions[lang]->translation.substr(0,char_limit);
+		if( text.length()==char_limit ) text += "...";
+        RenderRect rect = ft.render( render_screen, text, ft.latin_face, size, 0, top, &render_style );
+        top += rect.height+10;
+    }
+
+	// render first n characters of comment
+    size = 8;
+    if( this->lesson->render_comment && this->lesson->render_translation 
+		&& this->definitions.count(lang) && this->definitions[lang]->comment.length() )
+    {
+		std::string text = this->definitions[lang]->comment.substr(0,char_limit);
+		if( text.length()==char_limit ) text += "...";
+        RenderRect rect = ft.render( render_screen, text, ft.han_face, size, 0, top, &render_style );
+        top += rect.height;
+    }
+}
+
+
 NewWordsViewer::NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config )
 	: freetype_renderer(_freetype_renderer), lesson(_lesson), 
 		word_index(0), config(_config)
@@ -48,7 +119,26 @@ void NewWordsViewer::run_until_exit()
     {
         this->config.save_position( this->lesson.new_words[this->word_index], this->word_index );
         scanKeys();
-        touchPosition touch;
+		int pressed = keysDown();
+		int held = keysHeld();
+		if( held & KEY_SELECT && pressed & KEY_UP )
+		{
+			ErrorConsole::init_screen( SCREEN_MAIN );
+		}
+		if( held & KEY_SELECT && pressed & KEY_DOWN )
+		{
+			ErrorConsole::init_screen( SCREEN_SUB );
+		}
+		if( held & KEY_SELECT && pressed & KEY_LEFT )
+		{
+			ErrorConsole::clear();
+		}
+		if( held & KEY_SELECT && pressed & KEY_RIGHT )
+		{
+			ErrorConsole::dump();
+		}
+		
+		touchPosition touch;
         touchRead( &touch );
         int area = touch.px * touch.z2 / touch.z1 - touch.px;
         if( keysCurrent() & KEY_TOUCH 

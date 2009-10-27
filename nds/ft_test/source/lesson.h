@@ -54,11 +54,14 @@ class Lesson
 {
 public:
     Lesson( int _number, Book* _book ) : number(_number), 
-        render_hanzi(true), render_pinyin(true), render_translation(true),
+        render_hanzi(true), render_pinyin(true), render_word_type(true),
+		render_translation(true), render_comment(true),
         book(_book) {};
     void toggle_hanzi() { this->render_hanzi = !this->render_hanzi; }
     void toggle_pinyin() { this->render_pinyin = !this->render_pinyin; }
+    void toggle_word_type() { this->render_word_type = !this->render_word_type; }
     void toggle_translation() { this->render_translation = !this->render_translation; }
+    void toggle_comment() { this->render_comment = !this->render_comment; }
     void parse_config( const std::string& lesson_file_name );
     void parse_dictionary( const std::string& lesson_file_name );
 public:
@@ -68,7 +71,7 @@ public:
 	TextVector exercises;
     std::string title, description;
     int number;
-    bool render_hanzi, render_pinyin, render_translation;
+    bool render_hanzi, render_pinyin, render_word_type, render_translation, render_comment;
     Book* book;
 };
 
