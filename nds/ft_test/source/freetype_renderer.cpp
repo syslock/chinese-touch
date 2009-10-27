@@ -248,6 +248,11 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
 			|| ( (*rchar_it)->char_code == 10 
 				&& (*rchar_it)->x > x /*prevent endless loop*/ ) )
         {
+			if( (*rchar_it)->char_code == 10 )
+			{
+                // prevent successive line breaks at this position:
+                prev_whitespace_it = render_char_list.end();
+			}
             // go back to previous white space if possible and adjust 
             // correction values for next line
             if( prev_whitespace_it != render_char_list.end() )
