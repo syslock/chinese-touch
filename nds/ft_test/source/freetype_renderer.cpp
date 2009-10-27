@@ -127,28 +127,27 @@ void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
 	}
 }
 
-class RenderChar
+
+RenderCharList::~RenderCharList()
 {
-public:
-    RenderChar( unsigned long _char_code, unsigned long _glyph_index ) 
-        : x(0), y(0), width(0), height(0), 
-          char_code(_char_code), glyph_index(_glyph_index), 
-          line_begin(false), curr_line_end_char(0) {}
-public:
-    int x, y, width, height;
-    unsigned long char_code, glyph_index;
-    bool line_begin;
-    RenderChar* curr_line_end_char;
-};
-typedef std::list<RenderChar*> RenderCharList;
+	for( RenderCharList::iterator rc_it = this->begin();
+		rc_it != this->end(); rc_it++ )
+	{
+		if( *rc_it ) delete *rc_it;
+	}
+}
 
 
+// FIXME: provide override with UCCharList argument instead of std::string& argument for single line cases
+// 			with multiple calls to ::render()
 RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
-            int pixel_size, int x, int y, RenderStyle* render_style )
+            int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
     // 1. unicode conversion
-    CharList char_list;
-    RenderCharList render_char_list;
+    UCCharList char_list;
+    RenderCharList stack_render_char_list;
+	// redirect uninitialized pointer to stack object to ensure its destruction
+	if( !render_char_list ) render_char_list = &stack_render_char_list;
     if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
     {
         LOG( "error in utf-8 input (non fatal)" );
@@ -170,25 +169,33 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     FT_Vector pen;
     pen.x = x * 64;
     pen.y = -y * 64;
-    for( CharList::iterator char_it=char_list.begin(); 
+    for( UCCharList::iterator char_it=char_list.begin(); 
             char_it!=char_list.end(); char_it++ )
     {
         // Load Char
-        LOG( "character code: " << *char_it );
+        LOG( "character code: " << char_it->code_point );
         //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
-        FT_UInt glyph_index = FT_Get_Char_Index( face, *char_it );
+        FT_UInt glyph_index = FT_Get_Char_Index( face, char_it->code_point );
         if( !glyph_index )
         {
-			if( *char_it==10 )
+			if( char_it->code_point==10 )
 			{
-				// include line breaks
-				RenderChar* render_char = new RenderChar( *char_it, glyph_index );
-				render_char->x = pen.x/64;
-				render_char->y = -pen.y/64;
-				render_char_list.push_back( render_char );
-				continue;
+				if( render_style && !render_style->linebreak )
+				{
+					// line finished, stop rendering before line break:
+					break;
+				}
+				else
+				{
+					// include line breaks
+					RenderChar* render_char = new RenderChar( char_it->code_point, glyph_index );
+					render_char->x = pen.x/64;
+					render_char->y = -pen.y/64;
+					render_char_list->push_back( render_char );
+					continue;
+				}
 			}
-			WARN(  "error translating character code: " << *char_it );
+			WARN(  "error translating character code: " << char_it->code_point );
 			continue;
         }
         FT_Set_Transform( face, 0, &pen );
@@ -203,7 +210,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
         LOG( "glyph name: " << buffer );
         
-        RenderChar* render_char = new RenderChar( *char_it, glyph_index );
+        RenderChar* render_char = new RenderChar( char_it->code_point, glyph_index );
         render_char->x = pen.x/64;
         render_char->y = -pen.y/64;
 		FT_GlyphSlot& glyph = face->glyph;
@@ -216,13 +223,21 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
 			LOG( "got no bitmap for current glyph" );
 		}
 		if( bitmap.rows > line_height ) line_height = bitmap.rows;
+		if( render_style && !render_style->linebreak 
+			&& render_char->x+render_char->width > render_screen.res_x )
+		{
+			// clean up clipped character und stop rendering before this character,
+			// when in single line mode:
+			delete render_char;
+			break;
+		}
 		pen.x += glyph->advance.x;
-        render_char_list.push_back( render_char );
+        render_char_list->push_back( render_char );
     }
     
     // 4. insert line breaks
-    RenderCharList::iterator prev_whitespace_it = render_char_list.end();
-    RenderCharList::iterator last_line_it = render_char_list.begin();
+    RenderCharList::iterator prev_whitespace_it = render_char_list->end();
+    RenderCharList::iterator last_line_it = render_char_list->begin();
     int x_correction = 0;
     int y_correction = 0;
     int x_limit = render_screen.res_x;
@@ -231,68 +246,71 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     {
         x_limit -= x;
     }
-    for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
-            rchar_it!=render_char_list.end(); rchar_it++ )
-    {
-        LOG( "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
-            << " y=" << (*rchar_it)->y << " xc=" << x_correction 
-            << " yc=" << y_correction );
-        (*rchar_it)->x += x_correction;
-        (*rchar_it)->y += y_correction;
-        if( (*rchar_it)->char_code == 32
-			|| (*rchar_it)->char_code == 9 )
-        {
-            prev_whitespace_it = rchar_it;
-        }
-        if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x 
-			|| ( (*rchar_it)->char_code == 10 
-				&& (*rchar_it)->x > x /*prevent endless loop*/ ) )
-        {
-			if( (*rchar_it)->char_code == 10 )
+	if( render_style && render_style->linebreak )
+	{
+		for( RenderCharList::iterator rchar_it=render_char_list->begin(); 
+				rchar_it!=render_char_list->end(); rchar_it++ )
+		{
+			LOG( "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
+				<< " y=" << (*rchar_it)->y << " xc=" << x_correction 
+				<< " yc=" << y_correction );
+			(*rchar_it)->x += x_correction;
+			(*rchar_it)->y += y_correction;
+			if( (*rchar_it)->char_code == 32
+				|| (*rchar_it)->char_code == 9 )
 			{
-                // prevent successive line breaks at this position:
-                prev_whitespace_it = render_char_list.end();
+				prev_whitespace_it = rchar_it;
 			}
-            // go back to previous white space if possible and adjust 
-            // correction values for next line
-            if( prev_whitespace_it != render_char_list.end() )
-            {
-                // re-correct already corrected chars in line since prev whitespace:
-                RenderCharList::iterator reloc_char_it=prev_whitespace_it;
-                reloc_char_it++;
-                RenderCharList::iterator reloc_end_char_it=rchar_it;
-                reloc_end_char_it++;
-                for( ; reloc_char_it!=reloc_end_char_it; reloc_char_it++ )
-                {
-                    (*reloc_char_it)->x -= x_correction;
-                    (*reloc_char_it)->y -= y_correction;
-                }
-                rchar_it = ++prev_whitespace_it;
-                // prevent successive line breaks at this position:
-                prev_whitespace_it = render_char_list.end();
-            }
-            else
-            {
-                (*rchar_it)->x -= x_correction;
-                (*rchar_it)->y -= y_correction;
-            }
-            y_correction += line_height+1;
-            x_correction = x-(*rchar_it)->x;
-            RenderCharList::iterator prev_last_line_it = last_line_it;
-            last_line_it = rchar_it;
-            line_count++;
-            rchar_it--;
-            (*prev_last_line_it)->curr_line_end_char = *rchar_it;
-        }
-    }
-    (*last_line_it)->curr_line_end_char = *render_char_list.rbegin();
+			if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x 
+				|| ( (*rchar_it)->char_code == 10 
+					&& (*rchar_it)->x > x /*prevent endless loop*/ ) )
+			{
+				if( (*rchar_it)->char_code == 10 )
+				{
+					// prevent successive line breaks at this position:
+					prev_whitespace_it = render_char_list->end();
+				}
+				// go back to previous white space if possible and adjust 
+				// correction values for next line
+				if( prev_whitespace_it != render_char_list->end() )
+				{
+					// re-correct already corrected chars in line since prev whitespace:
+					RenderCharList::iterator reloc_char_it=prev_whitespace_it;
+					reloc_char_it++;
+					RenderCharList::iterator reloc_end_char_it=rchar_it;
+					reloc_end_char_it++;
+					for( ; reloc_char_it!=reloc_end_char_it; reloc_char_it++ )
+					{
+						(*reloc_char_it)->x -= x_correction;
+						(*reloc_char_it)->y -= y_correction;
+					}
+					rchar_it = ++prev_whitespace_it;
+					// prevent successive line breaks at this position:
+					prev_whitespace_it = render_char_list->end();
+				}
+				else
+				{
+					(*rchar_it)->x -= x_correction;
+					(*rchar_it)->y -= y_correction;
+				}
+				y_correction += line_height+1;
+				x_correction = x-(*rchar_it)->x;
+				RenderCharList::iterator prev_last_line_it = last_line_it;
+				last_line_it = rchar_it;
+				line_count++;
+				rchar_it--;
+				(*prev_last_line_it)->curr_line_end_char = *rchar_it;
+			}
+		}
+	}
+    (*last_line_it)->curr_line_end_char = *render_char_list->rbegin();
 
     if( render_style && render_style->center_x )
     {
         // 5. x-center every line
         x_correction = 0;
-        for( RenderCharList::iterator rchar_it=render_char_list.begin();
-                rchar_it!=render_char_list.end(); rchar_it++ )
+        for( RenderCharList::iterator rchar_it=render_char_list->begin();
+                rchar_it!=render_char_list->end(); rchar_it++ )
         {
             if( (*rchar_it)->curr_line_end_char )
             {
@@ -312,8 +330,8 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     // 7. render characters at final locations
     int max_x = 0;
     int max_y = 0;
-    for( RenderCharList::iterator rchar_it=render_char_list.begin(); 
-            rchar_it!=render_char_list.end(); rchar_it++ )
+    for( RenderCharList::iterator rchar_it=render_char_list->begin(); 
+            rchar_it!=render_char_list->end(); rchar_it++ )
     {
 		if( !(*rchar_it)->glyph_index )
 			continue;

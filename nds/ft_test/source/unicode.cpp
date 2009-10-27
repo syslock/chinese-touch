@@ -1,6 +1,6 @@
 #include "unicode.h"
 
-bool utf8_to_ucs4( const unsigned char* src, CharList& result_list )
+bool utf8_to_ucs4( const unsigned char* src, UCCharList& result_list )
 {
     if( !src ) return false;
     const unsigned char* first = src;
@@ -37,8 +37,12 @@ bool utf8_to_ucs4( const unsigned char* src, CharList& result_list )
             result = result << 6;
             result |= *next & 63;
         }
+		UCChar uc_char;
+		uc_char.code_point = result;
+		uc_char.source_offset = first-src;
+		uc_char.source_length = next-first;
+        result_list.push_back( uc_char );
         first = next;
-        result_list.push_back( result );
     }
     return true;
 }
