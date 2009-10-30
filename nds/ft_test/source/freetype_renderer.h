@@ -79,13 +79,14 @@ public:
 class RenderChar
 {
 public:
-    RenderChar( unsigned long _char_code, unsigned long _glyph_index ) 
+    RenderChar( UCChar _uc_char, unsigned long _glyph_index ) 
         : x(0), y(0), width(0), height(0), 
-          char_code(_char_code), glyph_index(_glyph_index), 
+          uc_char(_uc_char), glyph_index(_glyph_index), 
           line_begin(false), curr_line_end_char(0) {}
 public:
     int x, y, width, height;
-    unsigned long char_code, glyph_index;
+	UCChar uc_char;
+    unsigned long glyph_index;
     bool line_begin;
     RenderChar* curr_line_end_char;
 };
@@ -105,6 +106,8 @@ public:
     ~FreetypeRenderer();
 	void init_screen( Screen screen, RenderScreen& render_screen );
     RenderRect render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, int pixel_size, 
+                int x, int y, RenderStyle* render_style=0, RenderCharList* render_char_list=0 );
+    RenderRect render( const RenderScreen& render_screen, UCCharList& char_list, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0, RenderCharList* render_char_list=0 );
 public:
     FT_Error error;

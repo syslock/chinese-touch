@@ -2,7 +2,7 @@
 #define HANZI_TRAINER_H
 
 #ifndef DEBUG
-#define DEBUG 1
+#define DEBUG 0
 #endif
 
 #endif // HANZI_TRAINER_H

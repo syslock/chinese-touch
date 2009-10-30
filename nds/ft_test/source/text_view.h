@@ -9,9 +9,9 @@
 class BufferedLine : public RenderScreenBuffer
 {
 public:
-	int char_offset, char_count;
+	RenderCharList render_char_list;
 public:
-	BufferedLine() : RenderScreenBuffer(256, 16), char_offset(0), char_count(0) {};
+	BufferedLine() : RenderScreenBuffer(256, 16) {};
 };
 
 class TextView : private std::list<BufferedLine*>
@@ -21,9 +21,11 @@ public:
 	Config& config;
 	Text& text;
 	Dictionary& dict;
+	RenderScreen word_screen, text_screen;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();
+	void render();
 };
 
 #endif // TEXT_VIEW_H

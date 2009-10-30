@@ -138,21 +138,28 @@ RenderCharList::~RenderCharList()
 }
 
 
-// FIXME: provide override with UCCharList argument instead of std::string& argument for single line cases
-// 			with multiple calls to ::render()
 RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
     // 1. unicode conversion
     UCCharList char_list;
-    RenderCharList stack_render_char_list;
-	// redirect uninitialized pointer to stack object to ensure its destruction
-	if( !render_char_list ) render_char_list = &stack_render_char_list;
     if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
     {
-        LOG( "error in utf-8 input (non fatal)" );
+        WARN( "error in utf-8 input (non fatal)" );
     }
-    if( char_list.size()==0 ) return RenderRect(0,0,0,0);
+	return this->render( render_screen, char_list, face, pixel_size, x, y, render_style, render_char_list );
+}
+
+RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharList& input_char_list, FT_Face& face, 
+            int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
+{
+	// redirect uninitialized pointer to stack object with default configuration:
+	RenderStyle default_render_style;
+	if( !render_style ) render_style = &default_render_style;
+	// redirect uninitialized pointer to stack object to ensure its destruction:
+    RenderCharList stack_render_char_list;
+	if( !render_char_list ) render_char_list = &stack_render_char_list;
+    if( input_char_list.size()==0 ) return RenderRect(0,0,0,0);
     
     // 2. initialize Freetype
     FT_Error error;
@@ -169,33 +176,35 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     FT_Vector pen;
     pen.x = x * 64;
     pen.y = -y * 64;
-    for( UCCharList::iterator char_it=char_list.begin(); 
-            char_it!=char_list.end(); char_it++ )
+	UCCharList::iterator input_char_it=input_char_list.begin();
+    for( ; input_char_it!=input_char_list.end(); input_char_it++ )
     {
+		//std::cout << "#";
         // Load Char
-        LOG( "character code: " << char_it->code_point );
+        LOG( "character code: " << input_char_it->code_point );
         //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
-        FT_UInt glyph_index = FT_Get_Char_Index( face, char_it->code_point );
+        FT_UInt glyph_index = FT_Get_Char_Index( face, input_char_it->code_point );
         if( !glyph_index )
         {
-			if( char_it->code_point==10 )
+			if( input_char_it->code_point==10 )
 			{
-				if( render_style && !render_style->linebreak )
+				if( !render_style->linebreak )
 				{
-					// line finished, stop rendering before line break:
+					// line finished
+					// and stop rendering before line break:
 					break;
 				}
 				else
 				{
 					// include line breaks
-					RenderChar* render_char = new RenderChar( char_it->code_point, glyph_index );
+					RenderChar* render_char = new RenderChar( *input_char_it, glyph_index );
 					render_char->x = pen.x/64;
 					render_char->y = -pen.y/64;
 					render_char_list->push_back( render_char );
 					continue;
 				}
 			}
-			WARN(  "error translating character code: " << char_it->code_point );
+			WARN(  "error translating character code: " << input_char_it->code_point );
 			continue;
         }
         FT_Set_Transform( face, 0, &pen );
@@ -210,7 +219,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
         LOG( "glyph name: " << buffer );
         
-        RenderChar* render_char = new RenderChar( char_it->code_point, glyph_index );
+        RenderChar* render_char = new RenderChar( *input_char_it, glyph_index );
         render_char->x = pen.x/64;
         render_char->y = -pen.y/64;
 		FT_GlyphSlot& glyph = face->glyph;
@@ -223,17 +232,25 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
 			LOG( "got no bitmap for current glyph" );
 		}
 		if( bitmap.rows > line_height ) line_height = bitmap.rows;
-		if( render_style && !render_style->linebreak 
+		if( !render_style->linebreak 
 			&& render_char->x+render_char->width > render_screen.res_x )
 		{
-			// clean up clipped character und stop rendering before this character,
-			// when in single line mode:
+			// clean up clipped character...
 			delete render_char;
+			// and stop rendering before line break:
 			break;
 		}
 		pen.x += glyph->advance.x;
         render_char_list->push_back( render_char );
     }
+	// erase all successfully processed input characters from input char list:
+	input_char_list.erase( input_char_list.begin(), input_char_it );
+	while( input_char_list.begin()!=input_char_list.end() 
+		&& input_char_list.begin()->code_point==10 )
+	{
+		input_char_list.erase( input_char_list.begin() );
+	}
+	
     
     // 4. insert line breaks
     RenderCharList::iterator prev_whitespace_it = render_char_list->end();
@@ -242,30 +259,30 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
     int y_correction = 0;
     int x_limit = render_screen.res_x;
     int line_count = 1;
-    if( render_style && render_style->center_x )
+    if( render_style->center_x )
     {
         x_limit -= x;
     }
-	if( render_style && render_style->linebreak )
+	if( render_style->linebreak )
 	{
 		for( RenderCharList::iterator rchar_it=render_char_list->begin(); 
 				rchar_it!=render_char_list->end(); rchar_it++ )
 		{
-			LOG( "c=" << (*rchar_it)->char_code << " x=" << (*rchar_it)->x 
+			LOG( "c=" << (*rchar_it)->uc_char.code_point << " x=" << (*rchar_it)->x 
 				<< " y=" << (*rchar_it)->y << " xc=" << x_correction 
 				<< " yc=" << y_correction );
 			(*rchar_it)->x += x_correction;
 			(*rchar_it)->y += y_correction;
-			if( (*rchar_it)->char_code == 32
-				|| (*rchar_it)->char_code == 9 )
+			if( (*rchar_it)->uc_char.code_point == 32
+				|| (*rchar_it)->uc_char.code_point == 9 )
 			{
 				prev_whitespace_it = rchar_it;
 			}
 			if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x 
-				|| ( (*rchar_it)->char_code == 10 
+				|| ( (*rchar_it)->uc_char.code_point == 10 
 					&& (*rchar_it)->x > x /*prevent endless loop*/ ) )
 			{
-				if( (*rchar_it)->char_code == 10 )
+				if( (*rchar_it)->uc_char.code_point == 10 )
 				{
 					// prevent successive line breaks at this position:
 					prev_whitespace_it = render_char_list->end();
@@ -305,7 +322,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
 	}
     (*last_line_it)->curr_line_end_char = *render_char_list->rbegin();
 
-    if( render_style && render_style->center_x )
+    if( render_style->center_x )
     {
         // 5. x-center every line
         x_correction = 0;
@@ -321,7 +338,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
             (*rchar_it)->x += x_correction;
         }
     }
-    if( render_style && render_style->center_y )
+    if( render_style->center_y )
     {
         // 6. y-center all lines
         // TODO
@@ -352,10 +369,20 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
         }
         FT_GlyphSlot& glyph = face->glyph;
         FT_Bitmap& bitmap = face->glyph->bitmap;
+		if( !render_screen.res_x || ! render_screen.res_y || !render_screen.base_address )
+		{
+			throw ERROR( "FreeTypeRenderer::render(): target buffer not initialized or of zero size" );
+		}
         for( int row=0; bitmap.buffer && row<bitmap.rows; row++ )
         {
+			int dest_y = row+(line_height-glyph->bitmap_top);
+			if( dest_y < 0 || dest_y >= render_screen.res_y )
+				continue;
             for( int pixel=0; pixel<bitmap.width; pixel+=2 )
             {
+				int dest_x = pixel + glyph->bitmap_left;
+				if( dest_x < 0 || dest_x > (render_screen.res_x-2) )
+					continue;
                 u16 value = 0;
                 if( pixel < bitmap.width-1 )
                 {
@@ -370,11 +397,6 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
                 u16* base_address = bg_gfx_ptr
                         + (row+(line_height-glyph->bitmap_top))*render_screen.res_x/2
                         + pixel/2 + glyph->bitmap_left/2;
-                if( base_address < bg_gfx_ptr
-                    || base_address > bg_gfx_ptr+render_screen.res_x*render_screen.res_y-2 )
-                {
-                    continue;
-                }
                 *base_address |= value;
             }
         }
