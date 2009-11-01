@@ -29,6 +29,7 @@ public:
     void load();
     void save();
     void save_position( NewWord* word, unsigned int number );
+	void save_position( Lesson* lesson );
     std::string get_current_book_name() { return this->data.config.current_book_name; }
     int get_current_lesson_number() { return this->data.config.current_lesson_number; }
     int get_current_word_number() { return this->data.config.current_word_number; }

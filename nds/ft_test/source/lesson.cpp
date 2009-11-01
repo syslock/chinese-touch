@@ -278,12 +278,12 @@ void Lesson::parse_text( const std::string& text_file_name, TextVector& containe
 			else if( key=="text" )
 			{
 				text_started = true;
-				text->append( value );
+				text->append( value+"\n" );
 			}
 		}
 		else if( text_started )
 		{
-			text->append( line );
+			text->append( line+"\n" );
 		}
 	}
 }

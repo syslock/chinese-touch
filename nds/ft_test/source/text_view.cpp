@@ -64,6 +64,7 @@ void TextView::render( Screen screen )
 
 void TextView::run_until_exit()
 {
+	this->config.save_position( this->text.lesson );
 	this->render( SCREEN_MAIN );
 	this->render( SCREEN_SUB );
 	touchPosition old_touch;
