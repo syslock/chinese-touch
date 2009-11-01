@@ -204,6 +204,15 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 					continue;
 				}
 			}
+			else if( input_char_it->code_point==9 )
+			{
+				// include tabs
+				RenderChar* render_char = new RenderChar( *input_char_it, glyph_index );
+				render_char->x = pen.x/64;
+				render_char->y = -pen.y/64;
+				render_char_list->push_back( render_char );
+				continue;
+			}
 			WARN(  "error translating character code: " << input_char_it->code_point );
 			continue;
         }
@@ -277,6 +286,12 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 				|| (*rchar_it)->uc_char.code_point == 9 )
 			{
 				prev_whitespace_it = rchar_it;
+			}
+			if( (*rchar_it)->uc_char.code_point == 9 )
+			{
+				// insert dynamically sized tab space, based on pixel size and position:
+				int tab_width = pixel_size * 8;
+				x_correction += tab_width - ((*rchar_it)->x % tab_width);
 			}
 			if( (*rchar_it)->x+(*rchar_it)->width > render_screen.res_x 
 				|| ( (*rchar_it)->uc_char.code_point == 10 
