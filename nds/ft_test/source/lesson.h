@@ -64,6 +64,7 @@ public:
     void toggle_comment() { this->render_comment = !this->render_comment; }
     void parse_config( const std::string& lesson_file_name );
     void parse_dictionary( const std::string& lesson_file_name );
+	void parse_text( const std::string& text_file_name, TextVector& container );
 public:
 	NewWordVector new_words;
 	TextVector lesson_texts;

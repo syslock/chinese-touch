@@ -22,10 +22,13 @@ public:
 	Text& text;
 	Dictionary& dict;
 	RenderScreen word_screen, text_screen;
+	int y_offset;
+	int v_y;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();
-	void render();
+	void render( Screen screen );
+	void run_until_exit();
 };
 
 #endif // TEXT_VIEW_H

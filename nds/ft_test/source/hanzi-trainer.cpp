@@ -29,6 +29,8 @@ int main()
 			throw ERROR( "error initializing fat driver" );
 		}
 
+		Dictionary dictionary;
+
 		LOG( "initializing library" );
 		Library library( global_fat_initialized );
 		LOG( "scanning library..." );
@@ -80,42 +82,32 @@ int main()
 						}
 						case LessonMenuChoice::CONTENT_TYPE_GRAMMAR:
 						{
-							throw ERROR( "Die Anzeige der Grammatik ist noch nicht implementiert" );
+							TextVector& texts = lesson_menu_choice.lesson->grammar_texts;
+							if( texts.size() )
+							{
+								TextView text_view( *ft, config, *texts[0], dictionary );
+								text_view.run_until_exit();
+							} else throw ERROR( "Keine Grammatik für diese Lektion vorhanden" );
 							break;
 						}
 						case LessonMenuChoice::CONTENT_TYPE_TEXT:
 						{
-							Dictionary dict;
-							Text* text = new Text( "foobar", lesson_menu_choice.lesson );
-/*							text->append( "课文 这是爸爸\n"
-										"这是爸爸，这是妈妈。\n"
-										"这是姐姐和妹妹。\n"
-										"那是哥哥，那是弟弟。\n"
-										"那是爷爷和奶奶。\n"
-										"这是猫，这是狗。\n"
-										"这是猫和狗。\n" );
-*/
-							text->append( "「《施氏食獅史》\n"
-										"石室詩士施氏，嗜獅，誓食十獅。\n"
-										"氏時時適市視獅。\n"
-										"十時，適十獅適市。\n"
-										"是時，適施氏適市。\n"
-										"氏視是十獅，恃矢勢，使是十獅逝世。\n"
-										"氏拾是十獅屍，適石室。\n"
-										"石室濕，氏使侍拭石室。\n"
-										"石室拭，氏始試食是十獅。\n"
-										"食時，始識是十獅，實十石獅屍。\n"
-										"試釋是事。」" );
-							TextView* text_view = new TextView( *ft, config, *text, dict );
-							text_view->render();
-							for( int i=0; i<500; i++ ) swiWaitForVBlank();
-							delete text_view;
-							delete text;
+							TextVector& texts = lesson_menu_choice.lesson->lesson_texts;
+							if( texts.size() )
+							{
+								TextView text_view( *ft, config, *texts[0], dictionary );
+								text_view.run_until_exit();
+							} else throw ERROR( "Kein Text für diese Lektion vorhanden" );
 							break;
 						}
 						case LessonMenuChoice::CONTENT_TYPE_EXERCISES:
 						{
-							throw ERROR( "Die Anzeige von Übungsaufgaben ist noch nicht implementiert" );
+							TextVector& texts = lesson_menu_choice.lesson->exercises;
+							if( texts.size() )
+							{
+								TextView text_view( *ft, config, *texts[0], dictionary );
+								text_view.run_until_exit();
+							} else throw ERROR( "Keine Übung für diese Lektion vorhanden" );
 							break;
 						}
 						default: throw ERROR( "LessonMenu returned invalid content type!" );
