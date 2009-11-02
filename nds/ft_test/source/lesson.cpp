@@ -260,32 +260,12 @@ void Lesson::parse_dictionary( const std::string& dict_file_name, Dictionary&  d
 void Lesson::parse_text( const std::string& text_file_name, TextVector& container )
 {
 	std::ifstream text_file( text_file_name.c_str() );
-	char line_buffer[1024];
+	char buffer[512];
 	Text* text = new Text( "none", this );
 	container.push_back( text );
-	bool text_started = false;
 	while( text_file.good() )
 	{
- 		text_file.getline( line_buffer, sizeof(line_buffer) );
-		std::string line = line_buffer;
-		std::string::size_type equals_pos = line.find( '=' );
-		if( !text_started && equals_pos != std::string::npos )
-		{
-			std::string key = line.substr( 0, equals_pos );
-			std::string value = line.substr( equals_pos+1 );
-			if( key=="title" )
-			{
-				text->title = value;
-			}
-			else if( key=="text" )
-			{
-				text_started = true;
-				text->append( value+"\n" );
-			}
-		}
-		else if( text_started )
-		{
-			text->append( line+"\n" );
-		}
+ 		text_file.read( buffer, sizeof(buffer) );
+		text->append( buffer );
 	}
 }
