@@ -95,7 +95,7 @@ void RenderScreen::clear( int color )
     memset( this->base_address, color, this->res_x*this->res_y*1 );
 }
 
-void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
+void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y, bool replace )
 {
 	// 16-bit-aligned to allow copying to vram:
 	char* buffer = (char*)this->base_address;
@@ -122,7 +122,8 @@ void RenderScreenBuffer::render_to( RenderScreen& dest, int x, int y )
 			{
 				value = buffer[row*this->res_x+pixel];
 			}
-			*base_address |= value;
+			if( !replace ) *base_address |= value;
+			else *base_address = value;
 		}
 	}
 }

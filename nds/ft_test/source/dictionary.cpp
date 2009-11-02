@@ -14,6 +14,7 @@ void Dictionary::add_new_word( NewWord* new_word )
 
 void Dictionary::find_words_by_char_code( unsigned long char_code, NewWordSet& result )
 {
+	result.clear();
 	if( this->new_words_by_char_code.count(char_code) )
 	{
 		result = this->new_words_by_char_code[ char_code ];

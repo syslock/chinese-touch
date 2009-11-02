@@ -72,7 +72,7 @@ public:
 	{
 		free( this->base_address );
 	}
-	void render_to( RenderScreen& dest, int x, int y );
+	void render_to( RenderScreen& dest, int x, int y, bool replace=false );
 };
 
 

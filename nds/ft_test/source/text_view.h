@@ -29,6 +29,9 @@ public:
 	int frame_count;
 	NewWordSet current_new_word_set;
 	NewWordSet::iterator current_new_word_set_it;
+	RenderScreenBuffer* current_highlight;
+	int current_highlight_x, current_highlight_y;
+	static int LINE_HEIGHT;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();
