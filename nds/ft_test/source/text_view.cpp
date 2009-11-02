@@ -172,7 +172,9 @@ void TextView::run_until_exit()
 					line_it++ )
 				{
 					BufferedLine* line = *line_it;
-					if( old_touch.py > line->top  && old_touch.py < line->top+TextView::LINE_HEIGHT  )
+					if( line->last_frame_rendered==this->frame_count
+						&& old_touch.py > line->top  
+						&& old_touch.py < line->top+TextView::LINE_HEIGHT  )
 					{
 						for( RenderCharList::iterator char_it = line->render_char_list.begin();
 							!found && char_it != line->render_char_list.end();
