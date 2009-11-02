@@ -7,6 +7,7 @@
 #include <string>
 
 #include "freetype_renderer.h"
+#include "dictionary.h"
 
 
 class Lesson;
@@ -63,7 +64,7 @@ public:
     void toggle_translation() { this->render_translation = !this->render_translation; }
     void toggle_comment() { this->render_comment = !this->render_comment; }
     void parse_config( const std::string& lesson_file_name );
-    void parse_dictionary( const std::string& lesson_file_name );
+    void parse_dictionary( const std::string& lesson_file_name, Dictionary& dictionary );
 	void parse_text( const std::string& text_file_name, TextVector& container );
 public:
 	NewWordVector new_words;
@@ -94,10 +95,12 @@ public:
 class Library : public std::map<std::string,Book*>
 {
 public:
-    Library( bool _fat_initialized ) : fat_initialized(_fat_initialized) {}
+    Library( bool _fat_initialized, Dictionary& _dictionary ) 
+		: fat_initialized(_fat_initialized), dictionary(_dictionary) {}
     void rescan();
 protected:
     bool fat_initialized;
+	Dictionary& dictionary;
 };
 
 extern Lesson all_words_lesson;

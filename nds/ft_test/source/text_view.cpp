@@ -4,7 +4,8 @@
 
 
 TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict )
-	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0)
+	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0),
+		current_new_word_set_it(this->current_new_word_set.begin())
 {
 	UCCharList char_list;
 	if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
@@ -12,12 +13,11 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
         WARN( "error in utf-8 input (non fatal)" );
     }
 	unsigned int prev_size = 0;
-	ErrorConsole::init_screen( SCREEN_MAIN );
-	std::cout << "TextView(): while..." << std::endl;
+	//ErrorConsole::init_screen( SCREEN_SUB );
+	//std::cout << "TextView(): while..." << std::endl;
 	while( prev_size!=char_list.size() )
 	{
-		std::cout << "TextView(): noch " << char_list.size() << " (" << char_list.begin()->code_point << ")" << std::endl;
-		std::cout.flush();
+		//std::cout << "TextView(): noch " << char_list.size() << " (" << char_list.begin()->code_point << ")" << std::endl;
 		// break when no characters where consumed within two consecutive iterations
 		// 		to prevent endless loops
 		prev_size = char_list.size();
@@ -28,15 +28,15 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 			this->freetype_renderer.han_face, 10, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
 	}
-	std::cout << "TextView(): init_screen" << std::endl;
-	//this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
+	//std::cout << "TextView(): init_screen" << std::endl;
+	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->text_screen );
-	std::cout << "TextView(): fertig" << std::endl;
+	//std::cout << "TextView(): fertig" << std::endl;
 }
 
 TextView::~TextView()
 {
-	std::cout << "~TextView()" << std::endl; std::cout.flush();
+	//std::cout << "~TextView()" << std::endl; std::cout.flush();
 	for( TextView::iterator tv_it = this->begin();
 		tv_it != this->end(); tv_it++ )
 	{
@@ -46,7 +46,18 @@ TextView::~TextView()
 
 void TextView::render( Screen screen )
 {
-	if( screen == SCREEN_SUB )
+	this->frame_count++;
+	if( screen == SCREEN_MAIN )
+	{
+		this->word_screen.clear();
+		if( this->current_new_word_set_it != this->current_new_word_set.end() )
+		{
+			NewWord* new_word = *this->current_new_word_set_it;
+			new_word->render( this->freetype_renderer, this->word_screen );
+		}
+	}
+#if 1
+	else if( screen == SCREEN_SUB )
 	{
 		int top = this->y_offset;
 		this->text_screen.clear();
@@ -57,9 +68,12 @@ void TextView::render( Screen screen )
 			if( top > -16 )
 			{
 				(*line_it)->render_to( this->text_screen, 0, top );
+				(*line_it)->top = top;
+				(*line_it)->last_frame_rendered = this->frame_count;
 			}
 		}
 	}
+#endif
 }
 
 void TextView::run_until_exit()
@@ -114,14 +128,63 @@ void TextView::run_until_exit()
 		}
 		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 2 )
 		{
-			std::cout << "(" << old_touch.px << "," << old_touch.py << ")" << " -> (" << touch.px << "," << touch.py << ")" << std::endl;
+			//std::cout << "(" << old_touch.px << "," << old_touch.py << ")" << " -> (" << touch.px << "," << touch.py << ")" << std::endl;
 			touched = false;
             if( old_touch.px < 15 && old_touch.py > (this->text_screen.res_y-15) )
             {
-				//NewWord* word = this->lesson.new_words[ this->word_index ];
-				//this->config.save_position( word, this->word_index );
+				this->config.save_position( this->text.lesson );
 				return;
             }
+            else if( old_touch.px < 15 && old_touch.py < 15 )
+            {
+				if( this->current_new_word_set_it != this->current_new_word_set.begin() )
+				{
+					this->current_new_word_set_it--;
+					this->render( SCREEN_MAIN );
+				}
+			}
+            else if( old_touch.px > (this->text_screen.res_x-15) && old_touch.py < 15 )
+            {
+				if( this->current_new_word_set_it != this->current_new_word_set.end() )
+				{
+					if( ++this->current_new_word_set_it == this->current_new_word_set.end() )
+					{
+						this->current_new_word_set_it--;
+					}
+					else
+					{
+						this->render( SCREEN_MAIN );
+					}
+				}
+			}
+			else
+			{
+				// Dictionary nach relevanten Treffern durchsuchen:
+				bool found = false;
+				for( TextView::iterator line_it = this->begin();
+					!found && line_it != this->end() && (*line_it)->top<this->text_screen.res_y; 
+					line_it++ )
+				{
+					BufferedLine* line = *line_it;
+					if( old_touch.py > line->top  && old_touch.py < line->top+16  )
+					{
+						for( RenderCharList::iterator char_it = line->render_char_list.begin();
+							!found && char_it != line->render_char_list.end();
+							char_it++ )
+						{
+							RenderChar* curr_char = *char_it;
+							if( old_touch.px > curr_char->x && old_touch.px < curr_char->x+curr_char->width )
+							{
+								this->dict.find_words_by_char_code( curr_char->uc_char.code_point, this->current_new_word_set );
+								this->current_new_word_set_it = this->current_new_word_set.begin();
+								this->render( SCREEN_MAIN );
+								found = true;
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 		else if( this->v_y )
 		{

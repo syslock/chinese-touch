@@ -1,7 +1,12 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-#include "lesson.h"
+#include <set>
+#include <map>
+#include <string>
+
+class Text;
+class NewWord;
 
 class WordOccurrence
 {
@@ -12,17 +17,22 @@ public:
 	WordOccurrence() : text(0), offset(0) {}
 };
 
+typedef std::set<NewWord*> NewWordSet;
 typedef std::map<std::string,WordOccurrence> OccurrencesByString;
-typedef std::map<std::string,NewWord*> NewWordsByString;
+typedef std::map<std::string,NewWordSet> NewWordsByString;
+typedef std::map<unsigned long,NewWordSet> NewWordsByULong;
 
 
 class Dictionary
 {
 public:
-	OccurrencesByString occurrences_by_string;
-	NewWordsByString new_words_by_string;
+	//OccurrencesByString occurrences_by_string;
+	NewWordsByString new_words_by_word_string;
+	NewWordsByULong new_words_by_char_code;
 public:
 	Dictionary() {}
+	void add_new_word( NewWord* );
+	void find_words_by_char_code( unsigned long char_code, NewWordSet& result );
 };
 
 #endif // DICTIONARY_H

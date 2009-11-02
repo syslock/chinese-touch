@@ -97,7 +97,7 @@ void Library::rescan()
 						}
 						if( lesson_extension == "dict" )
 						{
-							lesson->parse_dictionary( lesson_path );
+							lesson->parse_dictionary( lesson_path, this->dictionary );
 						}
 						else if( lesson_extension == "conf" )
 						{
@@ -195,7 +195,7 @@ void Lesson::parse_config( const std::string& conf_file_name )
 }
 
 
-void Lesson::parse_dictionary( const std::string& dict_file_name )
+void Lesson::parse_dictionary( const std::string& dict_file_name, Dictionary&  dictionary )
 {
     std::ifstream shengci_file( dict_file_name.c_str() );
     char line_buffer[1024];
@@ -215,6 +215,7 @@ void Lesson::parse_dictionary( const std::string& dict_file_name )
                 NewWord* word = new NewWord( hanzi, pinyin, this );
                 word->definitions[ definition.lang ] = new Definition( definition );
                 this->new_words.push_back( word );
+				dictionary.add_new_word( word );
                 hanzi = "";
                 pinyin = "";
                 definition.translation = "";
@@ -229,6 +230,7 @@ void Lesson::parse_dictionary( const std::string& dict_file_name )
             NewWord* word = new NewWord( hanzi, pinyin, this );
             word->definitions[ definition.lang ] = new Definition( definition );
             this->new_words.push_back( word );
+			dictionary.add_new_word( word );
             column = 0;
         }
         else if( line.substr(0, 2) == "| " )

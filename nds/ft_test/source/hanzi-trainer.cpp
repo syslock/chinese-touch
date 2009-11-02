@@ -32,7 +32,7 @@ int main()
 		Dictionary dictionary;
 
 		LOG( "initializing library" );
-		Library library( global_fat_initialized );
+		Library library( global_fat_initialized, dictionary );
 		LOG( "scanning library..." );
 		library.rescan();
 		LOG( "scanning complete" );
