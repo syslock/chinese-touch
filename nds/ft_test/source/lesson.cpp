@@ -265,7 +265,8 @@ void Lesson::parse_text( const std::string& text_file_name, TextVector& containe
 	container.push_back( text );
 	while( text_file.good() )
 	{
- 		text_file.read( buffer, sizeof(buffer) );
+ 		text_file.read( buffer, sizeof(buffer)-1 );
+		buffer[ text_file.gcount() ] = 0;
 		text->append( buffer );
 	}
 }
