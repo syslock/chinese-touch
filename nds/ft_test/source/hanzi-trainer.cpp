@@ -51,7 +51,7 @@ int main()
 		}
 
 		LOG( "initializing Freetype" );
-		FreetypeRenderer* ft = new FreetypeRenderer( "ukai.ttf", "VeraSe.ttf" );
+		FreetypeRenderer* ft = new FreetypeRenderer( "ukai.ttc", "VeraSe.ttf" );
 
 		Config config;
 		LOG( "loading config" );

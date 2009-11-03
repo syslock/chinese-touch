@@ -19,8 +19,5 @@ void Dictionary::find_words_by_char_code( unsigned long char_code, NewWordSet& r
 	{
 		result = this->new_words_by_char_code[ char_code ];
 	}
-	else
-	{
-	}
 	return;
 }
