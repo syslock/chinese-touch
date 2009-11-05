@@ -75,6 +75,7 @@ void Dictionary::find_words_by_context( const std::string& text, const UCCharLis
 			}
 			WARN( "source_offset: " << source_offset );
 			WARN( "source_length: " << source_length );
+			// FIXME: text contains line breaks and stuff, so better do reverse conversion from search_list?
 			std::string pattern = text.substr( source_offset, source_length );
 			WARN( "pattern: " << pattern );
 			NewWordsByString::iterator word_it=this->new_words_by_word_string.find(pattern);
