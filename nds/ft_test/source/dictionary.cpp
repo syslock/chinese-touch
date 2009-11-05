@@ -67,17 +67,12 @@ void Dictionary::find_words_by_context( const std::string& text, const UCCharLis
 			end_it != ends.end();
 			end_it++ )
 		{
-			int source_offset = (*start_it)->source_offset;
-			int source_length = std::string::npos;
-			if( (*end_it)!=search_list.end() )
+			std::string pattern;
+			for( UCCharList::const_iterator char_it = *start_it; char_it != *end_it; char_it++ )
 			{
-				source_length = (*end_it)->source_offset - source_offset;
+				pattern += text.substr( char_it->source_offset, char_it->source_length );
 			}
-			WARN( "source_offset: " << source_offset );
-			WARN( "source_length: " << source_length );
-			// FIXME: text contains line breaks and stuff, so better do reverse conversion from search_list?
-			std::string pattern = text.substr( source_offset, source_length );
-			WARN( "pattern: " << pattern );
+			WARN( "pattern: \"" << pattern << "\"" );
 			NewWordsByString::iterator word_it=this->new_words_by_word_string.find(pattern);
 			if( word_it	!= this->new_words_by_word_string.end() )
 			{

@@ -194,11 +194,6 @@ void TextView::run_until_exit()
 								r_it != (*(*sli))->render_char_list.end();
 								r_it++ )
 							{
-								// ignore line breaks:
-								// FIXME: this has no influence on pattern matching in Dictionary::find_words_by_context,
-								// which is based on the original text input, still including line breaks
-								if( (*r_it)->uc_char.code_point==0x0a 
-									|| (*r_it)->uc_char.code_point==0x0d ) continue;
 								search_char_list.push_back( (*r_it)->uc_char );
 								// initiate search character position to first character of current line:
 								if( r_it == line->render_char_list.begin() )

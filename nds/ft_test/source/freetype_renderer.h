@@ -21,9 +21,10 @@ class RenderStyle
 {
 public:
     RenderStyle() : center_x(false), center_y(false), 
-            linebreak(true), autoscale(false) {}
+            linebreak(true), autoscale(false), tab_spaces(2) {}
 public:
     bool center_x, center_y, linebreak, autoscale;
+	int tab_spaces;
 };
 
 
