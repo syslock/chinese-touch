@@ -5,8 +5,11 @@
 #include <map>
 #include <string>
 
+#include "freetype_renderer.h"
+
 class Text;
 class NewWord;
+
 
 class WordOccurrence
 {
@@ -22,7 +25,6 @@ typedef std::map<std::string,WordOccurrence> OccurrencesByString;
 typedef std::map<std::string,NewWordSet> NewWordsByString;
 typedef std::map<unsigned long,NewWordSet> NewWordsByULong;
 
-
 class Dictionary
 {
 public:
@@ -33,6 +35,8 @@ public:
 	Dictionary() {}
 	void add_new_word( NewWord* );
 	void find_words_by_char_code( unsigned long char_code, NewWordSet& result );
+	void find_words_by_context( const std::string& text, const UCCharList& search_list, 
+		UCCharList::const_iterator pos, int max_range, NewWordSet& result );
 };
 
 #endif // DICTIONARY_H

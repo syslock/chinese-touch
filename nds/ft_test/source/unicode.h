@@ -7,8 +7,8 @@ class UCChar
 {
 public:
 	unsigned long code_point;
-	unsigned long source_offset;
-	unsigned short source_length;
+	int source_offset;
+	int source_length;
 };
 typedef std::list<UCChar> UCCharList;
 

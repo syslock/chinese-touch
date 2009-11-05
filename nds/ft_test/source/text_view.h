@@ -16,6 +16,12 @@ public:
 	BufferedLine() : RenderScreenBuffer(256, 16), top(0), last_frame_rendered(0) {};
 };
 
+enum ContextMode
+{
+	CONTEXT_WORDS_BY_CONTEXT,
+	CONTEXT_WORDS_BY_CHARCODE
+};
+
 class TextView : private std::list<BufferedLine*>
 {
 public:
@@ -32,6 +38,8 @@ public:
 	RenderScreenBuffer* current_highlight;
 	int current_highlight_x, current_highlight_y;
 	static int LINE_HEIGHT;
+	ContextMode context_mode;
+	RenderChar* context_render_char;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();

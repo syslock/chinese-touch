@@ -130,11 +130,13 @@ int main()
 	{
 		error_stream << "caught " << e.what() << std::endl;
 		ErrorConsole::init_screen();
+		ErrorConsole::dump();
 	}
 	catch( std::exception& e )
 	{
 		error_stream << "caught " << e.what() << std::endl;
 		ErrorConsole::init_screen();
+		ErrorConsole::dump();
 	}
     return 0;
 }

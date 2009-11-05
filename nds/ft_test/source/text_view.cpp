@@ -8,14 +8,13 @@ int TextView::LINE_HEIGHT = 16;
 TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict )
 	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0),
 		current_new_word_set_it(this->current_new_word_set.begin()), current_highlight(0),
-		current_highlight_x(0), current_highlight_y(0)
+		current_highlight_x(0), current_highlight_y(0), context_mode(CONTEXT_WORDS_BY_CONTEXT),
+		context_render_char(0)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	this->word_screen.clear();
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->text_screen );
 	this->text_screen.clear();
-	// Farbindex 0 der Hintergrundpalette auf orange für's Highlight setzen:
-	this->text_screen.palette[0] = 16<<10|24<<5|31;
 	
 	UCCharList char_list;
 	if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
@@ -167,24 +166,71 @@ void TextView::run_until_exit()
 			{
 				// Dictionary nach relevanten Treffern durchsuchen:
 				bool found = false;
+				TextView::iterator prev_line_it = this->end();
 				for( TextView::iterator line_it = this->begin();
 					!found && line_it != this->end() && (*line_it)->top<this->text_screen.res_y; 
-					line_it++ )
+					prev_line_it=line_it++ )
 				{
 					BufferedLine* line = *line_it;
 					if( line->last_frame_rendered==this->frame_count
 						&& old_touch.py > line->top  
 						&& old_touch.py < line->top+TextView::LINE_HEIGHT  )
 					{
+						// create and fill tempory search list containing characters of 3 successive lines
+						// for multi line context matches:
+						UCCharList search_char_list;
+						UCCharList::iterator search_char_it = search_char_list.begin();
+						typedef std::list<TextView::iterator> SearchLineIterators;
+						SearchLineIterators search_line_its;
+						if( prev_line_it!=this->end() ) search_line_its.push_back( prev_line_it );
+						search_line_its.push_back( line_it );
+						TextView::iterator next_line_it = line_it; next_line_it++;
+						if( next_line_it!=this->end() ) search_line_its.push_back( next_line_it );
+						for( SearchLineIterators::iterator sli = search_line_its.begin();
+							sli != search_line_its.end();
+							sli++ )
+						{
+							for( RenderCharList::iterator r_it = (*(*sli))->render_char_list.begin();
+								r_it != (*(*sli))->render_char_list.end();
+								r_it++ )
+							{
+								// ignore line breaks:
+								if( (*r_it)->uc_char.code_point==0x0a 
+									|| (*r_it)->uc_char.code_point==0x0d ) continue;
+								search_char_list.push_back( (*r_it)->uc_char );
+								// initiate search character position to first character of current line:
+								if( r_it == line->render_char_list.begin() )
+								{
+									search_char_it = search_char_list.end(); search_char_it--;
+								}
+							}
+						}
+						// find character clicked on:
 						for( RenderCharList::iterator char_it = line->render_char_list.begin();
 							!found && char_it != line->render_char_list.end();
-							char_it++ )
+							char_it++, search_char_it++ )
 						{
 							RenderChar* curr_char = *char_it;
 							if( old_touch.px > curr_char->x && old_touch.px < curr_char->x+curr_char->width )
 							{
-								// find words containing selected character:
-								this->dict.find_words_by_char_code( curr_char->uc_char.code_point, this->current_new_word_set );
+								if( this->context_render_char != curr_char 
+									|| this->context_mode != CONTEXT_WORDS_BY_CONTEXT )
+								{
+									// first click (odd count) on a character: find words in current context:
+									this->dict.find_words_by_context( this->text, search_char_list, search_char_it, 6, this->current_new_word_set );
+									this->context_mode = CONTEXT_WORDS_BY_CONTEXT;
+									// Farbindex 0 der Hintergrundpalette auf orange für's Highlight setzen:
+									this->text_screen.palette[0] = 16<<10|24<<5|31;
+								}
+								else
+								{
+									// second click (even count) on a character: find words containing selected character:
+									this->dict.find_words_by_char_code( curr_char->uc_char.code_point, this->current_new_word_set );
+									this->context_mode = CONTEXT_WORDS_BY_CHARCODE;
+									// Farbindex 0 der Hintergrundpalette auf blau für's Highlight setzen:
+									this->text_screen.palette[0] = 31<<10|24<<5|24;
+								}
+								this->context_render_char = curr_char;
 								this->current_new_word_set_it = this->current_new_word_set.begin();
 								// (re-)define and render highlight for selected character in text view:
 								if( this->current_highlight ) delete this->current_highlight;
