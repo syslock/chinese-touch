@@ -191,7 +191,8 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 			{
 				if( !render_style->linebreak )
 				{
-					// line finished
+					// consume line break:
+					input_char_it++;
 					// and stop rendering before line break:
 					break;
 				}
@@ -254,12 +255,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     }
 	// erase all successfully processed input characters from input char list:
 	input_char_list.erase( input_char_list.begin(), input_char_it );
-	while( input_char_list.begin()!=input_char_list.end() 
-		&& input_char_list.begin()->code_point==10 )
-	{
-		input_char_list.erase( input_char_list.begin() );
-	}
-	
+	if( !render_char_list->size() ) return RenderRect( x, y, 0, 0 );
     
     // 4. insert line breaks
     RenderCharList::iterator prev_whitespace_it = render_char_list->end();
