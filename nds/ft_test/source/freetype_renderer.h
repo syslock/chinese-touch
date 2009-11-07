@@ -21,20 +21,20 @@ class RenderStyle
 {
 public:
     RenderStyle() : center_x(false), center_y(false), 
-            linebreak(true), autoscale(false), tab_spaces(2) {}
+            linebreak(true), autoscale(false), tab_spaces(2), indentation_offset(0) {}
 public:
     bool center_x, center_y, linebreak, autoscale;
-	int tab_spaces;
+	int tab_spaces, indentation_offset;
 };
 
 
-class RenderRect
+class RenderInfo
 {
 public:
-    RenderRect( int _x, int _y, int _width, int _height )
-        : x(_x), y(_y), width(_width), height(_height) {}
+    RenderInfo( int _x, int _y, int _width, int _height )
+        : x(_x), y(_y), width(_width), height(_height), indentation_offset(0) {}
 public:
-    int x, y, width, height;
+    int x, y, width, height, indentation_offset;
 };
 
 
@@ -106,9 +106,9 @@ public:
                     const std::string& latin_font );
     ~FreetypeRenderer();
 	void init_screen( Screen screen, RenderScreen& render_screen );
-    RenderRect render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, int pixel_size, 
+    RenderInfo render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0, RenderCharList* render_char_list=0 );
-    RenderRect render( const RenderScreen& render_screen, UCCharList& char_list, FT_Face& face, int pixel_size, 
+    RenderInfo render( const RenderScreen& render_screen, UCCharList& char_list, FT_Face& face, int pixel_size, 
                 int x, int y, RenderStyle* render_style=0, RenderCharList* render_char_list=0 );
 public:
     FT_Error error;

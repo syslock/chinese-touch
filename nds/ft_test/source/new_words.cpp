@@ -18,7 +18,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     int size = 32;
     if( this->lesson->render_hanzi )
     {
-        RenderRect rect = ft.render( render_screen, this->hanzi, ft.han_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, this->hanzi, ft.han_face, size, 0, top, &render_style );
         top += rect.height;
     }
     else
@@ -31,7 +31,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     size = 14;
     if( this->lesson->render_pinyin )
     {
-        RenderRect rect = ft.render( render_screen, this->pinyin, ft.han_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, this->pinyin, ft.han_face, size, 0, top, &render_style );
         top += rect.height;
     }
     else
@@ -47,7 +47,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     if( this->lesson->render_translation && this->lesson->render_word_type 
 		&& this->definitions.count(lang) && this->definitions[lang]->word_type.length() )
     {
-        RenderRect rect = ft.render( render_screen, this->definitions[lang]->word_type, ft.latin_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, this->definitions[lang]->word_type, ft.latin_face, size, 0, top, &render_style );
         top += rect.height+5;
     }
 
@@ -60,7 +60,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     {
 		std::string text = this->definitions[lang]->translation.substr(0,char_limit);
 		if( text.length()==char_limit ) text += "...";
-        RenderRect rect = ft.render( render_screen, text, ft.latin_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, text, ft.latin_face, size, 0, top, &render_style );
         top += rect.height+10;
     }
 
@@ -71,7 +71,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     {
 		std::string text = this->definitions[lang]->comment.substr(0,char_limit);
 		if( text.length()==char_limit ) text += "...";
-        RenderRect rect = ft.render( render_screen, text, ft.han_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, text, ft.han_face, size, 0, top, &render_style );
         top += rect.height;
     }
 }

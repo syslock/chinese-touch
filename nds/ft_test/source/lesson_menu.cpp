@@ -282,7 +282,7 @@ void LessonMenu::render( Screen screen )
 			stats_text = stats_stream.str();
 		}
 		int top = 0;
-		RenderRect rect(0,0,0,0);
+		RenderInfo rect(0,0,0,0);
 		top += 3;
 		if( author.length() )
 		{

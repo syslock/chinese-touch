@@ -139,7 +139,7 @@ RenderCharList::~RenderCharList()
 }
 
 
-RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
+RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
     // 1. unicode conversion
@@ -151,7 +151,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, const st
 	return this->render( render_screen, char_list, face, pixel_size, x, y, render_style, render_char_list );
 }
 
-RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharList& input_char_list, FT_Face& face, 
+RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharList& input_char_list, FT_Face& face, 
             int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
 	// redirect uninitialized pointer to stack object with default configuration:
@@ -160,7 +160,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 	// redirect uninitialized pointer to stack object to ensure its destruction:
     RenderCharList stack_render_char_list;
 	if( !render_char_list ) render_char_list = &stack_render_char_list;
-    if( input_char_list.size()==0 ) return RenderRect(0,0,0,0);
+    if( input_char_list.size()==0 ) return RenderInfo( x, y, 0, 0 );
     
     // 2. initialize Freetype
     FT_Error error;
@@ -174,8 +174,11 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     
     // 3. compute preliminary character offsets and dimensions
     int line_height = pixel_size;
+	int indentation_offset = render_style->indentation_offset;
+	// ignore leading tabs if we are in indentation mode:
+	bool ignore_tabs = (render_style->indentation_offset != 0);
     FT_Vector pen;
-    pen.x = x * 64;
+    pen.x = (x + indentation_offset) * 64;
     pen.y = -y * 64;
 	UCCharList::iterator input_char_it=input_char_list.begin();
     for( ; input_char_it!=input_char_list.end(); input_char_it++ )
@@ -189,6 +192,19 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
         {
 			if( input_char_it->code_point==10 )
 			{
+				// Reset tab/indentation offset at line breaks, but only if the line break is not
+				// immediately followed by one or more new tab characters. Those are interpreted 
+				// as indentation-continuation markers and apart from that ignored.
+				UCCharList::iterator next_char_it = input_char_it;
+				next_char_it++;
+				if( next_char_it != input_char_list.end() && next_char_it->code_point == 9 )
+				{
+					ignore_tabs = true;
+				}
+				else
+				{
+					indentation_offset = 0;
+				}
 				if( !render_style->linebreak )
 				{
 					// consume line break:
@@ -206,17 +222,27 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 					continue;
 				}
 			}
-			else if( input_char_it->code_point==9 )
+			else if( input_char_it->code_point==9 
+					// ignore tabs at the beginning of lines following already indented text blocks
+					// those are just indentation-continuation markers
+					&& !ignore_tabs )
 			{
 				// insert dynamically sized tab space, based on pixel size and position:
 				int tab_width = pixel_size * render_style->tab_spaces;
 				x = pen.x/64;
-				pen.x += 64 * ( tab_width - (x % tab_width) );
+				int tab_offset = tab_width - (x % tab_width);
+				pen.x += 64 * tab_offset;
+				// store tab end position as new indentation_offset if there is not already one
+				if( !indentation_offset )
+				{
+					indentation_offset = x + tab_offset;
+				}
 				continue;
 			}
 			WARN(  "error translating character code: " << input_char_it->code_point );
 			continue;
         }
+		ignore_tabs = false;
         FT_Set_Transform( face, 0, &pen );
         LOG( "glyph index: " << glyph_index );
         error = FT_Load_Glyph( face, glyph_index, FT_LOAD_RENDER );
@@ -255,7 +281,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     }
 	// erase all successfully processed input characters from input char list:
 	input_char_list.erase( input_char_list.begin(), input_char_it );
-	if( !render_char_list->size() ) return RenderRect( x, y, 0, 0 );
+	if( !render_char_list->size() ) return RenderInfo( x, y, 0, 0 );
     
     // 4. insert line breaks
     RenderCharList::iterator prev_whitespace_it = render_char_list->end();
@@ -278,8 +304,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 				<< " yc=" << y_correction );
 			(*rchar_it)->x += x_correction;
 			(*rchar_it)->y += y_correction;
-			if( (*rchar_it)->uc_char.code_point == 32
-				|| (*rchar_it)->uc_char.code_point == 9 )
+			if( (*rchar_it)->uc_char.code_point == 32 )
 			{
 				prev_whitespace_it = rchar_it;
 			}
@@ -316,7 +341,7 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 					(*rchar_it)->y -= y_correction;
 				}
 				y_correction += line_height+1;
-				x_correction = x-(*rchar_it)->x;
+				x_correction = x - (*rchar_it)->x;
 				RenderCharList::iterator prev_last_line_it = last_line_it;
 				last_line_it = rchar_it;
 				line_count++;
@@ -408,6 +433,8 @@ RenderRect FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     }
     int height = max_y-y;
     if( line_height > height ) height = line_height;
-    return RenderRect( x, y, max_x-x, height );
+	RenderInfo info = RenderInfo( x, y, max_x-x, height );
+	info.indentation_offset = indentation_offset;
+    return info;
 }
 

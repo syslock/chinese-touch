@@ -22,6 +22,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
         WARN( "error in utf-8 input (non fatal)" );
     }
 	unsigned int prev_size = 0;
+	RenderInfo info( 0, 0, 0, 0 );
 	while( prev_size!=char_list.size() )
 	{
 		// break when no characters where consumed within two consecutive iterations
@@ -30,7 +31,8 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		BufferedLine* buffered_line = new BufferedLine();
 		RenderStyle render_style;
 		render_style.linebreak = false;
-		RenderRect rect = this->freetype_renderer.render( *buffered_line, char_list, 
+		render_style.indentation_offset = info.indentation_offset;
+		info = this->freetype_renderer.render( *buffered_line, char_list, 
 			this->freetype_renderer.han_face, 10, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
 	}
