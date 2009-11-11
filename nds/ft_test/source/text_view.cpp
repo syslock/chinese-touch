@@ -1,6 +1,16 @@
 #include "text_view.h"
 #include "unicode.h"
 #include "error_console.h"
+#include "sprite_helper.h"
+#include "menu_button_colors.h"
+#include "top_left_button.h"
+#include "top_left_button_active.h"
+#include "top_left_button_inactive.h"
+#include "top_right_button.h"
+#include "top_right_button_active.h"
+#include "top_right_button_inactive.h"
+
+#include <fstream>
 
 
 int TextView::LINE_HEIGHT = 16;
@@ -9,12 +19,69 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0),
 		current_new_word_set_it(this->current_new_word_set.begin()), current_highlight(0),
 		current_highlight_x(0), current_highlight_y(0), context_mode(CONTEXT_WORDS_BY_CONTEXT),
-		context_render_char(0)
+		context_render_char(0),
+		left_button_sprite_vram(0), left_button_active_sprite_vram(0), left_button_inactive_sprite_vram(0), left_button_text_sprite_vram(0),
+		right_button_sprite_vram(0), right_button_active_sprite_vram(0), right_button_inactive_sprite_vram(0), right_button_text_sprite_vram(0)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	this->word_screen.clear();
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->text_screen );
 	this->text_screen.clear();
+
+	// unteren Bildschirm für Spritenutzung initialisieren:
+	vramSetBankD( VRAM_D_SUB_SPRITE );
+	oamInit( &oamSub, SpriteMapping_Bmp_1D_128, 0 );
+	oamAllocReset( &oamSub );
+	oamEnable( &oamSub );
+	// vorgerenderte Spritegrafiken laden:
+	this->left_button_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_left_buttonBitmap, this->left_button_sprite_vram, 32*16*2 );
+	this->left_button_active_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_left_button_activeBitmap, this->left_button_active_sprite_vram, 32*16*2 );
+	this->left_button_inactive_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_left_button_inactiveBitmap, this->left_button_inactive_sprite_vram, 32*16*2 );
+	this->right_button_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_right_buttonBitmap, this->right_button_sprite_vram, 32*16*2 );
+	this->right_button_active_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_right_button_activeBitmap, this->right_button_active_sprite_vram, 32*16*2 );
+	this->right_button_inactive_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( top_right_button_inactiveBitmap, this->right_button_inactive_sprite_vram, 32*16*2 );
+	// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
+	for( int i=0; i<32*32; i++ )
+	{
+		if( this->left_button_sprite_vram[i] )
+			this->left_button_sprite_vram[i] |= 1<<15;
+		if( this->left_button_active_sprite_vram[i] )
+			this->left_button_active_sprite_vram[i] |= 1<<15;
+		if( this->left_button_inactive_sprite_vram[i] )
+			this->left_button_inactive_sprite_vram[i] |= 1<<15;
+		if( this->right_button_sprite_vram[i] )
+			this->right_button_sprite_vram[i] |= 1<<15;
+		if( this->right_button_active_sprite_vram[i] )
+			this->right_button_active_sprite_vram[i] |= 1<<15;
+		if( this->right_button_inactive_sprite_vram[i] )
+			this->right_button_inactive_sprite_vram[i] |= 1<<15;
+	}
+	
+	// Palette für 8-Bit-Buttonbeschriftungen wie Hintergrundpalette initialisieren:
+	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
+	// VRAM für 8-Bit-Buttonbeschriftungs-Sprites reservieren:
+	this->left_button_text_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+	this->right_button_text_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+	RenderScreenBuffer left_button_text(32,16), right_button_text(32,16);
+	RenderStyle render_style;
+	render_style.center_x = true;
+	this->freetype_renderer.render( left_button_text, "<",
+		this->freetype_renderer.latin_face, 9, 0, 1, &render_style );
+	this->freetype_renderer.render( right_button_text, ">",
+		this->freetype_renderer.latin_face, 9, 0, 1, &render_style );
+	// Spritekonvertierung:
+	// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
+	u8 conversion_buffer[32*16];
+	tile_32x16_8bpp_sprite( (u8*)(left_button_text.base_address), conversion_buffer );
+	memcpy( this->left_button_text_sprite_vram, conversion_buffer, 32*16*1 );
+	tile_32x16_8bpp_sprite( (u8*)(right_button_text.base_address), conversion_buffer );
+	memcpy( this->right_button_text_sprite_vram, conversion_buffer, 32*16*1 );
 	
 	UCCharList char_list;
 	if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
@@ -46,6 +113,14 @@ TextView::~TextView()
 	{
 		if( *tv_it ) delete *tv_it;
 	}
+	if( this->left_button_sprite_vram ) oamFreeGfx( &oamSub, this->left_button_sprite_vram );
+	if( this->left_button_active_sprite_vram ) oamFreeGfx( &oamSub, this->left_button_active_sprite_vram );
+	if( this->left_button_inactive_sprite_vram ) oamFreeGfx( &oamSub, this->left_button_inactive_sprite_vram );
+	if( this->left_button_text_sprite_vram ) oamFreeGfx( &oamSub, this->left_button_text_sprite_vram );
+	if( this->right_button_sprite_vram ) oamFreeGfx( &oamSub, this->right_button_sprite_vram );
+	if( this->right_button_active_sprite_vram ) oamFreeGfx( &oamSub, this->right_button_active_sprite_vram );
+	if( this->right_button_inactive_sprite_vram ) oamFreeGfx( &oamSub, this->right_button_inactive_sprite_vram );
+	if( this->right_button_text_sprite_vram ) oamFreeGfx( &oamSub, this->right_button_text_sprite_vram );
 }
 
 void TextView::render( Screen screen )
@@ -62,6 +137,37 @@ void TextView::render( Screen screen )
 	}
 	else if( screen == SCREEN_SUB )
 	{
+		oamClear( &oamSub, 0, 0 );
+		int oam_entry = 0;
+		if( this->current_new_word_set.size() )
+		{
+			if( this->current_new_word_set_it != this->current_new_word_set.begin() )
+			{
+				oamSet( &oamSub, oam_entry++,
+						0, 0, 	// position
+						1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->left_button_sprite_vram,
+						0, 0, 0, 0, 0, 0 );
+				oamSet( &oamSub, oam_entry++,
+						0, 0, 	// position
+						0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->left_button_text_sprite_vram,
+						0, 0, 0, 0, 0, 0 );
+			}
+			NewWordSet::iterator test_it = this->current_new_word_set_it;
+			if( ++test_it != this->current_new_word_set.end() )
+			{
+				oamSet( &oamSub, oam_entry++,
+						this->text_screen.res_x-32, 0, 	// position
+						1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->right_button_sprite_vram-64,
+						0, 0, 0, 0, 0, 0 );
+				oamSet( &oamSub, oam_entry++,
+						this->text_screen.res_x-32, 0, 	// position
+						0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->right_button_text_sprite_vram,
+						0, 0, 0, 0, 0, 0 );
+			}
+		}
+		// gepufferte Bilddaten einblenden bzw. in den VRAM kopieren:
+		swiWaitForVBlank();
+		oamUpdate( &oamSub );
 		int top = this->y_offset;
 		this->text_screen.clear( 1 );
 		if( this->current_highlight )
@@ -134,23 +240,24 @@ void TextView::run_until_exit()
 			}
 			old_touch = touch;
 		}
-		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 2 )
+		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 5 )
 		{
 			touched = false;
-            if( old_touch.px < 15 && old_touch.py > (this->text_screen.res_y-15) )
+            if( old_touch.px < 16 && old_touch.py > (this->text_screen.res_y-16) )
             {
 				this->config.save_position( this->text.lesson );
 				return;
             }
-            else if( old_touch.px < 15 && old_touch.py < 15 )
+            else if( old_touch.px < 32 && old_touch.py < 16 )
             {
 				if( this->current_new_word_set_it != this->current_new_word_set.begin() )
 				{
 					this->current_new_word_set_it--;
 					this->render( SCREEN_MAIN );
+					this->render( SCREEN_SUB );
 				}
 			}
-            else if( old_touch.px > (this->text_screen.res_x-15) && old_touch.py < 15 )
+            else if( old_touch.px > (this->text_screen.res_x-32) && old_touch.py < 16 )
             {
 				if( this->current_new_word_set_it != this->current_new_word_set.end() )
 				{
@@ -161,6 +268,7 @@ void TextView::run_until_exit()
 					else
 					{
 						this->render( SCREEN_MAIN );
+						this->render( SCREEN_SUB );
 					}
 				}
 			}

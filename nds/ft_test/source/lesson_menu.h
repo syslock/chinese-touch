@@ -77,7 +77,6 @@ public:
 	int v_y;
 	void* active_list_id;
 	int frame_count;
-	RenderScreenBuffer shengci_text, yufa_text, kewen_text, lianxi_text;
 	u16* shengci_sprite_vram;
 	u16* yufa_sprite_vram;
 	u16* kewen_sprite_vram;

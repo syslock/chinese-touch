@@ -12,6 +12,7 @@
 #include "accessories-dictionary-open.h"
 #include "menu_button.h"
 #include "menu_button_colors.h"
+#include "sprite_helper.h"
 
 
 int MenuEntry::BASE_HEIGHT = 32;
@@ -80,26 +81,10 @@ LessonMenuChoice::ContentType MenuEntry::get_content_type_by_pos( int x, int y )
 }
 
 
-void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
-{
-	int dest_offset = 0;
-	for( int tlin=0; tlin<2; tlin++ )
-		for( int trow=0; trow<4; trow++ )
-			for( int plin=0; plin<8; plin++ )
-				for( int prow=0; prow<8; prow++, dest_offset++ )
-				{
-					int source_offset = (32*8*tlin)+(plin*4+trow)*8+prow;
-					//int dest_offset = plin*8+prow+64*trow+256*tlin;
-					dest_buffer[dest_offset] = source_buffer[source_offset];
-				}
-}
-
-
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
 		book_sprite_vram(0), open_book_sprite_vram(0), lesson_sprite_vram(0), 
 		y_offset(5), v_y(0), active_list_id(0), frame_count(0), 
-		shengci_text(32,16), yufa_text(32,16), kewen_text(32,16), lianxi_text(32,16), 
 		shengci_sprite_vram(0), yufa_sprite_vram(0), kewen_sprite_vram(0), lianxi_sprite_vram(0),
 		button_sprite_vram(0)
 {
@@ -137,38 +122,35 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 			this->button_sprite_vram[i] |= 1<<15;
 	}
 
-	// Palette für 8-Bit-Sprites wie Hintergrundpalette initialisieren:
+	// Palette für 8-Bit-Buttonbeschriftungen mit speziell vorbereiteter Palette initialisieren:
 	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
-
-	// VRAM für 8-Bit-Button-Sprites reservieren:
+	// VRAM für 8-Bit-Buttonbeschriftungs-Sprites reservieren:
 	this->shengci_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
 	this->yufa_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
 	this->kewen_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
 	this->lianxi_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-
 	// Beschriftungen für Ladeknöpfe vorrendern:
+	RenderScreenBuffer shengci_text(32,16), yufa_text(32,16), kewen_text(32,16), lianxi_text(32,16);
 	RenderStyle render_style;
 	render_style.center_x = true;
-	this->freetype_renderer.render( this->shengci_text, "生词",
+	this->freetype_renderer.render( shengci_text, "生词",
 		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( this->yufa_text, "语法",
+	this->freetype_renderer.render( yufa_text, "语法",
 		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( this->kewen_text, "课文",
+	this->freetype_renderer.render( kewen_text, "课文",
 		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( this->lianxi_text, "练习",
+	this->freetype_renderer.render( lianxi_text, "练习",
 		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-
-	// FIXME: dmaCopy broken? needs VBlank? before? after? *confused*
 	// Spritekonvertierung:
 	// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
 	u8 conversion_buffer[32*16];
-	tile_32x16_8bpp_sprite( (u8*)(this->shengci_text.base_address), conversion_buffer );
+	tile_32x16_8bpp_sprite( (u8*)(shengci_text.base_address), conversion_buffer );
 	memcpy( this->shengci_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(this->yufa_text.base_address), conversion_buffer );
+	tile_32x16_8bpp_sprite( (u8*)(yufa_text.base_address), conversion_buffer );
 	memcpy( this->yufa_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(this->kewen_text.base_address), conversion_buffer );
+	tile_32x16_8bpp_sprite( (u8*)(kewen_text.base_address), conversion_buffer );
 	memcpy( this->kewen_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(this->lianxi_text.base_address), conversion_buffer );
+	tile_32x16_8bpp_sprite( (u8*)(lianxi_text.base_address), conversion_buffer );
 	memcpy( this->lianxi_sprite_vram, conversion_buffer, 32*16*1 );
 	
 	// Menü zur gespeicherten Position bewegen:

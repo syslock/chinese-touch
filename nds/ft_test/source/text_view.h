@@ -40,6 +40,8 @@ public:
 	static int LINE_HEIGHT;
 	ContextMode context_mode;
 	RenderChar* context_render_char;
+	u16 *left_button_sprite_vram, *left_button_active_sprite_vram, *left_button_inactive_sprite_vram, *left_button_text_sprite_vram;
+	u16 *right_button_sprite_vram, *right_button_active_sprite_vram, *right_button_inactive_sprite_vram, *right_button_text_sprite_vram;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();
