@@ -5,6 +5,7 @@
 #include "lesson.h"
 #include "config.h"
 #include "dictionary.h"
+#include "text_button.h"
 
 class BufferedLine : public RenderScreenBuffer
 {
@@ -32,7 +33,7 @@ public:
 	RenderScreen word_screen, text_screen;
 	int y_offset;
 	int v_y;
-	int frame_count;
+	int sub_frame_count;
 	NewWordSet current_new_word_set;
 	NewWordSet::iterator current_new_word_set_it;
 	RenderScreenBuffer* current_highlight;
@@ -40,8 +41,9 @@ public:
 	static int LINE_HEIGHT;
 	ContextMode context_mode;
 	RenderChar* context_render_char;
-	u16 *left_button_sprite_vram, *left_button_active_sprite_vram, *left_button_inactive_sprite_vram, *left_button_text_sprite_vram;
-	u16 *right_button_sprite_vram, *right_button_active_sprite_vram, *right_button_inactive_sprite_vram, *right_button_text_sprite_vram;
+	TextButton left_button, right_button, exit_button;
+	TextButtonList text_buttons;
+	static int BUTTON_ACTIVATION_SCROLL_LIMIT;
 public:
 	TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Dictionary& _dict );
 	~TextView();

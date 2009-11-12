@@ -13,3 +13,10 @@ void tile_32x16_8bpp_sprite( u8* source_buffer, u8* dest_buffer )
 					dest_buffer[dest_offset] = source_buffer[source_offset];
 				}
 }
+
+void set_16bpp_sprite_opague( u16* vram, int width, int height, u16 transparent_value )
+{
+	for( int i=0; i<width*height; i++ )
+		if( vram[i]!=transparent_value )
+			vram[i] |= 1<<15;
+}
