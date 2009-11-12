@@ -7,6 +7,8 @@
 #include "top_left_button_active.h"
 #include "top_right_button.h"
 #include "top_right_button_active.h"
+#include "bottom_left_button.h"
+#include "bottom_left_button_active.h"
 
 #include <fstream>
 
@@ -34,33 +36,38 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	oamEnable( &oamSub );
 	// vorgerenderte Spritegrafiken laden:
 	this->left_button.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
-	dmaCopy( top_left_buttonBitmap, this->left_button.bg_vram, 32*16*2 );
+	dmaCopy( top_left_buttonBitmap, this->left_button.bg_vram, this->left_button.width * this->left_button.height *2 );
 	this->left_button.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
-	dmaCopy( top_left_button_activeBitmap, this->left_button.bg_active_vram, 32*16*2 );
+	dmaCopy( top_left_button_activeBitmap, this->left_button.bg_active_vram, this->left_button.width * this->left_button.height *2 );
 	this->right_button.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
-	dmaCopy( top_right_buttonBitmap, this->right_button.bg_vram, 32*16*2 );
+	dmaCopy( top_right_buttonBitmap, this->right_button.bg_vram, this->right_button.width * this->right_button.height *2 );
 	this->right_button.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
-	dmaCopy( top_right_button_activeBitmap, this->right_button.bg_active_vram, 32*16*2 );
+	dmaCopy( top_right_button_activeBitmap, this->right_button.bg_active_vram, this->right_button.width * this->right_button.height *2 );
+	this->exit_button.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_16x16, SpriteColorFormat_Bmp );
+	dmaCopy( bottom_left_buttonBitmap, this->exit_button.bg_vram, this->exit_button.width * this->exit_button.height *2 );
+	this->exit_button.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_16x16, SpriteColorFormat_Bmp );
+	dmaCopy( bottom_left_button_activeBitmap, this->exit_button.bg_active_vram, this->exit_button.width * this->exit_button.height *2 );
 	this->text_buttons.push_back( &this->left_button );
 	this->text_buttons.push_back( &this->right_button );
+	this->text_buttons.push_back( &this->exit_button );
 	for( TextButtonList::iterator i=this->text_buttons.begin(); i!=this->text_buttons.end(); i++ )
 	{
 		// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
-		if( (*i)->bg_vram ) set_16bpp_sprite_opague( (*i)->bg_vram, 32, 16, 0 );
-		if( (*i)->bg_active_vram ) set_16bpp_sprite_opague( (*i)->bg_active_vram, 32, 16, 0 );
-		if( (*i)->bg_inactive_vram ) set_16bpp_sprite_opague( (*i)->bg_inactive_vram, 32, 16, 0 );
+		if( (*i)->bg_vram ) set_16bpp_sprite_opague( (*i)->bg_vram, (*i)->width, (*i)->height, 0 );
+		if( (*i)->bg_active_vram ) set_16bpp_sprite_opague( (*i)->bg_active_vram, (*i)->width, (*i)->height, 0 );
+		if( (*i)->bg_inactive_vram ) set_16bpp_sprite_opague( (*i)->bg_inactive_vram, (*i)->width, (*i)->height, 0 );
 		// VRAM für 8-Bit-Buttonbeschriftungs-Sprites reservieren:
 		(*i)->text_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-		RenderScreenBuffer button_text( 32, 16 );
+		RenderScreenBuffer button_text( (*i)->width, (*i)->height );
 		RenderStyle render_style;
 		render_style.center_x = true;
 		this->freetype_renderer.render( button_text, (*i)->text, 
-			this->freetype_renderer.latin_face, 9, 0, 1, &render_style );
+			this->freetype_renderer.latin_face, 10, 0, 1, &render_style );
 		// Spritekonvertierung:
 		// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
-		u8 conversion_buffer[32*16];
-		tile_32x16_8bpp_sprite( (u8*)(button_text.base_address), conversion_buffer );
-		memcpy( (*i)->text_vram, conversion_buffer, 32*16*1 );
+		u8 conversion_buffer[(*i)->width * (*i)->height];
+		tile_8bpp_sprite( (u8*)(button_text.base_address), conversion_buffer, (*i)->width, (*i)->height );
+		memcpy( (*i)->text_vram, conversion_buffer, (*i)->width * (*i)->height * 1 );
 	}	
 	// Palette für 8-Bit-Buttonbeschriftungen wie Hintergrundpalette initialisieren:
 	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
@@ -143,6 +150,16 @@ void TextView::render( Screen screen )
 						0, 0, 0, 0, 0, 0 );
 			}
 		}
+		oamSet( this->exit_button.oam, oam_entry++,
+				0, this->text_screen.res_y-16, 	// position
+				1, 1, SpriteSize_16x16, SpriteColorFormat_Bmp, 
+				/* FIXME: don't guess! somehow compute correct vram offsets: */
+				this->exit_button.active ? this->exit_button.bg_active_vram+32 : this->exit_button.bg_vram,
+				0, 0, 0, 0, 0, 0 );
+		oamSet( this->exit_button.oam, oam_entry++,
+				0, this->text_screen.res_y-16, 	// position
+				0, 0, SpriteSize_16x16, SpriteColorFormat_256Color, this->exit_button.text_vram,
+				0, 0, 0, 0, 0, 0 );
 		// gepufferte Bilddaten einblenden bzw. in den VRAM kopieren:
 		swiWaitForVBlank();
 		oamUpdate( &oamSub );

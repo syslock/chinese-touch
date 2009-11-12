@@ -144,13 +144,13 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	// Spritekonvertierung:
 	// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
 	u8 conversion_buffer[32*16];
-	tile_32x16_8bpp_sprite( (u8*)(shengci_text.base_address), conversion_buffer );
+	tile_8bpp_sprite( (u8*)(shengci_text.base_address), conversion_buffer, 32, 16 );
 	memcpy( this->shengci_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(yufa_text.base_address), conversion_buffer );
+	tile_8bpp_sprite( (u8*)(yufa_text.base_address), conversion_buffer, 32, 16 );
 	memcpy( this->yufa_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(kewen_text.base_address), conversion_buffer );
+	tile_8bpp_sprite( (u8*)(kewen_text.base_address), conversion_buffer, 32, 16 );
 	memcpy( this->kewen_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_32x16_8bpp_sprite( (u8*)(lianxi_text.base_address), conversion_buffer );
+	tile_8bpp_sprite( (u8*)(lianxi_text.base_address), conversion_buffer, 32, 16 );
 	memcpy( this->lianxi_sprite_vram, conversion_buffer, 32*16*1 );
 	
 	// Menü zur gespeicherten Position bewegen:
