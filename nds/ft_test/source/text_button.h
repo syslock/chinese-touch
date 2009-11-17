@@ -13,7 +13,7 @@ public:
 	std::string text;
 	int width, height, x, y;
 	u16 *text_vram, *bg_vram, *bg_active_vram, *bg_inactive_vram;
-	bool active;
+	bool active, inactive, owns_bg_vram;
 public:
 	TextButton( OamState* _oam, const std::string& _text, int _width, int _height, int _x, int _y );
 	~TextButton();

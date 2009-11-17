@@ -11,6 +11,8 @@
 #include "accessories-dictionary.h"
 #include "accessories-dictionary-open.h"
 #include "menu_button.h"
+#include "menu_button_active.h"
+#include "menu_button_inactive.h"
 #include "menu_button_colors.h"
 #include "sprite_helper.h"
 
@@ -23,10 +25,11 @@ int MenuEntry::BUTTON_GAP = 6;
 int MenuEntry::BUTTON_Y_OFFSET = MenuEntry::BASE_HEIGHT+2;
 int MenuEntry::BUTTON_WIDTH = 32;
 int MenuEntry::BUTTON_HEIGHT = 16;
-int MenuEntry::SHENGCI_BUTTON_X_OFFSET = 0 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
-int MenuEntry::YUFA_BUTTON_X_OFFSET = 1 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
-int MenuEntry::KEWEN_BUTTON_X_OFFSET = 2 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
-int MenuEntry::LIANXI_BUTTON_X_OFFSET = 3 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::NEW_WORDS_BUTTON_X_OFFSET = 0 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::GRAMMAR_BUTTON_X_OFFSET = 1 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::TEXT_BUTTON_X_OFFSET = 2 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int MenuEntry::EXERCISES_BUTTON_X_OFFSET = 3 * (MenuEntry::BUTTON_WIDTH+BUTTON_GAP) + MenuEntry::TEXT_X_OFFSET;
+int LessonMenu::BUTTON_ACTIVATION_SCROLL_LIMIT = 5;
 
 void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
 {
@@ -56,23 +59,23 @@ LessonMenuChoice::ContentType MenuEntry::get_content_type_by_pos( int x, int y )
 	if( y>=this->top+MenuEntry::BUTTON_Y_OFFSET 
 		&& y<this->top+MenuEntry::BUTTON_Y_OFFSET+MenuEntry::BUTTON_HEIGHT )
 	{
-		if( x>=MenuEntry::SHENGCI_BUTTON_X_OFFSET
-			&& x<MenuEntry::SHENGCI_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		if( x>=MenuEntry::NEW_WORDS_BUTTON_X_OFFSET
+			&& x<MenuEntry::NEW_WORDS_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
 		{
 			return LessonMenuChoice::CONTENT_TYPE_NEW_WORDS;
 		}
-		if( x>=MenuEntry::YUFA_BUTTON_X_OFFSET
-			&& x<MenuEntry::YUFA_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		if( x>=MenuEntry::GRAMMAR_BUTTON_X_OFFSET
+			&& x<MenuEntry::GRAMMAR_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
 		{
 			return LessonMenuChoice::CONTENT_TYPE_GRAMMAR;
 		}
-		if( x>=MenuEntry::KEWEN_BUTTON_X_OFFSET
-			&& x<MenuEntry::KEWEN_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		if( x>=MenuEntry::TEXT_BUTTON_X_OFFSET
+			&& x<MenuEntry::TEXT_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
 		{
 			return LessonMenuChoice::CONTENT_TYPE_TEXT;
 		}
-		if( x>=MenuEntry::LIANXI_BUTTON_X_OFFSET
-			&& x<MenuEntry::LIANXI_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
+		if( x>=MenuEntry::EXERCISES_BUTTON_X_OFFSET
+			&& x<MenuEntry::EXERCISES_BUTTON_X_OFFSET+MenuEntry::BUTTON_WIDTH )
 		{
 			return LessonMenuChoice::CONTENT_TYPE_EXERCISES;
 		}
@@ -83,10 +86,12 @@ LessonMenuChoice::ContentType MenuEntry::get_content_type_by_pos( int x, int y )
 
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
-		book_sprite_vram(0), open_book_sprite_vram(0), lesson_sprite_vram(0), 
 		y_offset(5), v_y(0), active_list_id(0), frame_count(0), 
-		shengci_sprite_vram(0), yufa_sprite_vram(0), kewen_sprite_vram(0), lianxi_sprite_vram(0),
-		button_sprite_vram(0)
+		book_icon(&oamSub,"",32,32,5,0), lesson_icon(&oamSub,"",32,32,5,0),
+		new_words_button(&oamSub,"生词",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::NEW_WORDS_BUTTON_X_OFFSET,0),
+		grammar_button(&oamSub,"语法",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::GRAMMAR_BUTTON_X_OFFSET,0),
+		text_button(&oamSub,"课文",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::TEXT_BUTTON_X_OFFSET,0),
+		exercises_button(&oamSub,"练习",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::EXERCISES_BUTTON_X_OFFSET,0)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
 	this->info_screen.clear();
@@ -100,58 +105,70 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	oamInit( &oamSub, SpriteMapping_Bmp_1D_128, 0 );
 	oamAllocReset( &oamSub );
 	oamEnable( &oamSub );
+
 	// vorgerenderte Spritegrafiken laden:
-	this->book_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
-	dmaCopy( accessories_dictionaryBitmap, this->book_sprite_vram, 32*32*2 );
-	this->open_book_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
-	dmaCopy( accessories_dictionary_openBitmap, this->open_book_sprite_vram, 32*32*2 );
-	this->lesson_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
-	dmaCopy( text_x_genericBitmap, this->lesson_sprite_vram, 32*32*2 );
-	this->button_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
-	dmaCopy( menu_buttonBitmap, this->button_sprite_vram, 32*16*2 );
-	// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
-	for( int i=0; i<32*32; i++ )
+	this->book_icon.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
+	dmaCopy( accessories_dictionaryBitmap, this->book_icon.bg_vram, this->book_icon.width * this->book_icon.height *2 );
+	this->book_icon.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
+	dmaCopy( accessories_dictionary_openBitmap, this->book_icon.bg_active_vram, this->book_icon.width * this->book_icon.height *2 );
+	this->lesson_icon.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x32, SpriteColorFormat_Bmp );
+	dmaCopy( text_x_genericBitmap, this->lesson_icon.bg_vram, this->lesson_icon.width * this->lesson_icon.height *2 );
+	this->new_words_button.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( menu_buttonBitmap, this->new_words_button.bg_vram, this->new_words_button.width * this->new_words_button.height *2 );
+	this->new_words_button.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( menu_button_activeBitmap, this->new_words_button.bg_active_vram, this->new_words_button.width * this->new_words_button.height *2 );
+	this->new_words_button.bg_inactive_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
+	dmaCopy( menu_button_inactiveBitmap, this->new_words_button.bg_inactive_vram, this->new_words_button.width * this->new_words_button.height *2 );
+	this->grammar_button.bg_vram = this->new_words_button.bg_vram;
+	this->grammar_button.bg_active_vram = this->new_words_button.bg_active_vram;
+	this->grammar_button.bg_inactive_vram = this->new_words_button.bg_inactive_vram;
+	this->grammar_button.owns_bg_vram = false;
+	this->text_button.bg_vram = this->new_words_button.bg_vram;
+	this->text_button.bg_active_vram = this->new_words_button.bg_active_vram;
+	this->text_button.bg_inactive_vram = this->new_words_button.bg_inactive_vram;
+	this->text_button.owns_bg_vram = false;
+	this->exercises_button.bg_vram = this->new_words_button.bg_vram;
+	this->exercises_button.bg_active_vram = this->new_words_button.bg_active_vram;
+	this->exercises_button.bg_inactive_vram = this->new_words_button.bg_inactive_vram;
+	this->exercises_button.owns_bg_vram = false;
+
+	// store list of interactive buttons in instance:
+	this->text_buttons.push_back( &this->new_words_button );
+	this->text_buttons.push_back( &this->grammar_button );
+	this->text_buttons.push_back( &this->text_button );
+	this->text_buttons.push_back( &this->exercises_button );
+	// create temporary superset for initialization:
+	TextButtonList init_button_list( this->text_buttons );
+	init_button_list.push_back( &this->book_icon );
+	init_button_list.push_back( &this->lesson_icon );
+	for( TextButtonList::iterator i=init_button_list.begin(); i!=init_button_list.end(); i++ )
 	{
-		if( this->book_sprite_vram[i] )
-			this->book_sprite_vram[i] |= 1<<15;
-		if( this->open_book_sprite_vram[i] )
-			this->open_book_sprite_vram[i] |= 1<<15;
-		if( this->lesson_sprite_vram[i] )
-			this->lesson_sprite_vram[i] |= 1<<15;
-		if( this->button_sprite_vram[i] )
-			this->button_sprite_vram[i] |= 1<<15;
+		if( (*i)->owns_bg_vram )
+		{
+			// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
+			if( (*i)->bg_vram ) set_16bpp_sprite_opague( (*i)->bg_vram, (*i)->width, (*i)->height, 0 );
+			if( (*i)->bg_active_vram ) set_16bpp_sprite_opague( (*i)->bg_active_vram, (*i)->width, (*i)->height, 0 );
+			if( (*i)->bg_inactive_vram ) set_16bpp_sprite_opague( (*i)->bg_inactive_vram, (*i)->width, (*i)->height, 0 );
+		}
+		if( (*i)->text.length() )
+		{
+			// VRAM für 8-Bit-Buttonbeschriftungs-Sprites reservieren:
+			(*i)->text_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
+			RenderScreenBuffer button_text( (*i)->width, (*i)->height );
+			RenderStyle render_style;
+			render_style.center_x = true;
+			this->freetype_renderer.render( button_text, (*i)->text, 
+				this->freetype_renderer.han_face, 9, 0, 1, &render_style );
+			// Spritekonvertierung:
+			// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
+			u8 conversion_buffer[(*i)->width * (*i)->height];
+			tile_8bpp_sprite( (u8*)(button_text.base_address), conversion_buffer, (*i)->width, (*i)->height );
+			memcpy( (*i)->text_vram, conversion_buffer, (*i)->width * (*i)->height * 1 );
+		}
 	}
 
 	// Palette für 8-Bit-Buttonbeschriftungen mit speziell vorbereiteter Palette initialisieren:
 	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
-	// VRAM für 8-Bit-Buttonbeschriftungs-Sprites reservieren:
-	this->shengci_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-	this->yufa_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-	this->kewen_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-	this->lianxi_sprite_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_256Color );
-	// Beschriftungen für Ladeknöpfe vorrendern:
-	RenderScreenBuffer shengci_text(32,16), yufa_text(32,16), kewen_text(32,16), lianxi_text(32,16);
-	RenderStyle render_style;
-	render_style.center_x = true;
-	this->freetype_renderer.render( shengci_text, "生词",
-		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( yufa_text, "语法",
-		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( kewen_text, "课文",
-		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	this->freetype_renderer.render( lianxi_text, "练习",
-		this->freetype_renderer.han_face, 9, 0, 1, &render_style );
-	// Spritekonvertierung:
-	// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
-	u8 conversion_buffer[32*16];
-	tile_8bpp_sprite( (u8*)(shengci_text.base_address), conversion_buffer, 32, 16 );
-	memcpy( this->shengci_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_8bpp_sprite( (u8*)(yufa_text.base_address), conversion_buffer, 32, 16 );
-	memcpy( this->yufa_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_8bpp_sprite( (u8*)(kewen_text.base_address), conversion_buffer, 32, 16 );
-	memcpy( this->kewen_sprite_vram, conversion_buffer, 32*16*1 );
-	tile_8bpp_sprite( (u8*)(lianxi_text.base_address), conversion_buffer, 32, 16 );
-	memcpy( this->lianxi_sprite_vram, conversion_buffer, 32*16*1 );
 	
 	// Menü zur gespeicherten Position bewegen:
 	std::string config_book_name = this->config.get_current_book_name();
@@ -202,13 +219,6 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 
 LessonMenu::~LessonMenu()
 {
-	oamFreeGfx( &oamSub, this->book_sprite_vram );
-	oamFreeGfx( &oamSub, this->lesson_sprite_vram );
-	oamFreeGfx( &oamSub, this->shengci_sprite_vram );
-	oamFreeGfx( &oamSub, this->yufa_sprite_vram );
-	oamFreeGfx( &oamSub, this->kewen_sprite_vram );
-	oamFreeGfx( &oamSub, this->lianxi_sprite_vram );
-	oamFreeGfx( &oamSub, this->book_sprite_vram );
 }
 
 void LessonMenu::render( Screen screen )
@@ -326,13 +336,13 @@ void LessonMenu::render( Screen screen )
 			{
 				if( book_entry && book_entry->exploded )
 				{
-					oamSet( &oamSub, oam_entry++, 5, top, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, 
-							this->open_book_sprite_vram, 0, 0, 0, 0, 0, 0 );
+					oamSet( this->book_icon.oam, oam_entry++, this->book_icon.x, top, /*prio=*/0, /*alpha=*/15, 
+							SpriteSize_32x32, SpriteColorFormat_Bmp, this->book_icon.bg_active_vram, 0, 0, 0, 0, 0, 0 );
 				}
 				else
 				{
-					oamSet( &oamSub, oam_entry++, 5, top, 0, 15, SpriteSize_32x32, SpriteColorFormat_Bmp, 
-							this->book_sprite_vram, 0, 0, 0, 0, 0, 0 );
+					oamSet( this->book_icon.oam, oam_entry++, this->book_icon.x, top, /*prio=*/0, /*alpha=*/15, 
+							SpriteSize_32x32, SpriteColorFormat_Bmp, this->book_icon.bg_vram, 0, 0, 0, 0, 0, 0 );
 				}
 				// book_entry anlegen, falls nicht schon früher geschehen,
 				// da wir ihn nun wirklich brauchen:
@@ -358,20 +368,8 @@ void LessonMenu::render( Screen screen )
 					MenuEntry* lesson_entry = 0;
 					if( top > -MenuEntry::ACTIVE_HEIGHT )
 					{
-						oamSet( &oamSub, 	// sub display
-								oam_entry++,	// oam entry to set
-								5, top, 	// position
-								0, 			// priority
-								15,			// alpha
-								SpriteSize_32x32, // size
-								SpriteColorFormat_Bmp, // format
-								this->lesson_sprite_vram, // vram address
-								0, 			// rotation index
-								0,			// double size
-								0, 			// hide
-								0, 0, 		// vflip, hflip
-								0			// apply mosaic
-							);
+						oamSet( this->lesson_icon.oam, oam_entry++, this->lesson_icon.x, top, /*prio=*/0, /*alpha=*/15, 
+								SpriteSize_32x32, SpriteColorFormat_Bmp, this->lesson_icon.bg_vram, 0, 0, 0, 0, 0, 0 );
 						if( this->menu_list.count( lesson_id ) )
 						{
 							lesson_entry = this->menu_list[ lesson_id ];
@@ -388,40 +386,26 @@ void LessonMenu::render( Screen screen )
 					}
 					if( lesson_entry && lesson_entry->lesson && (lesson_id == this->active_list_id) )
 					{
+						this->new_words_button.inactive = lesson_entry->lesson->new_words.empty();
+						this->grammar_button.inactive = lesson_entry->lesson->grammar_texts.empty();
+						this->text_button.inactive = lesson_entry->lesson->lesson_texts.empty();
+						this->exercises_button.inactive = lesson_entry->lesson->exercises.empty();
 						if( top > -MenuEntry::ACTIVE_HEIGHT )
 						{
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::SHENGCI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::SHENGCI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->shengci_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::YUFA_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::YUFA_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->yufa_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::KEWEN_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::KEWEN_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->kewen_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::LIANXI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, this->button_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
-							oamSet( &oamSub, oam_entry++,
-									MenuEntry::LIANXI_BUTTON_X_OFFSET, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
-									0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->lianxi_sprite_vram,
-									0, 0, 0, 0, 0, 0 );
+							for( TextButtonList::iterator i = this->text_buttons.begin();
+								i != this->text_buttons.end(); i++ )
+							{
+								oamSet( (*i)->oam, oam_entry++,
+										(*i)->x, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
+										/*prio=*/1, /*alpha=*/1, SpriteSize_32x16, SpriteColorFormat_Bmp, 
+										(*i)->inactive ? (*i)->bg_inactive_vram :
+											( (*i)->active ? (*i)->bg_active_vram-64 : (*i)->bg_vram ),
+										0, 0, 0, 0, 0, 0 );
+								oamSet( (*i)->oam, oam_entry++,
+										(*i)->x, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
+										/*prio=*/0, /*alpha=*/0, SpriteSize_32x16, SpriteColorFormat_256Color, 
+										(*i)->text_vram, 0, 0, 0, 0, 0, 0 );
+							}
 						}
 						top += MenuEntry::ACTIVE_HEIGHT;
 					}
@@ -482,11 +466,14 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 	touchPosition old_touch;
     touchRead( &old_touch );
 	bool touched = false;
+	int pixels_scrolled = 0;
 	int old_y_offset = this->y_offset;
+	bool button_activated_previously = false;
 	while( true )
 	{
         scanKeys();
 		int pressed = keysDown();
+		int released = keysUp();
 		int held = keysHeld();
 		if( held & KEY_SELECT && pressed & KEY_UP )
 		{
@@ -512,19 +499,61 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 			if( !touched ) 
 			{
 				touched = true;
-				old_touch = touch;
+				pixels_scrolled = 0;
 				old_y_offset = this->y_offset;
+				old_touch = touch;
 			}
-			int y_diff = touch.py - old_touch.py;
-			if( y_diff )
+			bool button_activated = false;
+			MenuList::iterator entry_it = this->get_entry_by_pos( touch.px, touch.py );
+			if( entry_it!=this->menu_list.end() )
 			{
-				this->y_offset += y_diff;
-				this->v_y = y_diff;
+				void* entry_id = entry_it->first;
+				MenuEntry* entry = entry_it->second;
+				if( entry_id == this->active_list_id )
+				{
+					if( entry->lesson )
+					{
+						button_activated = this->activate_button_by_content_type( 
+								entry->get_content_type_by_pos(old_touch.px, old_touch.py) );
+					}
+				}
+			}
+			bool changed = false;
+			if( button_activated && !button_activated_previously )
+			{
+				changed = true;
+			}
+			else if( !button_activated )
+			{
+				if( button_activated_previously )
+				{
+					for( TextButtonList::iterator i=this->text_buttons.begin(); 
+						i!=this->text_buttons.end(); i++ )
+					{
+						if( (*i)->active )
+						{
+							(*i)->active = false;
+							changed = true;
+						}
+					}
+				}
+				int y_diff = touch.py - old_touch.py;
+				if( y_diff )
+				{
+					pixels_scrolled += abs(y_diff);
+					this->y_offset += y_diff;
+					this->v_y = y_diff;
+					changed = true;
+				}
+			}
+			if( changed )
+			{
 				this->render( SCREEN_SUB );
 			}
 			old_touch = touch;
+			button_activated_previously = button_activated;
 		}
-		else if( touched && abs(abs(old_y_offset)-abs(this->y_offset)) < 2 )
+		else if( touched && pixels_scrolled < BUTTON_ACTIVATION_SCROLL_LIMIT )
 		{
 			touched = false;
 			MenuList::iterator entry_it = this->get_entry_by_pos( old_touch.px, old_touch.py );
@@ -544,14 +573,9 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 						choice.book = entry->lesson->book;
 						choice.lesson = entry->lesson;
 						choice.content_type = entry->get_content_type_by_pos( old_touch.px, old_touch.py );
-						if( choice.content_type )
+						if( this->get_activation_by_content_type(choice.content_type) )
 						{
 							return;
-						}
-						else
-						{
-							this->render( SCREEN_SUB );
-							this->render( SCREEN_MAIN );
 						}
 					}
 				}
@@ -563,19 +587,30 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 				}
 			}
 		}
-		else if( this->v_y )
-		{
-			touched = false;
-			int resistance = this->v_y / 4;
-			if( !resistance ) resistance = this->v_y / 2;
-			if( !resistance ) resistance = this->v_y;
-			this->v_y -= resistance;
-			this->y_offset += this->v_y;
-			this->render( SCREEN_SUB );
-		}
         else
         {
 			touched = false;
+			pixels_scrolled = 0;
+			bool changed = false;
+			for( TextButtonList::iterator i=this->text_buttons.begin(); 
+				i!=this->text_buttons.end(); i++ )
+			{
+				if( (*i)->active )
+				{
+					(*i)->active = false;
+					changed = true;
+				}
+			}
+			if( this->v_y )
+			{
+				int resistance = this->v_y / 4;
+				if( !resistance ) resistance = this->v_y / 2;
+				if( !resistance ) resistance = this->v_y;
+				this->v_y -= resistance;
+				this->y_offset += this->v_y;
+				changed = true;
+			}
+			if( changed ) this->render( SCREEN_SUB );
         }
 		swiWaitForVBlank();
 	}
@@ -603,4 +638,54 @@ MenuList::iterator LessonMenu::get_entry_by_pos( int x, int y )
 		}
 	}
 	return this->menu_list.end();
+}
+
+TextButton* LessonMenu::get_button_by_content_type( LessonMenuChoice::ContentType content_type )
+{
+	TextButton* button = 0;
+	switch( content_type )
+	{
+		case LessonMenuChoice::CONTENT_TYPE_NONE:
+		{
+			return 0;
+		}
+		case LessonMenuChoice::CONTENT_TYPE_NEW_WORDS:
+		{
+			button = &this->new_words_button;
+			break;
+		}
+		case LessonMenuChoice::CONTENT_TYPE_GRAMMAR:
+		{
+			button = &this->grammar_button;
+			break;
+		}
+		case LessonMenuChoice::CONTENT_TYPE_TEXT:
+		{
+			button = &this->text_button;
+			break;
+		}
+		case LessonMenuChoice::CONTENT_TYPE_EXERCISES:
+		{
+			button = &this->exercises_button;
+			break;
+		}
+	}
+	return button;
+}
+
+bool LessonMenu::activate_button_by_content_type( LessonMenuChoice::ContentType content_type )
+{
+	TextButton* button = this->get_button_by_content_type( content_type );
+	if( button && !button->inactive )
+	{
+		button->active = true;
+		return true;
+	}
+	return false;
+}
+
+bool LessonMenu::get_activation_by_content_type( LessonMenuChoice::ContentType content_type )
+{
+	TextButton* button = this->get_button_by_content_type( content_type );
+	return button && !button->inactive && button->active;
 }

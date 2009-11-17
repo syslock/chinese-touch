@@ -34,6 +34,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	oamInit( &oamSub, SpriteMapping_Bmp_1D_128, 0 );
 	oamAllocReset( &oamSub );
 	oamEnable( &oamSub );
+
 	// vorgerenderte Spritegrafiken laden:
 	this->left_button.bg_vram = oamAllocateGfx( &oamSub, SpriteSize_32x16, SpriteColorFormat_Bmp );
 	dmaCopy( top_left_buttonBitmap, this->left_button.bg_vram, this->left_button.width * this->left_button.height *2 );
@@ -47,9 +48,11 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	dmaCopy( bottom_left_buttonBitmap, this->exit_button.bg_vram, this->exit_button.width * this->exit_button.height *2 );
 	this->exit_button.bg_active_vram = oamAllocateGfx( &oamSub, SpriteSize_16x16, SpriteColorFormat_Bmp );
 	dmaCopy( bottom_left_button_activeBitmap, this->exit_button.bg_active_vram, this->exit_button.width * this->exit_button.height *2 );
+
 	this->text_buttons.push_back( &this->left_button );
 	this->text_buttons.push_back( &this->right_button );
 	this->text_buttons.push_back( &this->exit_button );
+
 	for( TextButtonList::iterator i=this->text_buttons.begin(); i!=this->text_buttons.end(); i++ )
 	{
 		// Alpha-Bits bei definierten Spritepixeln auf "undurchsichtig" setzen:
@@ -68,7 +71,8 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		u8 conversion_buffer[(*i)->width * (*i)->height];
 		tile_8bpp_sprite( (u8*)(button_text.base_address), conversion_buffer, (*i)->width, (*i)->height );
 		memcpy( (*i)->text_vram, conversion_buffer, (*i)->width * (*i)->height * 1 );
-	}	
+	}
+	
 	// Palette für 8-Bit-Buttonbeschriftungen wie Hintergrundpalette initialisieren:
 	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
 	
@@ -403,7 +407,8 @@ void TextView::run_until_exit()
 		{
 			touched = false;
 			pixels_scrolled = 0;
-			for( TextButtonList::iterator i=this->text_buttons.begin(); i!=this->text_buttons.end(); i++ )
+			for( TextButtonList::iterator i=this->text_buttons.begin(); 
+				i!=this->text_buttons.end(); i++ )
 			{
 				(*i)->active = false;
 			}
