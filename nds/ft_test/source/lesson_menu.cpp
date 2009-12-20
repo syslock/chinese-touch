@@ -13,7 +13,7 @@
 #include "menu_button.h"
 #include "menu_button_active.h"
 #include "menu_button_inactive.h"
-#include "menu_button_colors.h"
+#include "greys256.h"
 #include "sprite_helper.h"
 
 
@@ -87,11 +87,12 @@ LessonMenuChoice::ContentType MenuEntry::get_content_type_by_pos( int x, int y )
 LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library, Config& _config )
 	: freetype_renderer(_freetype_renderer), library(_library), config(_config), 
 		y_offset(5), v_y(0), active_list_id(0), frame_count(0), 
-		book_icon(&oamSub,"",32,32,5,0), lesson_icon(&oamSub,"",32,32,5,0),
-		new_words_button(&oamSub,"生词",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::NEW_WORDS_BUTTON_X_OFFSET,0),
-		grammar_button(&oamSub,"语法",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::GRAMMAR_BUTTON_X_OFFSET,0),
-		text_button(&oamSub,"课文",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::TEXT_BUTTON_X_OFFSET,0),
-		exercises_button(&oamSub,"练习",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::EXERCISES_BUTTON_X_OFFSET,0)
+		book_icon(&oamSub,"",32,32,5,0,freetype_renderer.latin_face,9), 
+		lesson_icon(&oamSub,"",32,32,5,0,freetype_renderer.latin_face,9),
+		new_words_button(&oamSub,"生词",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::NEW_WORDS_BUTTON_X_OFFSET,0,freetype_renderer.han_face,9),
+		grammar_button(&oamSub,"语法",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::GRAMMAR_BUTTON_X_OFFSET,0,freetype_renderer.han_face,9,1,1),
+		text_button(&oamSub,"课文",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::TEXT_BUTTON_X_OFFSET,0,freetype_renderer.han_face,9,1,1),
+		exercises_button(&oamSub,"练习",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::EXERCISES_BUTTON_X_OFFSET,0,freetype_renderer.han_face,9,1)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
 	this->info_screen.clear();
@@ -158,7 +159,7 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 			RenderStyle render_style;
 			render_style.center_x = true;
 			this->freetype_renderer.render( button_text, (*i)->text, 
-				this->freetype_renderer.han_face, 9, 0, 1, &render_style );
+				(*i)->face, (*i)->font_size, 0, 1, &render_style );
 			// Spritekonvertierung:
 			// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
 			u8 conversion_buffer[(*i)->width * (*i)->height];
@@ -168,7 +169,7 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 	}
 
 	// Palette für 8-Bit-Buttonbeschriftungen mit speziell vorbereiteter Palette initialisieren:
-	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
+	dmaCopy( greys256Pal, SPRITE_PALETTE_SUB, 256*2 );
 	
 	// Menü zur gespeicherten Position bewegen:
 	std::string config_book_name = this->config.get_current_book_name();
@@ -402,7 +403,7 @@ void LessonMenu::render( Screen screen )
 											( (*i)->active ? (*i)->bg_active_vram-64 : (*i)->bg_vram ),
 										0, 0, 0, 0, 0, 0 );
 								oamSet( (*i)->oam, oam_entry++,
-										(*i)->x, top+MenuEntry::BUTTON_Y_OFFSET, 	// position
+										(*i)->x+(*i)->text_x_offset, top+MenuEntry::BUTTON_Y_OFFSET+(*i)->text_y_offset, 	// position
 										/*prio=*/0, /*alpha=*/0, SpriteSize_32x16, SpriteColorFormat_256Color, 
 										(*i)->text_vram, 0, 0, 0, 0, 0, 0 );
 							}
@@ -589,6 +590,7 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 		}
         else
         {
+			swiWaitForVBlank();
 			touched = false;
 			pixels_scrolled = 0;
 			bool changed = false;
@@ -612,7 +614,6 @@ void LessonMenu::run_for_user_choice( LessonMenuChoice& choice )
 			}
 			if( changed ) this->render( SCREEN_SUB );
         }
-		swiWaitForVBlank();
 	}
 }
 

@@ -2,7 +2,7 @@
 #include "unicode.h"
 #include "error_console.h"
 #include "sprite_helper.h"
-#include "menu_button_colors.h"
+#include "greys256.h"
 #include "top_left_button.h"
 #include "top_left_button_active.h"
 #include "top_right_button.h"
@@ -20,9 +20,10 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0), sub_frame_count(0),
 		current_new_word_set_it(this->current_new_word_set.begin()), current_highlight(0),
 		current_highlight_x(0), current_highlight_y(0), context_mode(CONTEXT_WORDS_BY_CONTEXT),
-		context_render_char(0), left_button(&oamSub,"<",32,16,0,0), 
-		right_button(&oamSub,">",32,16,text_screen.res_x-32,0), 
-		exit_button(&oamSub,"x",16,16,0,text_screen.res_y-16)
+		context_render_char(0), 
+		left_button(&oamSub,"<",32,16,0,0,freetype_renderer.latin_face,10), 
+		right_button(&oamSub,">",32,16,text_screen.res_x-32,0,freetype_renderer.latin_face,10,2), 
+		exit_button(&oamSub,"x",16,16,0,text_screen.res_y-16,freetype_renderer.latin_face,10,-1,2)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	this->word_screen.clear();
@@ -65,7 +66,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		RenderStyle render_style;
 		render_style.center_x = true;
 		this->freetype_renderer.render( button_text, (*i)->text, 
-			this->freetype_renderer.latin_face, 10, 0, 1, &render_style );
+			(*i)->face, (*i)->font_size, 0, 1, &render_style );
 		// Spritekonvertierung:
 		// (Zwischenpufferung aus Bequemlichkeit, weil VRAM nur mit 16-bit-Wörtern beschreibbbar)
 		u8 conversion_buffer[(*i)->width * (*i)->height];
@@ -74,7 +75,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	}
 	
 	// Palette für 8-Bit-Buttonbeschriftungen wie Hintergrundpalette initialisieren:
-	dmaCopy( menu_button_colorsPal, SPRITE_PALETTE_SUB, 256*2 );
+	dmaCopy( greys256Pal, SPRITE_PALETTE_SUB, 256*2 );
 	
 	UCCharList char_list;
 	if( !utf8_to_ucs4((unsigned char*)text.c_str(), char_list) )
@@ -129,13 +130,13 @@ void TextView::render( Screen screen )
 			if( this->current_new_word_set_it != this->current_new_word_set.begin() )
 			{
 				oamSet( this->left_button.oam, oam_entry++,
-						0, 0, 	// position
+						this->left_button.x, this->left_button.y, 	// position
 						1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, 
 						/* FIXME: don't guess! somehow compute correct vram offsets: */
 						this->left_button.active ? this->left_button.bg_active_vram-64 : this->left_button.bg_vram,
 						0, 0, 0, 0, 0, 0 );
 				oamSet( this->left_button.oam, oam_entry++,
-						0, 0, 	// position
+						this->left_button.x, this->left_button.y, 	// position
 						0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->left_button.text_vram,
 						0, 0, 0, 0, 0, 0 );
 			}
@@ -143,25 +144,25 @@ void TextView::render( Screen screen )
 			if( ++test_it != this->current_new_word_set.end() )
 			{
 				oamSet( this->right_button.oam, oam_entry++,
-						this->text_screen.res_x-32, 0, 	// position
+						this->right_button.x, this->right_button.y, 	// position
 						1, 1, SpriteSize_32x16, SpriteColorFormat_Bmp, 
 						/* FIXME: don't guess! somehow compute correct vram offsets: */
 						this->right_button.active ? this->right_button.bg_active_vram-64 : this->right_button.bg_vram,
 						0, 0, 0, 0, 0, 0 );
 				oamSet( this->right_button.oam, oam_entry++,
-						this->text_screen.res_x-32, 0, 	// position
+						this->right_button.x+this->right_button.text_x_offset, this->right_button.y+this->right_button.text_y_offset, 	// position
 						0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->right_button.text_vram,
 						0, 0, 0, 0, 0, 0 );
 			}
 		}
 		oamSet( this->exit_button.oam, oam_entry++,
-				0, this->text_screen.res_y-16, 	// position
+				this->exit_button.x, this->exit_button.y, 	// position
 				1, 1, SpriteSize_16x16, SpriteColorFormat_Bmp, 
 				/* FIXME: don't guess! somehow compute correct vram offsets: */
 				this->exit_button.active ? this->exit_button.bg_active_vram+32 : this->exit_button.bg_vram,
 				0, 0, 0, 0, 0, 0 );
 		oamSet( this->exit_button.oam, oam_entry++,
-				0, this->text_screen.res_y-16, 	// position
+				this->exit_button.x+this->exit_button.text_x_offset, this->exit_button.y+this->exit_button.text_y_offset, 	// position
 				0, 0, SpriteSize_16x16, SpriteColorFormat_256Color, this->exit_button.text_vram,
 				0, 0, 0, 0, 0, 0 );
 		// gepufferte Bilddaten einblenden bzw. in den VRAM kopieren:
@@ -405,6 +406,7 @@ void TextView::run_until_exit()
 		}
 		else
 		{
+			swiWaitForVBlank();
 			touched = false;
 			pixels_scrolled = 0;
 			for( TextButtonList::iterator i=this->text_buttons.begin(); 
@@ -422,6 +424,5 @@ void TextView::run_until_exit()
 				this->render( SCREEN_SUB );
 			}
 		}
-		swiWaitForVBlank();
 	}
 }

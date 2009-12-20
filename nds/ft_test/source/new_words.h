@@ -15,7 +15,8 @@ class NewWordsViewer
 		Lesson& lesson;
 		unsigned int word_index;
 		Config& config;
-		TextButton left_button, right_button, exit_button, clear_button;
+		TextButton left_button, right_button, exit_button, clear_button, 
+			hanzi_tab, pinyin_tab, latin_tab;
 		TextButtonList text_buttons;
 		static int BUTTON_ACTIVATION_DRAW_LIMIT;
 	public:
