@@ -1,18 +1,19 @@
 #ifndef DRAWING_PAD_H
 #define DRAWING_PAD_H
 
+#include "freetype_renderer.h"
+#include "text_button.h"
+
 class DrawingPad
 {
 public:
-    DrawingPad();
-    void clear();
-    void render_buttons();
-    void draw( int x, int y, u8* buffer, int widht, int height, int layer=-1 );
+    RenderScreen& render_screen;
+public:
+    DrawingPad( RenderScreen& _render_screen );
+    void clear( int color=0 );
+    void draw( int x, int y, u8* buffer, int widht, int height );
     void draw_point( int x, int y );
     void draw_line( int x1, int y1, int x2, int y2 );
-public:
-    int bg2, bg3;
-    int res_x, res_y;
 };
 
 #endif // DRAWING_PAD_H

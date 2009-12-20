@@ -11,13 +11,16 @@ class NewWordsViewer
 	public:
 		FreetypeRenderer& freetype_renderer;
 		DrawingPad drawing_pad;
-		RenderScreen word_view;
+		RenderScreen word_screen, drawing_screen;
 		Lesson& lesson;
 		unsigned int word_index;
 		Config& config;
+		TextButton left_button, right_button, exit_button, clear_button;
+		TextButtonList text_buttons;
+		static int BUTTON_ACTIVATION_DRAW_LIMIT;
 	public:
 		NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config );
-		void render();
+		void render( Screen screen );
 		void run_until_exit();
 };
 
