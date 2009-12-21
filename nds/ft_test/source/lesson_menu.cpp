@@ -246,7 +246,7 @@ void LessonMenu::render( Screen screen )
 					word_count += lesson->new_words.size();
 				}
 				std::stringstream stats_stream;
-				stats_stream << "enthält " << entry->book->size() << " Lektionen und " << word_count << " Vokabeln";
+				stats_stream << "contains " << entry->book->size() << " lessons and " << word_count << " words";
 				stats_text = stats_stream.str();
 			}
 			else if( entry->lesson )
@@ -254,16 +254,16 @@ void LessonMenu::render( Screen screen )
 				title = entry->lesson->title;
 				description = entry->lesson->description;
 				std::stringstream stats_stream;
-				stats_stream << "enthält " << entry->lesson->new_words.size() << " Vokabeln";
+				stats_stream << "contains " << entry->lesson->new_words.size() << " words";
 				stats_text = stats_stream.str();
 			}
 		}
 		else
 		{
-			author = "Hànzì-Trainer";
+			author = "Hànzì Trainer";
 			title = "汉字教练";
-			publisher = "ein erweiterbares Sprachlernprogramm von Thomas Frenzel";
-			description = "Lektionsauswahl: Tippe ein Buch oder eine Lektion auf dem unteren Bildschirm an!";
+			publisher = "a language learning tool written by syslock";
+			description = "Lesson Menu: Please select a book or lesson on the touchscreen!";
 			std::stringstream stats_stream;
 			int lesson_count = 0;
 			for( Library::iterator book_it = this->library.begin();
@@ -271,7 +271,7 @@ void LessonMenu::render( Screen screen )
 			{
 				lesson_count += book_it->second->size();
 			}
-			stats_stream << "Es stehen " << lesson_count << " Lektionen in " << this->library.size() << " Büchern zur Auswahl." ;
+			stats_stream << "" << lesson_count << " lessons from " << this->library.size() << " books loaded." ;
 			stats_text = stats_stream.str();
 		}
 		int top = 0;
