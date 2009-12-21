@@ -227,7 +227,7 @@ void NewWordsViewer::render( Screen screen )
 		int oam_entry = 0;
 		if( this->lesson.new_words.size() )
 		{
-			if( this->word_index >= 0 )
+			if( this->word_index > 0 )
 			{
 				oamSet( this->left_button.oam, oam_entry++,
 						this->left_button.x, this->left_button.y, 	// position
@@ -240,7 +240,7 @@ void NewWordsViewer::render( Screen screen )
 						0, 0, SpriteSize_32x16, SpriteColorFormat_256Color, this->left_button.text_vram,
 						0, 0, 0, 0, 0, 0 );
 			}
-			if( this->word_index < this->lesson.new_words.size() )
+			if( this->word_index < this->lesson.new_words.size()-1 )
 			{
 				oamSet( this->right_button.oam, oam_entry++,
 						this->right_button.x, this->right_button.y, 	// position
