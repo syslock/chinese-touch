@@ -70,9 +70,11 @@ void FreetypeRenderer::init_screen( Screen screen, RenderScreen& render_screen )
 	if( screen == SCREEN_MAIN )
 	{
 		videoSetMode(MODE_5_2D);
-		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+		vramSetBankA(VRAM_A_MAIN_BG);
+		vramSetBankB(VRAM_B_MAIN_BG);
 		render_screen.init( bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0) );
 		render_screen.palette = BG_PALETTE;
+		render_screen.init_bg( bgInit(2, BgType_Bmp16, BgSize_B16_256x256, 3, 0) );
 	}
 	else /*if( screen == SCREEN_SUB )*/
 	{

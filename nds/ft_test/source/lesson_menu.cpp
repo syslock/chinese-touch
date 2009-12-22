@@ -15,6 +15,7 @@
 #include "menu_button_inactive.h"
 #include "greys256.h"
 #include "sprite_helper.h"
+#include "bg_dragon.h"
 
 
 int MenuEntry::BASE_HEIGHT = 32;
@@ -95,6 +96,9 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 		exercises_button(&oamSub,"练习",MenuEntry::BUTTON_WIDTH,MenuEntry::BUTTON_HEIGHT,MenuEntry::EXERCISES_BUTTON_X_OFFSET,0,freetype_renderer.han_face,9,1)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->info_screen );
+	dmaCopy( bg_dragonBitmap, this->info_screen.bg_base_address, sizeof(bg_dragonBitmap) );
+	set_16bpp_sprite_opague( this->info_screen.bg_base_address, 256, 192 );
+	bgShow( this->info_screen.bg_id );
 	this->info_screen.clear();
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->menu_screen );
 	this->menu_screen.clear();
@@ -216,6 +220,7 @@ LessonMenu::LessonMenu( FreetypeRenderer& _freetype_renderer, Library& _library,
 			}
 		}
 	}
+	bgHide( this->info_screen.bg_id );
 }
 
 LessonMenu::~LessonMenu()
@@ -260,9 +265,9 @@ void LessonMenu::render( Screen screen )
 		}
 		else
 		{
-			author = "Hànzì Trainer";
-			title = "汉字教练";
-			publisher = "a language learning tool written by syslock";
+			author = "Chinese Touch";
+			title = "汉语接触";
+			publisher = "an adaptable language learning tool written by Thomas Frenzel";
 			description = "Lesson Menu: Please select a book or lesson on the touchscreen!";
 			std::stringstream stats_stream;
 			int lesson_count = 0;

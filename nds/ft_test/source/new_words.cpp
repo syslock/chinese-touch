@@ -18,6 +18,7 @@
 #include "top_paper_tab.h"
 #include "top_paper_tab_active.h"
 #include "top_paper_tab_inactive.h"
+#include "bg_dragon.h"
 
 
 void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
@@ -104,6 +105,9 @@ NewWordsViewer::NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _l
 		latin_tab(&oamSub,"latin",32,16,drawing_screen.res_x/2+16+8,0,freetype_renderer.latin_face,7,0,2)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
+	dmaCopy( bg_dragonBitmap, this->word_screen.bg_base_address, sizeof(bg_dragonBitmap) );
+	set_16bpp_sprite_opague( this->word_screen.bg_base_address, 256, 192 );
+	bgShow( this->word_screen.bg_id );
 	this->word_screen.clear();
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->drawing_screen );
 	this->drawing_screen.clear();
@@ -205,8 +209,7 @@ NewWordsViewer::NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _l
 	{
 		this->word_index = this->lesson.new_words.size()-1;
 	}
-	NewWord* word = this->lesson.new_words[ this->word_index ];
-	word->render( this->freetype_renderer, this->word_screen );
+	bgHide( this->word_screen.bg_id );
 }
 
 void NewWordsViewer::render( Screen screen )

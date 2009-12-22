@@ -50,12 +50,20 @@ public:
 		this->base_address = bgGetGfxPtr( _id );
 		bgSetPriority( _id, 2 );
 	}
+	void init_bg( int _bg_id )
+	{
+		this->bg_id = _bg_id;
+		this->bg_base_address = bgGetGfxPtr( _bg_id );
+		bgSetPriority( _bg_id, 3 );
+	}
 	void clear( int color=0 );
 public:
 	int id;
 	u16* base_address;
 	u16* palette;
     int res_x, res_y;
+	int bg_id;
+	u16* bg_base_address;
 };
 
 

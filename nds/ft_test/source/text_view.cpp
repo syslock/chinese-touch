@@ -9,6 +9,7 @@
 #include "top_right_button_active.h"
 #include "bottom_left_button.h"
 #include "bottom_left_button_active.h"
+#include "bg_dragon.h"
 
 #include <fstream>
 
@@ -26,6 +27,9 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		exit_button(&oamSub,"x",16,16,0,text_screen.res_y-16,freetype_renderer.latin_face,10,-1,2)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
+	dmaCopy( bg_dragonBitmap, this->word_screen.bg_base_address, sizeof(bg_dragonBitmap) );
+	set_16bpp_sprite_opague( this->word_screen.bg_base_address, 256, 192 );
+	bgShow( this->word_screen.bg_id );
 	this->word_screen.clear();
 	this->freetype_renderer.init_screen( SCREEN_SUB, this->text_screen );
 	this->text_screen.clear();
@@ -97,6 +101,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 			this->freetype_renderer.han_face, 10, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
 	}
+	bgHide( this->word_screen.bg_id );
 }
 
 TextView::~TextView()
