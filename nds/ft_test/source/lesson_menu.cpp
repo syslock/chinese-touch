@@ -20,7 +20,7 @@
 
 int MenuEntry::BASE_HEIGHT = 32;
 int MenuEntry::ACTIVE_HEIGHT = 52;
-int MenuEntry::FONT_SIZE = 10;
+int MenuEntry::FONT_SIZE = 7;
 int MenuEntry::TEXT_X_OFFSET = 50;
 int MenuEntry::BUTTON_GAP = 6;
 int MenuEntry::BUTTON_Y_OFFSET = MenuEntry::BASE_HEIGHT+2;
@@ -37,7 +37,7 @@ void MenuEntry::render_text( FreetypeRenderer& ft, const std::string& text )
 	RenderStyle render_style;
 	//render_style.linebreak = false;
 	ft.render( *this->text_surface, text,
-		ft.han_face, MenuEntry::FONT_SIZE, 0, 0, &render_style );
+		ft.latin_face, MenuEntry::FONT_SIZE, 0, 0, &render_style );
 }
 
 MenuList::~MenuList()
@@ -267,7 +267,7 @@ void LessonMenu::render( Screen screen )
 		{
 			author = "Chinese Touch";
 			title = "汉语接触";
-			publisher = "an adaptable language learning tool written by Thomas Frenzel";
+			publisher = "an extensible language learning tool written by Thomas Frenzel";
 			description = "Lesson Menu: Please select a book or lesson on the touchscreen!";
 			std::stringstream stats_stream;
 			int lesson_count = 0;
@@ -287,7 +287,7 @@ void LessonMenu::render( Screen screen )
 			RenderStyle render_style;
 			render_style.center_x = true;
 			rect = this->freetype_renderer.render( this->info_screen, author, 
-				this->freetype_renderer.han_face, 12, 0, top, &render_style );
+				this->freetype_renderer.latin_face, 10, 0, top, &render_style );
 			top += rect.height+15;
 		}
 		if( title.length() )
@@ -295,7 +295,7 @@ void LessonMenu::render( Screen screen )
 			RenderStyle render_style;
 			render_style.center_x = true;
 			rect = this->freetype_renderer.render( this->info_screen, title, 
-				this->freetype_renderer.han_face, 16, 0, top, &render_style );
+				this->freetype_renderer.latin_face, 14, 0, top, &render_style );
 			top += rect.height+15;
 		} else top += 24+15;
 		if( publisher.length() )
@@ -303,21 +303,21 @@ void LessonMenu::render( Screen screen )
 			RenderStyle render_style;
 			render_style.center_x = true;
 			rect = this->freetype_renderer.render( this->info_screen, publisher, 
-				this->freetype_renderer.han_face, 8, 0, top, &render_style );
+				this->freetype_renderer.latin_face, 7, 0, top, &render_style );
 			top += rect.height+15;
 		}
 		if( description.length() )
 		{
 			RenderStyle render_style;
 			rect = this->freetype_renderer.render( this->info_screen, description, 
-				this->freetype_renderer.han_face, 10, 3, top, &render_style );
+				this->freetype_renderer.latin_face, 8, 3, top, &render_style );
 			top += rect.height+15;
 		}
 		if( stats_text.length() )
 		{
 			RenderStyle render_style;
 			rect = this->freetype_renderer.render( this->info_screen, stats_text, 
-				this->freetype_renderer.han_face, 8, 3, top, &render_style );
+				this->freetype_renderer.latin_face, 7, 3, top, &render_style );
 			top += rect.height+15;
 		}
 	}

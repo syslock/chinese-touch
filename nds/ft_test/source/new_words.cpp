@@ -85,7 +85,7 @@ void NewWord::render( FreetypeRenderer& ft, RenderScreen& render_screen )
     {
 		std::string text = this->definitions[lang]->comment.substr(0,char_limit);
 		if( text.length()==char_limit ) text += "...";
-        RenderInfo rect = ft.render( render_screen, text, ft.han_face, size, 0, top, &render_style );
+        RenderInfo rect = ft.render( render_screen, text, ft.latin_face, size, 0, top, &render_style );
         top += rect.height;
     }
 }
@@ -96,13 +96,13 @@ int NewWordsViewer::BUTTON_ACTIVATION_DRAW_LIMIT = 5;
 NewWordsViewer::NewWordsViewer( FreetypeRenderer& _freetype_renderer, Lesson& _lesson, Config& _config )
 	: freetype_renderer(_freetype_renderer), drawing_pad(drawing_screen), lesson(_lesson), 
 		word_index(0), config(_config), 
-		left_button(&oamSub,"<",32,16,0,0,freetype_renderer.latin_face,10), 
-		right_button(&oamSub,">",32,16,drawing_screen.res_x-32,0,freetype_renderer.latin_face,10,2), 
-		exit_button(&oamSub,"x",16,16,0,drawing_screen.res_y-16,freetype_renderer.latin_face,10,-1,2),
-		clear_button(&oamSub,"c",16,16,drawing_screen.res_x-16,drawing_screen.res_y-16,freetype_renderer.latin_face,10,1,2),
+		left_button(&oamSub,"<",32,16,0,0,freetype_renderer.latin_face,10,0,0), 
+		right_button(&oamSub,">",32,16,drawing_screen.res_x-32,0,freetype_renderer.latin_face,10,2,0), 
+		exit_button(&oamSub,"x",16,16,0,drawing_screen.res_y-16,freetype_renderer.latin_face,10,-1,1),
+		clear_button(&oamSub,"c",16,16,drawing_screen.res_x-16,drawing_screen.res_y-16,freetype_renderer.latin_face,10,1,1),
 		hanzi_tab(&oamSub,"汉字",32,16,drawing_screen.res_x/2-16-32-8,0,freetype_renderer.han_face,9),
 		pinyin_tab(&oamSub,"拼音",32,16,drawing_screen.res_x/2-16,0,freetype_renderer.han_face,9,1,-1),
-		latin_tab(&oamSub,"latin",32,16,drawing_screen.res_x/2+16+8,0,freetype_renderer.latin_face,7,0,2)
+		latin_tab(&oamSub,"latin",32,16,drawing_screen.res_x/2+16+8,0,freetype_renderer.latin_face,7,0,1)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	dmaCopy( bg_dragonBitmap, this->word_screen.bg_base_address, sizeof(bg_dragonBitmap) );

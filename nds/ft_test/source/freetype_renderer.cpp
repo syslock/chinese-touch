@@ -141,7 +141,7 @@ RenderCharList::~RenderCharList()
 }
 
 
-RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face& face, 
+RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, const std::string& text, FT_Face face, 
             int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
     // 1. unicode conversion
@@ -153,7 +153,7 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, const st
 	return this->render( render_screen, char_list, face, pixel_size, x, y, render_style, render_char_list );
 }
 
-RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharList& input_char_list, FT_Face& face, 
+RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharList& input_char_list, FT_Face face, 
             int pixel_size, int x, int y, RenderStyle* render_style, RenderCharList* render_char_list )
 {
 	// redirect uninitialized pointer to stack object with default configuration:
@@ -164,9 +164,27 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 	if( !render_char_list ) render_char_list = &stack_render_char_list;
     if( input_char_list.size()==0 ) return RenderInfo( x, y, 0, 0 );
     
-    // 2. initialize Freetype
+	int han_pixel_size = pixel_size;
+	int latin_pixel_size = pixel_size;
+	if( face == this->han_face )
+	{
+		han_pixel_size = pixel_size;
+		latin_pixel_size = (int)((double)han_pixel_size * 0.7);
+	}
+	else if( face == this->latin_face )
+	{
+		latin_pixel_size = pixel_size;
+		han_pixel_size = (int)((double)latin_pixel_size * 1.4);
+	}
     FT_Error error;
-    error = FT_Set_Char_Size( face, 0, pixel_size*64, this->dpi_x, this->dpi_y );
+    error = FT_Set_Char_Size( this->han_face, 0, han_pixel_size*64, this->dpi_x, this->dpi_y );
+    if( error )
+    {
+        std::stringstream msg;
+		msg << "error setting pixel size: " << ft_errors[error];
+		throw ERROR( msg.str() );
+    }
+    error = FT_Set_Char_Size( this->latin_face, 0, latin_pixel_size*64, this->dpi_x, this->dpi_y );
     if( error )
     {
         std::stringstream msg;
@@ -174,22 +192,39 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 		throw ERROR( msg.str() );
     }
     
-    // 3. compute preliminary character offsets and dimensions
-    int line_height = pixel_size;
+    int line_height = pixel_size+1;
 	int indentation_offset = render_style->indentation_offset;
 	// ignore leading tabs if we are in indentation mode:
 	bool ignore_tabs = (render_style->indentation_offset != 0);
     FT_Vector pen;
     pen.x = (x + indentation_offset) * 64;
     pen.y = -y * 64;
+	
+	
 	UCCharList::iterator input_char_it=input_char_list.begin();
     for( ; input_char_it!=input_char_list.end(); input_char_it++ )
     {
 		//std::cout << "#";
         // Load Char
         LOG( "character code: " << input_char_it->code_point );
-        //FT_UInt glyph_index = FT_Get_Name_Index(face, "a");
-        FT_UInt glyph_index = FT_Get_Char_Index( face, input_char_it->code_point );
+		FT_Face current_face = face;
+        FT_UInt glyph_index = FT_Get_Char_Index( current_face, input_char_it->code_point );
+		if( !glyph_index && render_style->autofallback && current_face != this->han_face )
+		{
+			glyph_index = FT_Get_Char_Index( this->han_face, input_char_it->code_point );
+			if( glyph_index )
+			{
+				current_face = this->han_face;
+			}
+		}
+		else if( !glyph_index && render_style->autofallback && current_face != this->latin_face )
+		{
+			glyph_index = FT_Get_Char_Index( this->latin_face, input_char_it->code_point );
+			if( glyph_index )
+			{
+				current_face = this->latin_face;
+			}
+		}
         if( !glyph_index )
         {
 			if( input_char_it->code_point==10 )
@@ -217,7 +252,7 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 				else
 				{
 					// include line breaks
-					RenderChar* render_char = new RenderChar( *input_char_it, glyph_index );
+					RenderChar* render_char = new RenderChar( *input_char_it, glyph_index, current_face );
 					render_char->x = pen.x/64;
 					render_char->y = -pen.y/64;
 					render_char_list->push_back( render_char );
@@ -245,23 +280,23 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 			continue;
         }
 		ignore_tabs = false;
-        FT_Set_Transform( face, 0, &pen );
+        FT_Set_Transform( current_face, 0, &pen );
         LOG( "glyph index: " << glyph_index );
-        error = FT_Load_Glyph( face, glyph_index, FT_LOAD_RENDER );
+        error = FT_Load_Glyph( current_face, glyph_index, FT_LOAD_RENDER );
         if( error )
         {
 			WARN( "error loading glyph index: " << glyph_index << "(" << ft_errors[error] << ")" );
 			continue;
         }
         char buffer[1000]; buffer[0]=0;
-        FT_Get_Glyph_Name( face, glyph_index, buffer, 1000 );
+        FT_Get_Glyph_Name( current_face, glyph_index, buffer, 1000 );
         LOG( "glyph name: " << buffer );
         
-        RenderChar* render_char = new RenderChar( *input_char_it, glyph_index );
+        RenderChar* render_char = new RenderChar( *input_char_it, glyph_index, current_face );
         render_char->x = pen.x/64;
         render_char->y = -pen.y/64;
-		FT_GlyphSlot& glyph = face->glyph;
-		FT_Bitmap& bitmap = face->glyph->bitmap;
+		FT_GlyphSlot& glyph = current_face->glyph;
+		FT_Bitmap& bitmap = current_face->glyph->bitmap;
 		LOG( "w/r: " << bitmap.width << "/" << bitmap.rows << " t: " << glyph->bitmap_top );
 		render_char->width = glyph->advance.x/64;
 		render_char->height = bitmap.rows;
@@ -390,8 +425,8 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
         if( cur_by > max_y ) max_y = cur_by;
         pen.x = (*rchar_it)->x*64;
         pen.y = (*rchar_it)->y*-64;
-        FT_Set_Transform( face, 0, &pen );
-        error = FT_Load_Glyph( face, (*rchar_it)->glyph_index, FT_LOAD_RENDER );
+        FT_Set_Transform( (*rchar_it)->face, 0, &pen );
+        error = FT_Load_Glyph( (*rchar_it)->face, (*rchar_it)->glyph_index, FT_LOAD_RENDER );
         if( error )
         {
             std::stringstream msg;
@@ -399,8 +434,8 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 				<< "(" << ft_errors[error];
 			throw ERROR( msg.str() );
         }
-        FT_GlyphSlot& glyph = face->glyph;
-        FT_Bitmap& bitmap = face->glyph->bitmap;
+        FT_GlyphSlot& glyph = (*rchar_it)->face->glyph;
+        FT_Bitmap& bitmap = (*rchar_it)->face->glyph->bitmap;
 		if( !render_screen.res_x || ! render_screen.res_y || !render_screen.base_address )
 		{
 			throw ERROR( "FreeTypeRenderer::render(): target buffer not initialized or of zero size" );

@@ -21,10 +21,10 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 	: freetype_renderer(_ft), config(_config), text(_text), dict(_dict), y_offset(5), v_y(0), sub_frame_count(0),
 		current_new_word_set_it(this->current_new_word_set.begin()), current_highlight(0),
 		current_highlight_x(0), current_highlight_y(0), context_mode(CONTEXT_WORDS_BY_CONTEXT),
-		context_render_char(0), 
-		left_button(&oamSub,"<",32,16,0,0,freetype_renderer.latin_face,10), 
-		right_button(&oamSub,">",32,16,text_screen.res_x-32,0,freetype_renderer.latin_face,10,2), 
-		exit_button(&oamSub,"x",16,16,0,text_screen.res_y-16,freetype_renderer.latin_face,10,-1,2)
+		context_render_char(0),
+		left_button(&oamSub,"<",32,16,0,0,freetype_renderer.latin_face,10,0,0), 
+		right_button(&oamSub,">",32,16,text_screen.res_x-32,0,freetype_renderer.latin_face,10,2,0), 
+		exit_button(&oamSub,"x",16,16,0,text_screen.res_y-16,freetype_renderer.latin_face,10,-1,1)
 {
 	this->freetype_renderer.init_screen( SCREEN_MAIN, this->word_screen );
 	dmaCopy( bg_dragonBitmap, this->word_screen.bg_base_address, sizeof(bg_dragonBitmap) );
@@ -98,7 +98,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		render_style.linebreak = false;
 		render_style.indentation_offset = info.indentation_offset;
 		info = this->freetype_renderer.render( *buffered_line, char_list, 
-			this->freetype_renderer.han_face, 10, 0, 0, &render_style, &buffered_line->render_char_list );
+			this->freetype_renderer.latin_face, 8, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
 	}
 	bgHide( this->word_screen.bg_id );
