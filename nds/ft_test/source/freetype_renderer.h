@@ -21,9 +21,10 @@ class RenderStyle
 {
 public:
     RenderStyle() : center_x(false), center_y(false), 
-            linebreak(true), autoscale(false), autofallback(true), tab_spaces(2), indentation_offset(0) {}
+            linebreak(true), autoscale(false), autofallback(true), 
+			multiline(true), tab_spaces(2), indentation_offset(0) {}
 public:
-    bool center_x, center_y, linebreak, autoscale, autofallback;
+    bool center_x, center_y, linebreak, autoscale, autofallback, multiline;
 	int tab_spaces, indentation_offset;
 };
 
@@ -92,6 +93,11 @@ public:
         : x(0), y(0), width(0), height(0), 
           uc_char(_uc_char), glyph_index(_glyph_index), 
           line_begin(false), curr_line_end_char(0), face(_face) {}
+    RenderChar( UCCharList::iterator _input_char_it, unsigned long _glyph_index, FT_Face _face ) 
+        : x(0), y(0), width(0), height(0), 
+          uc_char(*_input_char_it), glyph_index(_glyph_index), 
+          line_begin(false), curr_line_end_char(0), face(_face),
+		  input_char_it(_input_char_it) {}
 public:
     int x, y, width, height;
 	UCChar uc_char;
@@ -99,6 +105,7 @@ public:
     bool line_begin;
     RenderChar* curr_line_end_char;
 	FT_Face face;
+	UCCharList::iterator input_char_it; //!< reference to source position in input char list (only useful within FreetypeRenderer::render()!)
 };
 
 class RenderCharList : public std::list<RenderChar*>

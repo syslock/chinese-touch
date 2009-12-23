@@ -8,10 +8,10 @@ TextButton::TextButton( OamState* _oam, const std::string& _text,
 						FT_Face _face, int _font_size,
 						int _text_x_offset, int _text_y_offset )
 	: oam(_oam), text(_text), width(_width), height(_height), x(_x), y(_y), 
+	text_x_offset(_text_x_offset), text_y_offset(_text_y_offset),
 	text_vram(0), bg_vram(0), bg_active_vram(0), bg_inactive_vram(0), 
 	active(false), inactive(false), owns_bg_vram(true),
-	face(_face), font_size(_font_size),
-	text_x_offset(_text_x_offset), text_y_offset(_text_y_offset)
+	face(_face), font_size(_font_size)
 {
 }
 

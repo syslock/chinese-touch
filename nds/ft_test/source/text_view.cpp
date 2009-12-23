@@ -88,6 +88,7 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
     }
 	unsigned int prev_size = 0;
 	RenderInfo info( 0, 0, 0, 0 );
+	int org_size = char_list.size();
 	while( prev_size!=char_list.size() )
 	{
 		// break when no characters where consumed within two consecutive iterations
@@ -95,11 +96,19 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		prev_size = char_list.size();
 		BufferedLine* buffered_line = new BufferedLine();
 		RenderStyle render_style;
-		render_style.linebreak = false;
+		render_style.multiline = false;
 		render_style.indentation_offset = info.indentation_offset;
 		info = this->freetype_renderer.render( *buffered_line, char_list, 
 			this->freetype_renderer.latin_face, 8, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
+		int loading_bar_pixels = (org_size-char_list.size())*this->word_screen.res_x/org_size;
+		for( int i=-4; i<=4; i++ )
+			for( int j=0; j<loading_bar_pixels; j++ )
+			{
+				u16* ptr = this->word_screen.bg_base_address+(this->word_screen.res_y/2+i)*this->word_screen.res_x+j;
+				*ptr |= 31<<10;
+				*ptr &= 0xffff^((1<<4)|(1<<9));
+			}
 	}
 	bgHide( this->word_screen.bg_id );
 }

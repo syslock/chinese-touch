@@ -252,11 +252,19 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 				else
 				{
 					// include line breaks
-					RenderChar* render_char = new RenderChar( *input_char_it, glyph_index, current_face );
+					RenderChar* render_char = new RenderChar( input_char_it, glyph_index, current_face );
 					render_char->x = pen.x/64;
 					render_char->y = -pen.y/64;
 					render_char_list->push_back( render_char );
-					continue;
+					if( !render_style->multiline )
+					{
+						// we can stop after having pushed the new line character, when in single line mode:
+						break;
+					}
+					else
+					{
+						continue;
+					}
 				}
 			}
 			else if( input_char_it->code_point==9 
@@ -292,7 +300,7 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
         FT_Get_Glyph_Name( current_face, glyph_index, buffer, 1000 );
         LOG( "glyph name: " << buffer );
         
-        RenderChar* render_char = new RenderChar( *input_char_it, glyph_index, current_face );
+        RenderChar* render_char = new RenderChar( input_char_it, glyph_index, current_face );
         render_char->x = pen.x/64;
         render_char->y = -pen.y/64;
 		FT_GlyphSlot& glyph = current_face->glyph;
@@ -305,22 +313,36 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 			LOG( "got no bitmap for current glyph" );
 		}
 		if( bitmap.rows > line_height ) line_height = bitmap.rows;
-		if( !render_style->linebreak 
-			&& render_char->x+render_char->width > render_screen.res_x )
+		if( render_char->x+render_char->width > render_screen.res_x 
+			&& (!render_style->linebreak 
+				|| !render_style->multiline) )
 		{
-			// clean up clipped character...
-			delete render_char;
+			if( !render_style->multiline )
+			{
+				// push exceeding character so we can find the right position to break later:
+				render_char_list->push_back( render_char );
+			}
+			else
+			{
+				// clean up clipped character...
+				delete render_char;
+			}
 			// and stop rendering before line break:
 			break;
 		}
 		pen.x += glyph->advance.x;
         render_char_list->push_back( render_char );
     }
-	// erase all successfully processed input characters from input char list:
-	input_char_list.erase( input_char_list.begin(), input_char_it );
-	if( !render_char_list->size() ) return RenderInfo( x, y, 0, 0 );
+	
+	// nothing to render -> early return
+	if( !render_char_list->size() ) 
+	{
+		// erase all successfully processed input characters from input char list:
+		input_char_list.erase( input_char_list.begin(), input_char_it );
+		return RenderInfo( x, y, 0, 0 );
+	}
     
-    // 4. insert line breaks
+    // insert line breaks
     RenderCharList::iterator prev_whitespace_it = render_char_list->end();
     RenderCharList::iterator last_line_it = render_char_list->begin();
     int x_correction = 0;
@@ -377,6 +399,24 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 					(*rchar_it)->x -= x_correction;
 					(*rchar_it)->y -= y_correction;
 				}
+				// delete/reject characters after line break, when not in multiline mode
+				if( !render_style->multiline )
+				{
+					while( (*rchar_it)->uc_char.code_point==10 
+						|| (*rchar_it)->uc_char.code_point==32 )
+					{
+						// consume (not reject) whitespaces
+						rchar_it++;
+					}
+					for( RenderCharList::iterator del_char_it=rchar_it; 
+						del_char_it!=render_char_list->end(); 
+						del_char_it++ )
+					{
+						if( *del_char_it ) delete *del_char_it;
+					}
+					render_char_list->erase( rchar_it, render_char_list->end() );
+					break;
+				}
 				y_correction += line_height+1;
 				x_correction = x - (*rchar_it)->x;
 				RenderCharList::iterator prev_last_line_it = last_line_it;
@@ -391,7 +431,7 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
 
     if( render_style->center_x )
     {
-        // 5. x-center every line
+        // x-center every line
         x_correction = 0;
         for( RenderCharList::iterator rchar_it=render_char_list->begin();
                 rchar_it!=render_char_list->end(); rchar_it++ )
@@ -407,11 +447,11 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     }
     if( render_style->center_y )
     {
-        // 6. y-center all lines
+        // y-center all lines
         // TODO
     }
 
-    // 7. render characters at final locations
+    // render characters at final locations
     int max_x = 0;
     int max_y = 0;
     for( RenderCharList::iterator rchar_it=render_char_list->begin(); 
@@ -472,6 +512,9 @@ RenderInfo FreetypeRenderer::render( const RenderScreen& render_screen, UCCharLi
     if( line_height > height ) height = line_height;
 	RenderInfo info = RenderInfo( x, y, max_x-x, height );
 	info.indentation_offset = indentation_offset;
+	// erase all successfully processed input characters from input char list:
+	input_char_list.erase( input_char_list.begin(), (*render_char_list->rbegin())->input_char_it );
+	input_char_list.erase( (*render_char_list->rbegin())->input_char_it );
     return info;
 }
 
