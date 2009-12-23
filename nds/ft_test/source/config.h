@@ -3,7 +3,7 @@
 
 #include "lesson.h"
 
-#define PROGRAM_NAME "hanzi_trainer"
+#define PROGRAM_NAME "chinese-touch"
 #define CONFIG_STRING_SIZE 50
 #define BASE_DIR "/" PROGRAM_NAME "/"
 #define CONFIG_FILE_NAME BASE_DIR PROGRAM_NAME ".conf"
