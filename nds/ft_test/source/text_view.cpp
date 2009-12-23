@@ -101,9 +101,10 @@ TextView::TextView( FreetypeRenderer& _ft, Config& _config, Text& _text, Diction
 		info = this->freetype_renderer.render( *buffered_line, char_list, 
 			this->freetype_renderer.latin_face, 8, 0, 0, &render_style, &buffered_line->render_char_list );
 		this->push_back( buffered_line );
-		int loading_bar_pixels = (org_size-char_list.size())*this->word_screen.res_x/org_size;
+		// render progress bar:
+		int progress_bar_pixels = (org_size-char_list.size())*this->word_screen.res_x/org_size;
 		for( int i=-4; i<=4; i++ )
-			for( int j=0; j<loading_bar_pixels; j++ )
+			for( int j=0; j<progress_bar_pixels; j++ )
 			{
 				u16* ptr = this->word_screen.bg_base_address+(this->word_screen.res_y/2+i)*this->word_screen.res_x+j;
 				*ptr |= 31<<10;
