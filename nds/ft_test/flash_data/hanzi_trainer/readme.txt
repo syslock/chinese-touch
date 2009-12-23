@@ -7,3 +7,6 @@ The current implementation basicly features two modes:
 2. The text browser displays longer texts which you can easily scroll using the touchscreen. You can tap on unknown characters and display context-matching word list entries on the upper screen. Tap again and display any word containing the character. This makes reading texts containing many unknown characters much less time consuming and less frustrating, whereas it might have a negative influence on word memorization.
 
 Chinese Touch organizes your learning stuff in a hierarchy of books and lessons, while every lesson can contain a list of new words, a grammar text, a chinese text and plain textual excercises. Your lessons are available from the lesson menu that Chinese Touch boots right into.
+
+Want to contribute or looking for updates?
+See: http://code.google.com/p/chinese-touch/
