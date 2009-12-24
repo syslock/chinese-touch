@@ -2,7 +2,7 @@
 #include <sstream>
 #include <nds/arm9/image.h>
 
-#include "hanzi-trainer.h"
+#include "chinese-touch.h"
 #include "lesson_menu.h"
 #include "screen.h"
 #include "error_console.h"

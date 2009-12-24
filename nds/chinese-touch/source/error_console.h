@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "hanzi-trainer.h"
+#include "chinese-touch.h"
 #include "screen.h"
 
 extern std::stringstream error_stream;

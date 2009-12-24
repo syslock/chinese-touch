@@ -6,7 +6,7 @@
 #include <nds.h>
 #include <fat.h>
 
-#include "hanzi-trainer.h"
+#include "chinese-touch.h"
 #include "freetype_renderer.h"
 #include "unicode.h"
 #include "lesson.h"
