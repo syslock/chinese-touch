@@ -19,6 +19,6 @@ The current implementation basicly features two modes:
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-13.png"/>
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-17.png"/>
 
-The ability to process and render arbitrary texts using Truetype fonts opens the possibility to create/convert lessons for different languages than Chinese. At least in theory. Here is an example of a japanese text rendering using the default CJK font in Chinese Touch:
+The ability to process and render arbitrary texts using Truetype fonts opens the possibility to create/convert lessons for different languages than Chinese. At least in theory. Here is an example of a japanese text rendered using the default CJK font in Chinese Touch:
 
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-20.png"/>
