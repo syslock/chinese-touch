@@ -13,9 +13,11 @@ Some kind of integration is desirable, because pure use of flashcards can be bor
 
 New widgets and menus are required for management and use of flashcard sets.
   * TextView: button to add currently selected word to a flashcard set
-  * WordView:
+  * WordView (if flashcards use WordView as a backend):
     * button to add currently selected word to a flashcard set
-    * button to remove word from the current flashcard set (if flashcards use WordView as a backend)
+      * needs to popup a quick menu of available flashcard sets including an option to create a new one
+    * button to remove word from a flashcard set it is currently assigend to
+      * nees to popup a quick menu of flashcard sets this word is currently assigned to
   * FlashcardMenu: list of currently managed flashcard sets
     * merge FlashcardMenu with LessonMenu?
       * display flashcards as one book and each currently managed flashcard set as a lesson of the virtual "flashcard book"?
