@@ -1,0 +1,7 @@
+#summary A list of design studies on planned program features
+
+= Feature Design =
+
+This is a list of design studies on planned program features, including graphical interface design and basic concepts of how stuff should work and why.
+
+  # [http://m20s08.vip-server.net/chinesisch/00_dummy.png.html A series of slides] (external link) showing an older (pre-implementation) concept and ui design study for the character writing mode. The images where drawn in Gimp. Slide comments are in german. Most of the features seen in the mockup are already implemented. One exception is the background grid which was considered less important and delayed for a later release.
