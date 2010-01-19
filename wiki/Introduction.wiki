@@ -10,11 +10,11 @@ Chinese Touch organizes your learning stuff in a hierarchy of books and lessons,
 
 The current implementation basicly features two modes:
 
-1. The word list browser displays single chinese words along with pinyin and translation which you can show or hide individually to practice memorization. You can use the touchscreen to practice writing or just complete hidden information and control yourself afterwards. 
+  #1 The word list browser displays single chinese words along with pinyin and translation which you can show or hide individually to practice memorization. You can use the touchscreen to practice writing or just complete hidden information and control yourself afterwards. 
 
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-4b.png"/>
 
-2. The text browser displays longer texts which you can easily scroll using the touchscreen. You can tap on unknown characters and display context-matching word list entries on the upper screen. Tap again and display any word containing the character. This makes reading texts containing many unknown characters much less time consuming and less frustrating, whereas it might have a negative influence on word memorization.
+  #2 The text browser displays longer texts which you can easily scroll using the touchscreen. You can tap on unknown characters and display context-matching word list entries on the upper screen. Tap again and display any word containing the character. This makes reading texts containing many unknown characters much less time consuming and less frustrating, whereas it might have a negative influence on word memorization.
 
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-13.png"/>
 <img src="http://chinese-touch.googlecode.com/files/desmume-screenshot-17.png"/>
