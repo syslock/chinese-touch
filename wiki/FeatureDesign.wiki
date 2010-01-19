@@ -15,4 +15,4 @@ In CT it would make sense to enable the user to manage different sets of flashca
 
 The flashcard concept itself is very generic and allows any kind of information to be "stored" on ether side of a card. In CT I think it would be o.k. to restrict the cards structure to the one already seen in the writing and reading modes. This decision might prohibit some use cases, but allows semantic integration into other parts of the application.
 
-New widgets and menus are required for the management and use of flashcard sets.
+New widgets and menus are required for management and use of flashcard sets.
