@@ -12,10 +12,10 @@ The flashcard concept itself is very generic and allows any kind of information 
 Some kind of integration is desirable, because pure use of flashcards can be boring and frustrating, while a combination with reading of text containing a limited set of new words can be motivating. Consequentially in CT it would make sense to enable the user to manage different sets of flashcards dynamically by adding and removing individual words from a text or a static word list belonging to a lesson or by adding and removing whole sets of words from a lesson or a complete book.
 
 New widgets and menus are required for management and use of flashcard sets.
-* TextView: button to add currently selected word to a flashcard set
-* WordView:
-  * button to add currently selected word to a flashcard set
-  * button to remove word from the current flashcard set (if flashcards use WordView as a backend)
-* FlashcardMenu: list of currently managed flashcard sets
-  * merge FlashcardMenu with LessonMenu?
-    * display flashcards as one book and each currently managed flashcard set as a lesson of the virtual "flashcard book"?
+  * TextView: button to add currently selected word to a flashcard set
+  * WordView:
+    * button to add currently selected word to a flashcard set
+    * button to remove word from the current flashcard set (if flashcards use WordView as a backend)
+  * FlashcardMenu: list of currently managed flashcard sets
+    * merge FlashcardMenu with LessonMenu?
+      * display flashcards as one book and each currently managed flashcard set as a lesson of the virtual "flashcard book"?
