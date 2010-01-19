@@ -4,4 +4,11 @@
 
 This is a list of design studies on planned program features, including graphical interface design and basic concepts of how stuff should work and why.
 
-  # [http://m20s08.vip-server.net/chinesisch/00_dummy.png.html A series of slides] (external link) showing an older (pre-implementation) concept and ui design study for the character writing mode. The images where drawn in Gimp. Slide comments are in german. Most of the features seen in the mockup are already implemented. One exception is the background grid which was considered less important and delayed for a later release.
+  * [http://m20s08.vip-server.net/chinesisch/00_dummy.png.html A series of slides] (external link) showing an older (pre-implementation) concept and ui design study for the character writing mode. The images where drawn in Gimp. Slide comments are in german. Most of the features seen in the mockup are already implemented. One exception is the background grid which was considered less important and delayed for a later release.
+
+  * Efficient character and word memorization could be achieved through a dynamic [http://en.wikipedia.org/wiki/Flashcard flashcard] mode.
+    * has to fit into the book and lesson based learning scheme used so far
+    * pure use of flashcards can be boring and frustrating, while a combination with reading of texts containing a limited set of new words can be motivating
+    * In CT it would make sense to enable the user to manage different sets of flashcards dynamically by adding and removing individual words from a text or a static word list belonging to a lesson or by adding and removing whole sets of words from a lesson or a complete book.
+    * The flashcard concept itself is very generic and allows any kind of information to be "stored" on ether side of a card. In CT I think it would be o.k. to restrict the cards structure to the one already seen in the writing and reading modes. This decision might prohibit some use cases, but allows semantic integration into other the rest of the application.
+    * New widgets and menus are required for the management of and access to flashcard sets. 
