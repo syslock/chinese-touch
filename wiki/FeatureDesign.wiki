@@ -1,4 +1,4 @@
-#summary A list of design studies on planned program features
+#summary List of design studies on planned program features
 
 = Feature Design =
 This is a list of design studies on planned program features, including graphical interface design and basic concepts of how stuff should work and why.
