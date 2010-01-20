@@ -1,4 +1,4 @@
-#summary A short Introduction to Chinese Touch
+#summary Short Introduction to Chinese Touch
 #labels Featured
 
 = A short Introduction to Chinese Touch =
