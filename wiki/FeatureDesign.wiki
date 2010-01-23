@@ -21,7 +21,7 @@ New widgets and menus are required for management and use of flashcard sets. A s
       * semi-hidden at right side of the touch screen?
       * stars, emoticons?
       * first step: simple per word rating
-      * <img src="http://chinese-touch.googlecode.com/files/smilie_tab.png"/>
+      * <img src="http://chinese-touch.googlecode.com/files/smilie_tab.png"/><img src="http://chinese-touch.googlecode.com/files/smilie_tab2.png"/>
   * NewWordsViewer (if flashcards use NewWordsViewer as a backend):
     * button to remove word from a flashcard set it is currently assigend to
       * needs to popup a quick menu of flashcard sets this word is currently assigned to
