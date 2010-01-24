@@ -24,6 +24,9 @@ New widgets and menus are required for management and use of flashcard sets. A s
       * <img src="http://chinese-touch.googlecode.com/files/smilie_tab.png"/><img src="http://chinese-touch.googlecode.com/files/smilie_tab2.png"/>
       * <img src="http://chinese-touch.googlecode.com/files/smilie_tab_detail_levels.png"/>
       * The retractable side bar might be ok for NewWordsViewer but it could be anoying in TextView when covering the right most characters of some lines. I have to test this. An alternative position for the rating widget would be the lower screen edge. The top edge would be perfect in TextView, because it is next to the top screen that shows the selected word that is to be rated. But it is already in use by the hide/show selectors in NewWordsViewer...
+      * <img src="http://chinese-touch.googlecode.com/files/smilie_tab3.png"/>
+      * The start next to the rating bar could be used to summon a list of flashcard sets the currently selected word could be added to or removed from. Thus the flashcard set menu has to be some kind of hybrid checkbox-list widget visualizing which flashcard sets the current word is already assigned to and which not.
+      * The emoticon an the upper right corner of the main screen shows the current rating for that word. It can be visible anytime, so the user knows about the current rating even if the rating bar on the sub screen is in retracted state.
   * NewWordsViewer (if flashcards use NewWordsViewer as a backend):
     * button to remove word from a flashcard set it is currently assigend to
       * needs to popup a quick menu of flashcard sets this word is currently assigned to
