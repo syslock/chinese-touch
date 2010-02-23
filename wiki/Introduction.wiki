@@ -12,6 +12,7 @@ Chinese Touch organizes your learning stuff in a hierarchy of books and lessons,
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_grammar_1.1.png"/>||Grammar Text||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_text_1.1.png"/>||Lesson Text||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_exercises_1.1.png"/>||Exercises||
+||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_rating_1.1.png"/>||Browse dynamically generated word lists by difficulty rating||
 
 
 The current implementation basicly features two modes:
