@@ -8,6 +8,7 @@ Chinese Touch organizes your learning stuff in a hierarchy of books and lessons,
 ||Lesson menu||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_book_1.1.png"/>||
 
+||Options available from a lesson entry||and their meaning||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_new_words_1.1.png"/>||New words of the lesson||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_grammar_1.1.png"/>||Grammar Text||
 ||<img src="http://chinese-touch.googlecode.com/files/lesson_menu_text_1.1.png"/>||Lesson Text||
