@@ -1,5 +1,5 @@
 #summary How To Create Word Lists
-#labels Phase-Support,Phase-Deploy
+#labels Phase-Support,Phase-Deploy,Featured
 
 So how do you get your own word lists into your copy of Chinese Touch you may ask? 
 
@@ -7,6 +7,25 @@ Luckily this is rather easy to accomplish. Chinese Touch automatically imports a
 
 Start OpenOffice or StarOffice and create a new text document. Therein create a table with five columns and any number of rows. Every row describes one word definition, where column one contains the word in Chinese language, column two contains the pronunciation in pinyin, column number three takes the translation into your native language, column four is for a short abbreviated form of the word type and the fifth column takes an additional comment or example phrase. Any of the columns in exception of the first one is optional and can be left blank if you do not have or need the information. You are not even forced to create a list of Chinese words. The font shipped with Chinese Touch also supports Japanese, Korean and many Latin glyphs and could be replaced with another one if necessary.
 
-_howto-create-word-tables-1.png_
+||Creating a word list for Chinese Touch in OpenOffice||
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-1.png||
 
-_tbc_...
+When your word list is completed go to the files menu and select the export dialogue. You can store your word list in a standard format e.g. *.odt before you do that if you like.
+
+||Starting the export dialogue||
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-2.png||
+
+Now select the Media Wiki export filter and store your word list directly into your book directory on your flash memory card or elsewhere you can find it later. You can already give it its final name e.g. 036.dict, although the export filter will append an additional .txt ending to your file silently. 
+
+||Selecting the Media Wiki export filter||
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-3.png||
+
+To fix the file name go to the location you exported your word list to and find the newly created file, e.g. 036.dict.txt and edit the files name to 036.dict.
+
+||Fixing the file name||
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-4.png||
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-5.png||
+
+Finally you can open the newly created dictionary file with a text editor to control whether OpenOffice did its job properly. If it looks something like this, then Chinese Touch should be able to parse and display the files contents:
+
+||http://chinese-touch.googlecode.com/files/howto-create-word-tables-6.png||
