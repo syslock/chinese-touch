@@ -10,12 +10,14 @@ Start OpenOffice or StarOffice and create a new text document. Therein create a 
 ||Creating a word list for Chinese Touch in OpenOffice||
 ||http://chinese-touch.googlecode.com/files/howto-create-word-tables-1.png||
 
-When your word list is completed go to the files menu and select the export dialogue. You can store your word list in a standard format e.g. *.odt before you do that if you like.
+When your word list is completed go to the files menu and select the export dialogue. You can store your word list in a standard format e.g. .odt before you do that if you like.
 
 ||Starting the export dialogue||
 ||http://chinese-touch.googlecode.com/files/howto-create-word-tables-2.png||
 
 Now select the Media Wiki export filter and store your word list directly into your book directory on your flash memory card or elsewhere you can find it later. You can already give it its final name e.g. 036.dict, although the export filter will append an additional .txt ending to your file silently. 
+
+*Note:* Some versions of OpenOffice do not include a Media Wiki export filter. You can get it [http://wiki.services.openoffice.org/wiki/Odt2Wiki here] in that case (instructions included).
 
 ||Selecting the Media Wiki export filter||
 ||http://chinese-touch.googlecode.com/files/howto-create-word-tables-3.png||
