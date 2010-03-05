@@ -40,4 +40,4 @@ New widgets and menus are required for management and use of flashcard sets. A s
 == Settings Screen for Word List Browser ==
   * should automatically pop-up after a (dynamic) word list has been loaded
   * a small button should be provided to enter the settings from within the word list browser
-  * Concept rendering||http://chinese-touch.googlecode.com/files/word_list_settings.png||
+  * Concept rendering||http://chinese-touch.googlecode.com/files/word_list_settings.png||http://chinese-touch.googlecode.com/files/word_list_settings-2.png||
