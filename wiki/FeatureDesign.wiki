@@ -43,4 +43,4 @@ New widgets and menus are required for management and use of flashcard sets. A s
   * A similar thing can be done for the text mode: ||http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/blueprints/text_mode_settings.png||
     * The text mode configuration screen should not pop-up every time the text mode is started.
     * A reasonable default setting would be to lookup words from the current lesson and previous lessons. That way Learners would not be confused by alternative definitions from upcoming lessons and other books that could be from a different language in the worst case.
-  * a small button should be provided that allows to enter the settings from within the word list and the text mode, when needed
+  * A small button should be provided that allows to enter the settings from within the word list and the text mode, when needed.
