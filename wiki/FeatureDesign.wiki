@@ -38,8 +38,7 @@ New widgets and menus are required for management and use of flashcard sets. A s
       * start test with easy/medium/hard difficulty
 
 == Settings Screens for Word List Browser and Text Mode ==
-browser
-  * Concept rendering: ||http://chinese-touch.googlecode.com/files/word_list_settings.png||http://chinese-touch.googlecode.com/files/word_list_settings-2.png||
+  * Concept rendering for the word list browser configuration: ||http://chinese-touch.googlecode.com/files/word_list_settings.png||http://chinese-touch.googlecode.com/files/word_list_settings-2.png||
     * should automatically pop-up after a (dynamic) word list has been loaded
   * A similar thing can be done for the text mode: ||http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/blueprints/text_mode_settings.png||
     * The text mode configuration screen should not pop-up every time the text mode is started.
