@@ -20,4 +20,9 @@ Chinese-Touch liest die oben aufgezählten Daten aus einer Verzeichnisstruktur, 
 || /chinese-touch/books/_anderes-buch_/_..._ || _usw._ ||
 || /chinese-touch/books/_..._ || _usw._ ||
 
-Die in der Tabelle aufgeführten Dateien sind tatsächlich einfache Textdateien mit einem leicht verständlichen Klartextformat. Die Wortlisten sind ein wenig komplizierter aufgebaut das man aber nicht zwangsläufig verstehen muss um sie erstellen zu können. Das WortlistenErstellen wird in einem eigenen Artikel behandelt.
+Die in der Tabelle aufgeführten Dateien sind tatsächlich einfache Textdateien mit einem leicht verständlichen Klartextformat, die sich mit jedem beliebigen Texteditor, der Texte in UTF-8 kodiert speichern kann, bearbeiten lassen. Die Wortlisten sind ein wenig komplizierter aufgebaut als die anderen Dateien. Man muss das Wortlisten-Format aber nicht zwangsläufig verstehen, um sie selbst erstellen zu können. Das WortlistenErstellen wird in einem eigenen Artikel behandelt.
+
+Die folgenden Tabellen Beschreiben das Format der einzelnen Buch- und Lektionsdateien. Alle Dateien und Felder sind optional. Wenn Chinese-Touch eine Datei oder einen Wert nicht findet, wird die entsprechende Funktion deaktiviert bzw. die fehlende Information nicht angezeigt.
+
+|| *_buchname_.conf* (Stammdaten eines Buches) ||
+|| title=Titel Dieses Buches<br/> description=Kurzer Text, der beschreibt, welchen Inhalt dieses Buch hat<br/> author=Max Mustermann <br/> publisher=Name des Verlags<br/> year=2007 (Erscheinungsjahr) <br/> isbn=123-4-56789-123-4 ||
