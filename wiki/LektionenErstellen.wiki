@@ -10,7 +10,7 @@ Chinese-Touch verwaltet dein Lehrmaterial in *Büchern* und *Lektionen*, wobei j
 
 ==Verzeichnisstruktur==
 
-Chinese-Touch liest die oben aufgezählten Daten aus einer Verzeichnisstruktur, auf der Speicherkarte, die du für deinen Nintendo-DS verwendest. Wenn du diese an deinen Rechner anschließt ergibt sich Ausgehend vom Wurzelverzeichnis der Speicherkarte folgende Verzeichnisstruktur:
+Chinese-Touch liest die oben aufgezählten Daten aus einer Verzeichnisstruktur auf der Speicherkarte, die du für deinen Nintendo-DS verwendest. Wenn du diese an deinen Rechner anschließt ergibt sich Ausgehend vom Wurzelverzeichnis der Speicherkarte folgende Verzeichnisstruktur:
 || *Pfad* || *Bedeutung* ||
 || /chinese-touch/ || Hauptverzeichnis von Chinese-Touch ||
 || /chinese-touch/books/ || Lehrbuchsammlung ||
