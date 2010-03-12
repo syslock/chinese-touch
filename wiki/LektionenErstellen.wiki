@@ -48,7 +48,7 @@ Die .grammar-, .text- und .exercises-Dateien enthalten keine Schlüssel-Wert-Paa
 || Ein Fließtext, der die in dieser Lektion behandelten grammatikalischen Regeln erklärt.  ||
 
 || *_01_.text* (Lesetext der Lektion _1_) ||
-|| Ein längerer chinesischer Text. In der Regel müssen Lautumschrift oder Übersetzung nicht dazu geschrieben werden, da der Nutzer unbekannte Wörter ja auf dem Touch-Screen anklicken und so ihre Wörterbucheinträge, so vorhanden, aufrufen kann. ||
+|| Ein längerer chinesischer Text. In der Regel müssen Lautumschrift oder Übersetzung nicht dazu geschrieben werden, da der Nutzer unbekannte Wörter ja auf dem Touch-Screen anklicken und so ihre Wörterbucheinträge, falls vorhanden, aufrufen kann. ||
 
 || *_01_.exercises* (Übungsaufgaben zur Lektion _1_) ||
 || Übungsaufgaben für diese Lektion. _Diese Funktion soll später noch mit interaktiven Möglichkeiten erweitert werden und hat derweil keine große Bedeutung, da man ja trotzdem Papier und Schreibstift benötigt um die Übungsaufgaben lösen zu können._  ||
