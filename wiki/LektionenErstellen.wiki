@@ -42,13 +42,13 @@ Die folgenden Tabellen Beschreiben das Format der einzelnen Buch- und Lektionsda
 
 ==Texte==
 
-Die .grammar-, .text- und .exercises-Dateien enthalten keine Schlüssel-Wert-Paare, wie die .conf-Dateien, sondern ausschließlich längere Fließtexte. Sie dürfen, wie alle Dateien UTF-8-kodierte chinesische Zeichen oder andere Sonderzeichen enthalten. Explizite Zeilenumbrüche sind nicht nötig, da diese automatisch generiert werden können, sind aber, z.B. zur Trennung inhaltlich abzugrenzender Abschnitte, durchaus erlaubt. Tabulator-Zeichen erzeugen eine Einrückung, die auch nach automatisch eingefügten Zeilenumbrüchen eingehalten wird. Gut lesbare Dialoge z.B. kann man also leicht erzeugen, indem man nach dem Namen des Sprechers ein Tabulator-Zeichen einfügt.
+Die .grammar-, .text- und .exercises-Dateien enthalten keine Schlüssel-Wert-Paare, wie die .conf-Dateien, sondern ausschließlich längere Fließtexte. Sie dürfen, wie alle von Chinese-Touch verwendeten Dateien, UTF-8-kodierte chinesische Zeichen oder andere Sonderzeichen enthalten. Explizite Zeilenumbrüche sind nicht nötig, da diese automatisch generiert werden, falls Zeichen den Bildschirmrand erreichen, sind aber, z.B. zur Trennung inhaltlich abzugrenzender Abschnitte, durchaus erlaubt. Tabulator-Zeichen erzeugen eine Einrückung, die auch nach automatisch eingefügten Zeilenumbrüchen eingehalten wird. Gut lesbare Dialoge z.B. kann man also leicht erzeugen, indem man zwischen dem Namen des Sprechers und dem gesprochenen Text ein Tabulator-Zeichen einfügt.
 
 || *_01_.grammar* (Text mit Erklärungen zur *Grammatik*, zur Lektion _1_) ||
 || Ein Fließtext, der die in dieser Lektion behandelten grammatikalischen Regeln erklärt.  ||
 
 || *_01_.text* (Lesetext der Lektion _1_) ||
-|| Ein längerer chinesischer Text. In der Regel müssen Lautumschrift oder Übersetzung, nicht dazu geschrieben werden, da der Nutzer unbekannte Wörter ja auf dem Touch-Screen anklicken und so ihre Wörterbucheinträge, so vorhanden, aufrufen kann. ||
+|| Ein längerer chinesischer Text. In der Regel müssen Lautumschrift oder Übersetzung nicht dazu geschrieben werden, da der Nutzer unbekannte Wörter ja auf dem Touch-Screen anklicken und so ihre Wörterbucheinträge, so vorhanden, aufrufen kann. ||
 
 || *_01_.exercises* (Übungsaufgaben zur Lektion _1_) ||
 || Übungsaufgaben für diese Lektion. _Diese Funktion soll später noch mit interaktiven Möglichkeiten erweitert werden und hat derweil keine große Bedeutung, da man ja trotzdem Papier und Schreibstift benötigt um die Übungsaufgaben lösen zu können._  ||
