@@ -3,7 +3,13 @@
 
 Wenn dir Chinese-Touch gefällt wirst du dich vielleicht fragen wie man nun eigene Lektionen dafür erstellen kann. Dieser Artikel erklärt die dazu notwendigen Grundlagen und Schritte.
 
+
+==Einleitung==
+
 Chinese-Touch verwaltet dein Lehrmaterial in *Büchern* und *Lektionen*, wobei jedes Buch eine beliebige Anzahl von Lektionen enthalten kann und jede Lektion zur Zeit aus verschiedenen Texten (*Grammatik*, *Lesetext*, *Übungsaufgaben*) und einer *Wortliste* besteht.
+
+
+==Verzeichnisstruktur==
 
 Chinese-Touch liest die oben aufgezählten Daten aus einer Verzeichnisstruktur, auf der Speicherkarte, die du für deinen Nintendo-DS verwendest. Wenn du diese an deinen Rechner anschließt ergibt sich Ausgehend vom Wurzelverzeichnis der Speicherkarte folgende Verzeichnisstruktur:
 || *Pfad* || *Bedeutung* ||
