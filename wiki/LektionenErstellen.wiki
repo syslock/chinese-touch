@@ -28,7 +28,7 @@ Chinese-Touch liest die oben aufgezählten Daten aus einer Verzeichnisstruktur a
 
 Die in der Tabelle aufgeführten Dateien sind tatsächlich einfache Textdateien mit einem leicht verständlichen Klartextformat, die sich mit jedem beliebigen Texteditor, der Texte in UTF-8 kodiert speichern kann, bearbeiten lassen. Die Wortlisten sind ein wenig komplizierter aufgebaut als die anderen Dateien. Man muss das Wortlistenformat aber nicht zwangsläufig verstehen, um sie selbst erstellen zu können. Das WortlistenErstellen wird in einem eigenen Artikel behandelt.
 
-Die folgenden Tabellen Beschreiben das Format der einzelnen Buch- und Lektionsdateien. Alle Dateien und Felder sind optional. Wenn Chinese-Touch eine Datei oder einen Wert nicht findet, wird die entsprechende Funktion deaktiviert bzw. die fehlende Information nicht angezeigt.
+Die folgenden Tabellen beschreiben das Format der einzelnen Buch- und Lektionsdateien. Alle Dateien und Felder sind optional. Wenn Chinese-Touch eine Datei oder einen Wert nicht findet, wird die entsprechende Funktion deaktiviert bzw. die fehlende Information nicht angezeigt.
 
 
 ==Stammdaten==
