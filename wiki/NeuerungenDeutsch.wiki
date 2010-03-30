@@ -5,7 +5,7 @@
  * In Wortlisten kann man nun, direkt am Anfang oder über den "s"-Knopf, auswählen welche Bestandteile des Wörterbucheintrages angezeigt werden sollen, wenn man zu einem neuen Wort wechselt. Dadurch wird es einfacher die Assoziationsmöglichkeiten zwischen den verschiedenen Bestandteilen (Hanzi, Pinyin, Übersetzung) zu trainieren.
  * Ein sparsameres Verwalten von Wörtern sollte größere Wörterbücher möglich machen (mehrere tausend Wörter?), allerdings können einige Operationen dadurch etwas langsamer werden.
  * Das Synchronisieren von Wörterbucheinträgen aus aktualisierten .dict-Dateien funktioniert nun, allerdings wird dieser Vorgang zur Zeit nur ausgelöst, wenn man die statische Vokabelliste einer zu aktualisierenden Lektion auswählt oder wenn man ihn explizit über das Einstellungsmenü ("s"-Knopf) für die gesamte Bibliothek startet. Es sei gewarnt, dass die Synchronisation bis zu einigen Minuten dauern kann, wenn viele Wörter auf einmal gelesen werden müssen. Automatisch startet der Vorgang derzeit nur beim ersten Programmstart, wenn noch keine words.db existiert.
- * Mehrfacheinträge für das gleiche chin. Wort (Zeichenkombination) werden nun korrekt gehandhabt.
+ * Mehrfacheinträge für das gleiche chin. Wort (Zeichenkombination) innerhalb einer .dict-Datei werden nun korrekt gehandhabt.
  * Es ist nun möglich einzustellen ob ausgewählte Wörter oder Zeichen im Textmodus auch in vorherigen, nachfolgenden Lektionen oder anderen Büchern nachgeschlagen werden sollen. ("s"-Knopf)
  * Nicht bewertete Wörter erscheinen nun in der sehr schweren dynamischen Wortliste einer Lektion oder eines Buches, sodass man ermuntert wird diese früher oder später doch noch zu bewerten.
- * Buchtitel und Lektionsname werden nun unter dem Wörterbucheintrag dargestellt, wenn keiner der Bestandteile verborgen ist.
+ * Buchtitel und Lektionsnummer werden nun unter dem Wörterbucheintrag dargestellt, wenn keiner der Bestandteile verborgen ist.
