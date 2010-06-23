@@ -61,22 +61,55 @@ Some functions in Chinese Touch are independent of the selected book or lesson a
 <br/>
 == Word Lists ==
 === Word Lists: Settings ===
-=== Word Lists: Handwriting ===
-=== Word Lists: Self Control ===
-=== Word Lists: Browsing ===
-=== Word Lists: Rating ===
+When you chose a word list from the lesson menu you will be asked how the dictionary entries within the list shall be displayed. When you are learning Chinese you typically want to train memorization of different aspects of words at different times. In the example shown below the user will to try to remember spelling and meaning of Chinese words within the list, so she disables "Show Pronunciation" and "Show Translation" and then proceeds through "OK".
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-25.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-27.png||
 
+<br/>
+=== Word Lists: Handwriting and Self Control ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-28.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-29.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-30.png||
+
+<br/>
+=== Word Lists: Browsing ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-31.png||
+
+<br/>
+=== Word Lists: Rating ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-32.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-33.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-34.png||
+
+<br/>
 == Reading Text ==
+
+<br/>
 === Reading Text: Context Look-Ups ===
+
+<br/>
 === Reading Text: Character Look-Ups ===
+
+<br/>
 === Reading Text: Diving Into Dictionary Entries ===
+
+<br/>
 === Reading Text: Settings ===
 
+
+<br/>
 == Dictionary Search ==
 
+
+<br/>
 == Creating Content ==
+
+<br/>
 === Creating Content: Books and Lessons ===
+
+<br/>
 === Creating Content: Text Files ===
+
+<br/>
 === Creating Content: Dynamic Word Lists ===
+
+<br/>
 === Creating Content: Static Word Lists ===
+
+<br/>
 === Creating Content: Large Dictionaries ===
