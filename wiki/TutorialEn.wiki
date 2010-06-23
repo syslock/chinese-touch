@@ -8,6 +8,20 @@ Directly after start-up Chinese Touch will show the lesson menu. Its structure i
 ||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" />||
 
 === Lesson Menu: Book Entries ===
+||Widget||Description||
+||open||Explode a book entry and show lessons within that book.||
+||close||Close a book entry and hide lessons within that book.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_clock.png" />||Order word lists generated for the book entry by access time. Longes unseen words come first. Touch this button to change order settings!||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_dice.png" />||Shuffle word lists generated for the book entry. Touch this button to change order settings!||
+||#||Order word lists generated for the book entry by occurrence within the book lessons. Touch this button to change order settings!||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/center_rating_bar.png" />||Shows the current mean rating of words stored in this book. Allows to generate lists of words with different ratings. (see below)||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_any_active.png" />||Generate a list of words from the book regardless of their assigned difficulty rating.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_easy_active.png" />||Generate a list of easy words from the book.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words from the book.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words from the book.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words from the book.||
+
+
 === Lesson Menu: Lesson Entries ===
 === Lesson Menu: Global Functions ===
 
