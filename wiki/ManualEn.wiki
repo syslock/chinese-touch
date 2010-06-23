@@ -6,7 +6,7 @@
 
 <br/>
 === Lesson Menu: Book Entries ===
-Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary.png or http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary-open.png) in front of them are book entries. Books may contain multiple lessons about different aspects of Chinese. Some books do not contain any lessons but a dictionary of words, spelling and translations, that you can lookup from different locations within the program. When you activate a book entry a description about the books contents will be shown on the upper screen and a couple of buttons appear on the selected book entry. See the table on the right for a description of each of them.
+Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary.png or http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary-open.png) in front of them are book entries. Books may contain multiple lessons about different aspects of Chinese. Some books do not contain any lessons but a dictionary of words, spelling and translations, that you can lookup from different locations within the program. When you activate a book entry a description about the books contents will be shown on the upper screen and a couple of buttons appear on the selected book entry. See the table below for a description of each of them.
 <table><tr valign="top"><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
 || *Widget*|| *Description*||
 ||open||Explode a book entry and show lessons within that book.||
@@ -24,6 +24,7 @@ Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/tru
 
 <br/>
 === Lesson Menu: Lesson Entries ===
+Menu entries with a large paper sheet icon (http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/text-x-generic.png) in front of them are lesson entries. Lessons typically introduce a set of new words, grammar rules and provide text and exercises for practice, though each of those is optional. When you activate a lesson entry a description about the lessons contents or purpose is shown on the upper screen and a couple of buttons appear on the selected lesson entry. See the table below for a description of each of them. 
 <table><tr valign="top"><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" /></td><td>
 || *Widget*|| *Description*||
 ||下||Jump down to the last lesson of the book.||
@@ -46,6 +47,7 @@ Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/tru
 
 <br/>
 === Lesson Menu: Global Functions ===
+Some functions in Chinese Touch are independent of the selected book or lesson and always available. Please see below for a description of each of them.
 || *Widget*|| *Description*||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_search.png" />||Starts the dictionary search applet.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_bar.png" />||Shows the current mean rating of words stored within the users word database. Allows to generate lists of words with different ratings. (see below)||
