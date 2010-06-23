@@ -5,7 +5,7 @@
 
 Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.
 
-||<img src="desmume-screenshot-0.png" />||<img src="desmume-screenshot-1.png" />||<img src="desmume-screenshot-16.png" />||
+||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" />||
 
 === Lesson Menu: Book Entries ===
 === Lesson Menu: Lesson Entries ===
