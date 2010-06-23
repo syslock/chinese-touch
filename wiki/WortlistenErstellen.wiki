@@ -1,5 +1,4 @@
 #summary Wie man eigene Wortlisten anlegt
-#labels Featured
 
 Wenn du Chinese-Touch zum Lesen von chinesischen Texten mit unbekannten Wörtern verwendest oder die Vokabeltrainingsfunktionen benutzen möchtest, dann ist es notwendig eigene Wortlisten zu erstellen und in ein Format zu bringen, das Chinese-Touch versteht und anzeigen kann.
 
