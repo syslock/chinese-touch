@@ -1,5 +1,5 @@
 #summary How To Create Word Lists
-#labels Phase-Support,Phase-Deploy,Featured
+#labels Phase-Support,Phase-Deploy
 
 So how do you get your own word lists into your copy of Chinese Touch you may ask? 
 
