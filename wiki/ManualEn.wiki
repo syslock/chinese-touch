@@ -2,8 +2,9 @@
 
 = Chinese Touch 1.3 - Manual =
 == Lesson Menu ==
-||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" />||Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.||
+<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" /></td><td>Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.</td></tr></table>
 
+<br/>
 === Lesson Menu: Book Entries ===
 <table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
 ||*Widget*||*Description*||
@@ -20,7 +21,7 @@
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words from the book.||
 </td></tr></table>
 
-
+<br/>
 === Lesson Menu: Lesson Entries ===
 <table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" /></td><td>
 ||*Widget*||*Description*||
@@ -42,7 +43,7 @@
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words.||
 </td></tr></table>
 
-
+<br/>
 === Lesson Menu: Global Functions ===
 
 == Word Lists ==
