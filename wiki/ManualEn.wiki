@@ -2,12 +2,12 @@
 
 = Chinese Touch 1.3 - Manual =
 == Lesson Menu ==
-<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" /></td><td>Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.</td></tr></table>
+<table><tr valign="top"><td>Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.</td><td width="50%"><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" /></td></tr></table>
 
 <br/>
 === Lesson Menu: Book Entries ===
-<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
-||*Widget*||*Description*||
+<table><tr valign="top"><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
+|| *Widget*|| *Description*||
 ||open||Explode a book entry and show lessons within that book.||
 ||close||Close a book entry and hide lessons within that book.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_clock.png" />||Order word lists generated for the book entry by access time. Longest unseen words come first. Touch this button to change order settings!||
@@ -23,8 +23,8 @@
 
 <br/>
 === Lesson Menu: Lesson Entries ===
-<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" /></td><td>
-||*Widget*||*Description*||
+<table><tr valign="top"><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" /></td><td>
+|| *Widget*|| *Description*||
 ||下||Jump down to the last lesson of the book.||
 ||上||Jump up to the first lesson of the book.||
 ||§||Display grammar text for this lesson. (optional)||
@@ -45,13 +45,14 @@
 
 <br/>
 === Lesson Menu: Global Functions ===
+|| *Widget*|| *Description*||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_search.png" />||Starts the dictionary search applet.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_bar.png" />||Shows the current mean rating of words stored within the users words database. Allows to generate lists of words with different ratings. (see below)||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_any_active.png" />||Generate a list of words regardless of their assigned difficulty rating.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_easy_active.png" />||Generate a list of easy words.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_bar.png" />||Shows the current mean rating of words stored within the users word database. Allows to generate lists of words with different ratings. (see below)||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_any_active.png" />||Generate a list of words from the users word database regardless of their assigned difficulty rating.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_easy_active.png" />||Generate a list of easy words from the users word database.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words from the users word database.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words from the users word database.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words from the users word database.||
 ||S||Starts the global settings screen.||
 
 <br/>
