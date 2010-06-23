@@ -123,7 +123,11 @@ You can tap on unknown characters and display context-matching word list entries
 
 <br/>
 === Creating Content: Static Word Lists ===
-...
+see HowtoCreateWordLists
+
+<br/>
+==== Static Word Lists: Synchronizing Word Database ====
+After creating or changing static word lists using the steps described above you need to synchronize your word database. This can be done through the global settings screen of the lesson menu as shown below:
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-76.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-81.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-83.png||
 
 <br/>
