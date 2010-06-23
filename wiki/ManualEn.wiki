@@ -1,4 +1,5 @@
 #summary Chinese Touch 1.3 - Manual
+#labels Featured
 
 = Chinese Touch 1.3 - Manual =
 == Lesson Menu ==
@@ -76,19 +77,18 @@ Sometimes you won't get it right. Whatever your results are, you can adjust the 
 
 <br/>
 === Word Lists: Browsing and Exit ===
-You can browse word lists easily using the left/right buttons seen in the upper left and upper right corners of the screen. Your visibility settings and the writing screen will be reset/cleared automatically if you choose so from the settings menu, that is always accessible through the "S"-button at the lower right corner. You can exit the word list using the "X"-button at the lower left corner of the screen.
+You can browse word lists easily using the left/right buttons seen in the upper left and upper right corners of the screen. Your visibility settings and the writing screen will be reset/cleared automatically if you choose so from the settings menu, that is always accessible through the "S"-button at the lower right corner. You can exit the word list when you are ready using the "X"-button at the lower left corner of the screen.
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-36.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-37.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-38.png||
 
 <br/>
 == Reading Text ==
+When you choose grammar, text or exercises from a lesson entry, then the text browser will be started. The text browser displays longer texts which you can easily scroll using the touchscreen similar to the way you navigate in the lesson menu.
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-41.png||
 
 <br/>
-=== Reading Text: Context Look-Ups ===
+=== Reading Text: Context and Character Look-Ups ===
+You can tap on unknown characters and display context-matching word list entries on the upper screen. Tap again and display any word containing the character. This makes reading texts containing many unknown characters much less time consuming and less frustrating. Besides that the user interface of the text browser is similar to the word list browser. Use the arrow buttons to browse the list of matching words, hide or show portions of the word entry and rate the difficulty of the currently shown word.
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-42.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-43.png||
-
-<br/>
-=== Reading Text: Character Look-Ups ===
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-53.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-54.png||
 
 <br/>
