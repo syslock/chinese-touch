@@ -45,7 +45,16 @@
 
 <br/>
 === Lesson Menu: Global Functions ===
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_search.png" />||Starts the dictionary search applet.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_bar.png" />||Shows the current mean rating of words stored within the users words database. Allows to generate lists of words with different ratings. (see below)||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_any_active.png" />||Generate a list of words regardless of their assigned difficulty rating.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_easy_active.png" />||Generate a list of easy words.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words.||
+||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words.||
+||S||Starts the global settings screen.||
 
+<br/>
 == Word Lists ==
 === Word Lists: Settings ===
 === Word Lists: Handwriting ===
