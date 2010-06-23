@@ -5,10 +5,10 @@
 
 Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.
 
-||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" />||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" />||
-
+||<img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-0.png" />||
 
 === Lesson Menu: Book Entries ===
+<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
 ||*Widget*||*Description*||
 ||open||Explode a book entry and show lessons within that book.||
 ||close||Close a book entry and hide lessons within that book.||
@@ -21,9 +21,11 @@ Directly after start-up Chinese Touch will show the lesson menu. Its structure i
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words from the book.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words from the book.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words from the book.||
+</td></tr></table>
 
 
 === Lesson Menu: Lesson Entries ===
+<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-16.png" /></td><td>
 ||*Widget*||*Description*||
 ||下||Jump down to the last lesson of the book.||
 ||上||Jump up to the first lesson of the book.||
@@ -41,6 +43,7 @@ Directly after start-up Chinese Touch will show the lesson menu. Its structure i
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words.||
 ||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words.||
+</td></tr></table>
 
 
 === Lesson Menu: Global Functions ===
@@ -66,4 +69,3 @@ Directly after start-up Chinese Touch will show the lesson menu. Its structure i
 === Creating Content: Dynamic Word Lists ===
 === Creating Content: Static Word Lists ===
 === Creating Content: Large Dictionaries ===
-
