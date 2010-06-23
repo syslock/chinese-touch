@@ -112,9 +112,13 @@ When you chose a word list from the lesson menu you will be asked how the dictio
 
 <br/>
 === Creating Content: Dynamic Word Lists ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-86.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-87.png||
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-89.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-90.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-92.png||
 
 <br/>
 === Creating Content: Static Word Lists ===
+...
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-76.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-81.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-83.png||
 
 <br/>
 === Creating Content: Large Dictionaries ===
