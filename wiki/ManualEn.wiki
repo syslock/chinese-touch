@@ -69,32 +69,37 @@ When you chose a word list from the lesson menu you will be asked how the dictio
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-28.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-29.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-30.png||
 
 <br/>
-=== Word Lists: Browsing ===
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-31.png||
-
-<br/>
 === Word Lists: Rating ===
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-32.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-33.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-34.png||
 
 <br/>
+=== Word Lists: Browsing and Exit ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-36.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-37.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-38.png||
+
+<br/>
 == Reading Text ==
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-41.png||
 
 <br/>
 === Reading Text: Context Look-Ups ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-42.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-43.png||
 
 <br/>
 === Reading Text: Character Look-Ups ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-53.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-54.png||
 
 <br/>
 === Reading Text: Diving Into Dictionary Entries ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-47.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-48.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-49.png||
 
 <br/>
 === Reading Text: Settings ===
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-55.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-56.png||
 
 
 <br/>
 == Dictionary Search ==
-
+||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-59.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-61.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-64.png||
 
 <br/>
 == Creating Content ==
