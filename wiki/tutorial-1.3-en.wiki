@@ -1,0 +1,35 @@
+#summary Chinese Touch 1.3 - Tutorial
+
+= Chinese Touch 1.3 - Tutorial =
+== Lesson Menu ==
+
+Directly after start-up Chinese Touch will show the lesson menu. Its structure is hierarchical. You can choose from books installed in the directory "/chinese-touch/books" of your flash cartridge and each book can contain any number of lessons.
+
+||<img src="desmume-screenshot-0.png" />||<img src="desmume-screenshot-1.png" />||<img src="desmume-screenshot-16.png" />||
+
+=== Lesson Menu: Book Entries ===
+=== Lesson Menu: Lesson Entries ===
+=== Lesson Menu: Global Functions ===
+
+== Word Lists ==
+=== Word Lists: Settings ===
+=== Word Lists: Handwriting ===
+=== Word Lists: Self Control ===
+=== Word Lists: Browsing ===
+=== Word Lists: Rating ===
+
+== Reading Text ==
+=== Reading Text: Context Look-Ups ===
+=== Reading Text: Character Look-Ups ===
+=== Reading Text: Diving Into Dictionary Entries ===
+=== Reading Text: Settings ===
+
+== Dictionary Search ==
+
+== Creating Content ==
+=== Creating Content: Books and Lessons ===
+=== Creating Content: Text Files ===
+=== Creating Content: Dynamic Word Lists ===
+=== Creating Content: Static Word Lists ===
+=== Creating Content: Large Dictionaries ===
+
