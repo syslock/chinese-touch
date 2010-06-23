@@ -1,5 +1,4 @@
 #summary Wie man eigene Lektionen erstellt
-#labels Featured
 
 ==Einleitung==
 
