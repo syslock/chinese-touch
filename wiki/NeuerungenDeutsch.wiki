@@ -1,4 +1,19 @@
 #labels Featured
+=Chinese Touch 1.3 - Release Notes=
+
+ * Unterstützung große Wörterbücher, wie CC-CEDICT, HanDeDict, WaDoku etc.
+ * Mehr Kontrolle über Schwierigkeitsgrad (neu Wahlmöglichkeit: beliebig), Sortierreihenfolge (Vorkommen, Zeit, zufällig) und Bereich (aktuelle Lektion, einschließliche vorherige Lektionen) von aus dem Lektionsmenü aufgerufenen Wortlisten
+ * Mit den neuen Stern- und Müllsymbolen lassen sich in großen Wörterbüchern gefundene Treffern dynamisch zur aktuellen Lektionsliste hinzufügen, bzw. aus dieser entfernen.
+ * Chinesische Button-Beschriftungen größtenteils durch grafische Symbole ersetzt.
+ * Nachladen von Lektionsmenüeinträgen und Textzeilen im Lesemodus verbessert.
+ * Für im chinesischen Standard-Font fehlende japanische Zeichen auf einen speziellen japanischen Font zurückfallen. (instabil)
+ * Darstellung der durchschnittlichen Vokabelbewertung pro Lektion/Buch/global im Lektionsmenü.
+ * Neuer Lesetext und einige neue Vokabeln in Lektion 8 des englisch-chinesischen Wikibooks.
+ * Die Unterstützung für das ARGV-Protokoll erlaubt es das Programmverzeichnis an einen beliebigen Pfad auf dem SD/Flash-Dateisystem zu legen, sofern die Kartensoftware das unterstützt.
+ * Das im Lesemodus ausgewählte Zeichen wird nun immer auf dem oberen Bildschirm dargestellt, auch wenn dafür kein Treffern in einem Wörterbuch gefunden wurde. Dadurch kann man unbekannte Zeichen zumindest genau erkennen und notfalls woanders nachschlagen.
+ * Darüber hinaus viele Fehler repariert und die Benutzeroberfläche verbessert.
+
+
 =Chinese-Touch 1.2 - Neuerungen=
 
  * Mit Hilfe der neuen Runter- (下) und Hoch- (上) Knöpfe in den Wortlisten- und Textmodi ist es nun möglich einen neuen Textmodus für den aktuell dargestellten Wörterbucheintrag zu starten oder zu beenden. Dadurch wird es möglich unbekannte Wörter in Kommentaren nachzuschlagen, durch Wörter mit gemeinsamen Zeichen zu blättern usw.
