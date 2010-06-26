@@ -1,17 +1,17 @@
 #labels Featured
 =Chinese Touch 1.3 - Release Notes=
 
-* Support for context lookups in text mode and keyword lookups using a touch screen keyboard from large dictionaries like CC-CEDICT, HanDeDict, WaDoku etc.
-* More control about word list difficulty (any rating) ordering (occurrence, time, random) and scope (current lesson, including previous lessons, book, global) available from the lesson menu.
-* It is possible to assign and remove words found in dictionaries to/from lessons new word lists, using the star and trash symbols.
-* Replaced most Chinese button captions with more intuitive icons.
-* Improved loading of lesson menu entries and rendering of text lines in text mode to minimize usability impact.
-* Fallback to Japanese font for some glyphs missing in standard Chinese font. (unstable)
-* Added visualization for current mean rating per lesson/book/globally to lesson menu.
-* Added a new text and some new words to lesson 8 of English Chinese Wikibook.
-* Added ARGV support, so you can move the programs base directory to any location on your sd/flash filesystem, if your carts loader software supports this.
-* Selected character will now be rendered on the upper screen, even if no matching dictionary entry was found, so its easier to read and lookup by other means.
-* fixed many bugs; added some ui improvements
+ * Support for context lookups in text mode and keyword lookups using a touch screen keyboard from large dictionaries like CC-CEDICT, HanDeDict, WaDoku etc.
+ * More control about word list difficulty (any rating) ordering (occurrence, time, random) and scope (current lesson, including previous lessons, book, global) available from the lesson menu.
+ * It is possible to assign and remove words found in dictionaries to/from lessons new word lists, using the star and trash symbols.
+ * Replaced most Chinese button captions with more intuitive icons.
+ * Improved loading of lesson menu entries and rendering of text lines in text mode to minimize usability impact.
+ * Fallback to Japanese font for some glyphs missing in standard Chinese font. (unstable)
+ * Added visualization for current mean rating per lesson/book/globally to lesson menu.
+ * Added a new text and some new words to lesson 8 of English Chinese Wikibook.
+ * Added ARGV support, so you can move the programs base directory to any location on your sd/flash filesystem, if your carts loader software supports this.
+ * Selected character will now be rendered on the upper screen, even if no matching dictionary entry was found, so its easier to read and lookup by other means.
+ * fixed many bugs; added some ui improvements
 
 
 =Chinese Touch 1.2 - Release Notes=
