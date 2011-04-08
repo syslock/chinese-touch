@@ -29,13 +29,13 @@ When you chose a word list from the lesson menu you will be asked how the dictio
 
 <br/>
 === Word Lists: Handwriting and Self Control ===
-It is well known, that writing down things you are learning can improve memorization. In the word list mode the entire lower screen is for writing. If you think you made an error just clear the screen using the large orange clear button on the right screen edge. Control yourself afterwards using the yellow buttons on the top edge of the screen! In the example shown below the users answer was correct. But that was an easy word, right? ;)
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-28.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-29.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-30.png||
-
+It is well known, that writing down things you are learning can improve memorization. In the word list mode the entire lower screen is for writing. If you think you made an error just clear the screen using the clear button on the right screen edge. Control yourself afterwards using the yellow buttons on the top edge of the screen! In the example shown below the users answer was correct. But that was an easy word, right? ;)
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_writing.png</td></tr></table>
 <br/>
+
 === Word Lists: Rating ===
-Sometimes you won't get it right. Whatever your results are, you can adjust the words difficulty rating using the rating widget at the bottom screen edge. This way you can practice hard words more often using the corresponding selectors from the lesson menu. Your rating will also influence the mean difficulty ratings shown in the lesson menu, so you will see your learning progress.
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-32.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-33.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-34.png||
+<table width="60%"><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_rating.png</td><td>Sometimes you won't get it right. Whatever your results are, you can adjust the words difficulty rating using the rating widget at the bottom screen edge. This way you can practice hard words more often using the corresponding selectors from the lesson menu. Your rating will also influence the mean difficulty ratings shown in the lesson menu, so you will see your learning progress.
+</td></tr></table>
 
 <br/>
 === Word Lists: Browsing and Exit ===
