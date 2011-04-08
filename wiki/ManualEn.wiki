@@ -36,13 +36,13 @@ It is well known, that writing down things you are learning can improve memoriza
 === Word Lists: Rating ===
 <table width="60%"><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_rating.png</td><td>Sometimes you won't get it right. Whatever your results are, you can adjust the words difficulty rating using the rating widget at the bottom screen edge. This way you can practice hard words more often using the corresponding selectors from the lesson menu. Your rating will also influence the mean difficulty ratings shown in the lesson menu, so you will see your learning progress.
 </td></tr></table>
-
 <br/>
-=== Word Lists: Browsing and Exit ===
-You can browse word lists easily using the left/right buttons seen in the upper left and upper right corners of the screen. Your visibility settings and the writing screen will be reset/cleared automatically if you choose so from the settings menu, that is always accessible through the "S"-button at the lower right corner. You can exit the word list when you are ready using the "X"-button at the lower left corner of the screen.
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-36.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-37.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-38.png||
 
+=== Word Lists: Function Overview ===
+You can browse word lists easily using the left/right buttons seen in the upper left and upper right corners of the screen. Your visibility settings and the writing screen will be reset/cleared automatically if you choose so from the settings menu, that is always accessible through the settings button at the lower right corner. You can exit the word list when you are ready using the exit button at the lower left corner of the screen. See the images below for a complete list of supported features.
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_buttons.png</td></tr><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_buttons2.png</td></tr></table>
 <br/>
+
 == Reading Text ==
 When you choose grammar, text or exercises from a lesson entry, then the text browser will be started. The text browser displays longer texts which you can easily scroll using the touchscreen similar to the way you navigate in the lesson menu.
 ||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-41.png||
