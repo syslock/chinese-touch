@@ -12,21 +12,9 @@ After startup Chinese Touch will show the lesson menu. Its structure is hierarch
 
 <br/>
 === Lesson Menu: Book Entries ===
-Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary.png or http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary-open.png) in front of them are book entries. Books may contain multiple lessons about different aspects of Chinese. Some books do not contain any lessons but a dictionary of words, spelling and translations, that you can lookup from different locations within the program. When you activate a book entry a description about the books contents will be shown on the upper screen and a couple of buttons appear on the selected book entry. See the table below for a description of each of them.
-<table><tr valign="top"><td><img src="http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-1.png" /></td><td>
-|| *Widget*|| *Description*||
-||open||Explode a book entry and show lessons within that book.||
-||close||Close a book entry and hide lessons within that book.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_clock.png" />||Order word lists generated for the book entry by access time. Longest unseen words come first. Touch this button to change order settings!||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/tiny_dice.png" />||Shuffle word lists generated for the book entry. Touch this button to change order settings!||
-||#||Order word lists generated for the book entry by occurrence within the book lessons. Touch this button to change order settings!||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/center_rating_bar.png" />||Shows the current mean rating of words stored in this book. Allows to generate lists of words with different ratings. (see below)||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_any_active.png" />||Generate a list of words from the book regardless of their assigned difficulty rating.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_easy_active.png" />||Generate a list of easy words from the book.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_medium_active.png" />||Generate a list of medium words from the book.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_hard_active.png" />||Generate a list of hard words from the book.||
-||<img src="http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/bottom_rating_impossible_active.png" />||Generate a list of very hard and unrated words from the book.||
-</td></tr></table>
+Menu entries with a large book icon (http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary.png or http://chinese-touch.googlecode.com/svn/trunk/chinese-touch/graphics/accessories-dictionary-open.png) in front of them are book entries. Books may contain multiple lessons about different aspects of Chinese. Some books do not contain any lessons but a dictionary of words, spelling and translations, that you can lookup from different locations within the program. When you activate a book entry a description about the books contents will be shown on the upper screen and a couple of buttons appear on the selected book entry. See the image below for a description of each of them.
+
+<table><tr><td><img src="http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/menu_book_buttons.png" /></td></tr></table>
 
 <br/>
 === Lesson Menu: Lesson Entries ===
