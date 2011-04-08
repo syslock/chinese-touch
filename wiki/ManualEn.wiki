@@ -25,7 +25,7 @@ Menu entries with a large paper sheet icon (http://chinese-touch.googlecode.com/
 == Word Lists ==
 === Word Lists: Settings ===
 When you chose a word list from the lesson menu you will be asked how the dictionary entries within the list shall be displayed. When you are learning Chinese you typically want to train memorization of different aspects of words at different times. In the example shown below the user will to try to remember spelling and meaning of Chinese words within the list, so she disables "Show Pronunciation" and "Show Translation" and then proceeds through "OK".
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-25.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-27.png||
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/words_settings.png</td></tr></table>
 
 <br/>
 === Word Lists: Handwriting and Self Control ===
