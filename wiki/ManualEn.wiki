@@ -45,7 +45,7 @@ You can browse word lists easily using the left/right buttons seen in the upper 
 
 == Reading Text ==
 When you choose grammar, text or exercises from a lesson entry, then the text browser will be started. The text browser displays longer texts which you can easily scroll using the touchscreen similar to the way you navigate in the lesson menu.
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-41.png||
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/text_start_and_scrolling.png</td></tr></table>
 
 <br/>
 === Reading Text: Context and Character Look-Ups ===
