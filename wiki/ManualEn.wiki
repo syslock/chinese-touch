@@ -48,9 +48,10 @@ When you choose grammar, text or exercises from a lesson entry, then the text br
 <table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/text_start_and_scrolling.png</td></tr></table>
 
 <br/>
-=== Reading Text: Context and Character Look-Ups ===
+=== Reading Text: Context Lookups ===
 Tapping on a character will display context-matching word list entries on the upper screen. This makes reading texts containing many unknown characters much less time consuming and less frustrating. The user interface of the text browser is similar to the word list browser. Use the arrow buttons to browse the list of matching words, hide or show portions of the word entry and rate the difficulty of the currently shown word. By default Chinese Touch will show the longest word from the context near the character you tap on. You can reach shorter hits by browsing the hit list.
 <table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/text_context_lookups.png</td></tr></table>
+=== Reading Text: Character Lookups and Settings ===
 If you tap again on an already activated character the highlight color will change to blue and Chinese Touch will display words containing the highlighted character starting from the shortest. Depending on the dictionary used, this often will be an entry for the character itself. You may choose the sources Chinese Touch will try to lookup word entries from, using the text mode settings menu, reachable through the settings button in the lower right.
 <table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/text_character_lookup_and_settings.png</td></tr></table>
 
