@@ -76,8 +76,8 @@ If you tap again on an already activated character the highlight color will chan
 see HowtoCreateWordLists
 
 ==== Static Word Lists: Synchronizing Word Database ====
-After creating or changing static word lists using the steps described above you need to synchronize your word database. This can be done through the global settings screen of the lesson menu as shown below:
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-76.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-81.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-83.png||
+After creating or changing static word lists using the steps described above you need to synchronize your word database and recreate the fulltext index for new word entries to be available. This can be done from the global settings screen of the lesson menu as shown below:
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/menu_settings_resync_and_index.png</td></tr></table>
 
 <br/>
 === Creating Content: Large Dictionaries ===
