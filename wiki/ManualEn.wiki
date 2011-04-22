@@ -57,7 +57,7 @@ If you tap again on an already activated character the highlight color will chan
 
 <br/>
 == Dictionary Search ==
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-59.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-61.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-64.png||
+<table><tr><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/fulltext_search1.png</td><td>http://chinese-touch.googlecode.com/svn/wiki/screenshots_1_5/fulltext_search2.png</td></tr></table>
 
 <br/>
 == Creating Content ==
@@ -70,8 +70,6 @@ If you tap again on an already activated character the highlight color will chan
 
 <br/>
 === Creating Content: Dynamic Word Lists ===
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-86.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-87.png||
-||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-89.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-90.png||http://chinese-touch.googlecode.com/svn/wiki/tutorial/desmume-screenshot-92.png||
 
 <br/>
 === Creating Content: Static Word Lists ===
