@@ -1,4 +1,4 @@
-#labels Featured
+#labels Deprecated
 =Chinese Touch 1.3 - Release Notes=
 
  * Unterstützung große Wörterbücher, wie CC-CEDICT, HanDeDict, WaDoku etc.
